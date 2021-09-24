@@ -9,7 +9,7 @@ Shader::Shader() :
 	_fs(0),
 	_handle(0)
 {
-	_handle - glCreateProgram();
+	_handle = glCreateProgram();
 }
 
 Shader::~Shader() {
@@ -23,9 +23,11 @@ bool Shader::LoadShaderPart(const char* source, ShaderPartType type)
 {
 	// Creates a new shader part (VS, FS, GS, etc...)
 	GLuint handle = glCreateShader((GLenum)type);
+
 	// Load the GLSL source and compile it
 	glShaderSource(handle, 1, &source, nullptr);
 	glCompileShader(handle);
+
 	// Get the compilation status for the shader part
 	GLint status = 0;
 	glGetShaderiv(handle, GL_COMPILE_STATUS, &status);
@@ -34,17 +36,24 @@ bool Shader::LoadShaderPart(const char* source, ShaderPartType type)
 		// Get the size of the error log
 		GLint logSize = 0;
 		glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &logSize);
+
 		// Create a new character buffer for the log
 		char* log = new char[logSize];
+
 		// Get the log
 		glGetShaderInfoLog(handle, logSize, &logSize, log);
+
 		// Dump error log
 		LOG_ERROR("Failed to compile shader part:\n{}", log);
+
 		// Clean up our log memory
 		delete[] log;
+
 		// Delete the broken shader result
 		glDeleteShader(handle);
 		handle = 0;
+
+		return false;
 	}
 
 	switch (type) {
@@ -52,6 +61,7 @@ bool Shader::LoadShaderPart(const char* source, ShaderPartType type)
 	case ShaderPartType::Fragment: _fs = handle; break;
 	default: LOG_WARN("Not implemented"); break;
 	}
+
 	return status != GL_FALSE;
 }
 
@@ -86,13 +96,16 @@ bool Shader::Link()
 	// Attach our two shaders
 	glAttachShader(_handle, _vs);
 	glAttachShader(_handle, _fs);
+
 	// Perform linking
 	glLinkProgram(_handle);
 
+	// Remove shader parts to save space (we can do this since we only needed the shader parts to compile an actual shader program)
 	glDetachShader(_handle, _vs);
 	glDeleteShader(_vs);
 	glDetachShader(_handle, _fs);
 	glDeleteShader(_fs);
+
 	GLint status = 0;
 	glGetProgramiv(_handle, GL_LINK_STATUS, &status);
 
@@ -101,11 +114,11 @@ bool Shader::Link()
 		// Get the length of the log
 		GLint length = 0;
 		glGetProgramiv(_handle, GL_INFO_LOG_LENGTH, &length);
+
 		if (length > 0) {
 			// Read the log from openGL
 			char* log = new char[length];
-			glGetProgramInfoLog(_handle, length, &length,
-				log);
+			glGetProgramInfoLog(_handle, length, &length, log);
 			LOG_ERROR("Shader failed to link:\n{}", log);
 			delete[] log;
 		}

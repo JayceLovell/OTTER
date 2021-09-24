@@ -74,7 +74,7 @@ bool initGLFW() {
 		LOG_ERROR("Failed to initialize GLFW");
 		return false;
 	}
-
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 	//Create a new GLFW window and make it current
 	window = glfwCreateWindow(windowSize.x, windowSize.y, windowTitle.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent(window);
@@ -108,7 +108,7 @@ int main() {
 	//Initialize GLAD
 	if (!initGLAD())
 		return 1;
-
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	int Ma, Mi;
 	glGetIntegerv(GL_MAJOR_VERSION, &Ma);
 	glGetIntegerv(GL_MINOR_VERSION, &Mi);
@@ -148,10 +148,10 @@ int main() {
 
 	static const float interleaved[] = {
 		// X      Y    Z       R     G     B
-		 0.5f, -0.5f, 0.5f,   0.0f, 0.0f, 0.0f,
-		 0.5f,  0.5f, 0.5f,   0.3f, 0.2f, 0.5f,
-		-0.5f,  0.5f, 0.5f,   1.0f, 1.0f, 0.0f,
-		-0.5f, -0.5f, 0.5f,   1.0f, 1.0f, 1.0f
+		 1.0f, -0.0f, 0.5f,   1.0f, 0.0f, 0.0f,
+		 1.0f,  1.0f, 0.5f,   0.3f, 0.2f, 0.5f,
+		-0.0f,  1.0f, 0.5f,   1.0f, 1.0f, 0.0f,
+		-0.0f, -0.0f, 0.5f,   1.0f, 1.0f, 1.0f
 	};
 	VertexBuffer* interleaved_vbo = new VertexBuffer();
 	interleaved_vbo->LoadData(interleaved, 6 * 4);
@@ -197,8 +197,8 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		shader->Bind();
-		//vao->Bind();
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
+		vao->Bind();
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		vao2->Bind();
 		glDrawElements(
