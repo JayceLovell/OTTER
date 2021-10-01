@@ -57,7 +57,7 @@ GLFWwindow* window;
 // The current size of our window in pixels
 glm::ivec2 windowSize = glm::ivec2(800, 800);
 // The title of our GLFW window
-std::string windowTitle = "INFR-1350U";
+std::string windowTitle = "Jayce Lovell - 100775118";
 
 void GlfwWindowResizedCallback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
@@ -146,7 +146,8 @@ int main() {
 		 0.5f, -0.5f, 0.5f,   0.0f, 0.0f, 0.0f,
 		 0.5f,  0.5f, 0.5f,   0.3f, 0.2f, 0.5f,
 		-0.5f,  0.5f, 0.5f,   1.0f, 1.0f, 0.0f,
-		-0.5f, -0.5f, 0.5f,   1.0f, 1.0f, 1.0f
+		-0.5f, -0.5f, 0.5f,   1.0f, 1.0f, 1.0f,
+
 	};
 	VertexBuffer::Sptr interleaved_vbo = VertexBuffer::Create();
 	interleaved_vbo->LoadData(interleaved, 6 * 4);
@@ -166,6 +167,33 @@ int main() {
 	});
 	vao2->SetIndexBuffer(interleaved_ibo);
 
+	//what i added
+	static const float newshape[] = {
+		// X      Y    Z       R     G     B
+		 0.1f, -0.1f, 0.5f,   0.5f, 1.f, 0.5f, //top left
+		 0.1f,  0.1f, 0.5f,   0.0f, 0.0f, 0.0f,
+		-0.1f,  0.1f, 0.5f,   0.5f, 1.f, 0.5f, //bottom right
+		-0.1f, -0.1f, 0.5f,   0.0f, 0.0f, 0.0f,
+
+	};
+	VertexBuffer::Sptr interleaved_vbo1 = VertexBuffer::Create();
+	interleaved_vbo1->LoadData(newshape, 6 * 4);
+
+	static const uint16_t indices1[] = {
+		3, 0, 1,
+		3, 1, 2
+	};
+	IndexBuffer::Sptr interleaved_ibo1 = IndexBuffer::Create();
+	interleaved_ibo1->LoadData(indices1, 3 * 2);
+
+	size_t stride1 = sizeof(float) * 6;
+	VertexArrayObject::Sptr vao3 = VertexArrayObject::Create();
+	vao3->AddVertexBuffer(interleaved_vbo1, {
+		BufferAttribute(0, 3, AttributeType::Float, stride1, 0),
+		BufferAttribute(1, 3, AttributeType::Float, stride1, sizeof(float) * 3),
+		});
+	vao3->SetIndexBuffer(interleaved_ibo1);
+
 	// Load our shaders
 	Shader::Sptr shader = Shader::Create();
 	shader->LoadShaderPartFromFile("shaders/vertex_shader.glsl", ShaderPartType::Vertex);
@@ -180,6 +208,7 @@ int main() {
 	// Create a mat4 to store our mvp (for now)
 	glm::mat4 transform = glm::mat4(1.0f);
 	glm::mat4 transform2 = glm::mat4(1.0f);
+	glm::mat4 transform3 = glm::mat4(1.0f);
 
 	// Our high-precision timer
 	double lastFrame = glfwGetTime();
@@ -199,6 +228,9 @@ int main() {
 		// Rotate our models around the z axis
 		transform = glm::rotate(glm::mat4(1.0f), static_cast<float>(thisFrame), glm::vec3(0, 0, 1));
 		transform2 = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.0f, glm::sin(static_cast<float>(thisFrame))));
+		//what i ad
+		//transform3 = glm::rotate(glm::mat4(1.0f), static_cast<float>(thisFrame), glm::vec3(1, 0, 0));
+		transform3 = glm::translate(glm::mat4(1.0f), glm::vec3(glm::sin(static_cast<float>(thisFrame)), 0.0f, 0));
 
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -215,6 +247,13 @@ int main() {
 
 		vao2->Bind();
 		glDrawElements(GL_TRIANGLES, interleaved_ibo->GetElementCount(), (GLenum)interleaved_ibo->GetElementType(), nullptr);
+		vao2->Unbind();
+
+		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * transform3);
+
+		vao3->Bind();
+		glDrawElements(GL_TRIANGLES, interleaved_ibo->GetElementCount(), (GLenum)interleaved_ibo->GetElementType(), nullptr);
+
 
 		VertexArrayObject::Unbind();
 
