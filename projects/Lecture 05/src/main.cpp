@@ -289,7 +289,7 @@ int main() {
 
 		/////////////////
 
-		glDrawArrays(GL_TRIANGLES, 0, 18);
+		glDrawArrays(GL_TRIANGLES, 0, 18); // will need 36 for hands on
 
 		
 		glfwSwapBuffers(window);
