@@ -150,34 +150,34 @@ int main() {
 		1.0f, 0.0f, 0.0f
 	};
 
-	//////// LECTURE 05 ////////
+	/////// LECTURE 05 //////////
 
 	static const GLfloat normals[] = {
-		0.0f,0.0f,1.0f,
-		0.0f,0.0f,1.0f,
-		0.0f,0.0f,1.0f,
-		0.0f,0.0f,1.0f,
-		0.0f,0.0f,1.0f,
-		0.0f,0.0f,1.0f,// front
-		1.0f,0.0f,0.0f,
-		1.0f,0.0f,0.0f,
-		1.0f,0.0f,0.0f,
-		1.0f,0.0f,0.0f,
-		1.0f,0.0f,0.0f,
-		1.0f,0.0f,0.0f, // right
-		-1.0f,0.0f,0.0f,
-		-1.0f,0.0f,0.0f,
-		-1.0f,0.0f,0.0f,
-		-1.0f,0.0f,0.0f,
-		-1.0f,0.0f,0.0f,
-		-1.0f,0.0f,0.0f //left
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, // front
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f, //right
+		-1.0f, 0.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f //left
 	};
 
-	//////// LECTURE 05
-	GLfloat cameraPos[] = { 0.0f,0.0f,3.0f };
-	GLfloat lightPos[] = { 0.0f,0.0f,3.0f };
-	////////
-
+	/// LECTURE 05
+	GLfloat cameraPos[] = { 0.0f, 0.0f, 3.0f };
+	GLfloat lightPos[] = { 0.0f, 0.0f, 3.0f };
+	////////////
+	
 
 	//VBO - Vertex buffer object
 	GLuint pos_vbo = 0;
@@ -198,21 +198,21 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, color_vbo);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	//////// Lecture 05
+	/////////// LECTURE 05
 	GLuint normal_vbo = 2;
 	glGenBuffers(1, &normal_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, normal_vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	///
+	//////////////
+
 
 	glEnableVertexAttribArray(0);//pos
 	glEnableVertexAttribArray(1);//colors
-
-	//////// Lecture 05
+	/// LEC 05
 	glEnableVertexAttribArray(2);//normals
-	///
+	////////////
 
 	// Load our shaders
 
@@ -239,28 +239,25 @@ int main() {
 	// Model matrix
 	glm::mat4 Model = glm::mat4(1.0f);//Identity matrix - resets your matrix
 
-	glm::mat4 mvp = Projection * View * Model;
+	glm::mat4 mvp;// = Projection * View * Model;
 
 	// Handle for our mvp
 	GLuint matrixMVP = glGetUniformLocation(shader_program, "MVP");
-
-
-	/////// Lecture 5
+	
+	////// LEC 05 - uniform variables
 	GLuint matrixModel = glGetUniformLocation(shader_program, "Model");
 	GLuint lightPosID = glGetUniformLocation(shader_program, "lightPos");
 	GLuint cameraPosID = glGetUniformLocation(shader_program, "cameraPos");
-	/////
-
-
 	////////////////////////////////
+	
 	// GL states
 	glEnable(GL_DEPTH_TEST);
-	// Lec 05
+	// LEC 05
 	glEnable(GL_CULL_FACE);
 	//glFrontFace(GL_CCW);
 	//glCullFace(GL_FRONT); //GL_BACK, GL_FRONT_AND_BACK
 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 
 	///// Game loop /////
@@ -284,11 +281,13 @@ int main() {
 		// Send mvp to GPU
 		glUniformMatrix4fv(matrixMVP, 1, GL_FALSE, &mvp[0][0]);
 
-		///////////////// LEC 05
-		glUniformMatrix4fv(matrixModel,1, GL_FALSE, &Model[0][0]);
+		///////// LEC 05
+		glUniformMatrix4fv(matrixModel, 1, GL_FALSE, &Model[0][0]);
 
 		glUniform3fv(lightPosID, 1, &lightPos[0]);
 		glUniform3fv(cameraPosID, 1, &cameraPos[0]);
+
+		/////////////////
 
 		glDrawArrays(GL_TRIANGLES, 0, 18);
 
