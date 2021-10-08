@@ -62,7 +62,7 @@ GLFWwindow* window;
 // The current size of our window in pixels
 glm::ivec2 windowSize = glm::ivec2(800, 800);
 // The title of our GLFW window
-std::string windowTitle = "INFR-1350U";
+std::string windowTitle = "100775118 - Jayce Lovell";
 
 void GlfwWindowResizedCallback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
@@ -212,6 +212,18 @@ int main() {
 	///// Game loop /////
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
+
+		// WEEK 5: Input handling
+		if (glfwGetKey(window, GLFW_KEY_W)) {
+			if (!isButtonPressed) {
+				// This is the action we want to perform on key press
+				isRotating = !isRotating;
+			}
+			isButtonPressed = true;
+		}
+		else {
+			isButtonPressed = false;
+		}
 
 		// Calculate the time since our last frame (dt)
 		double thisFrame = glfwGetTime();
