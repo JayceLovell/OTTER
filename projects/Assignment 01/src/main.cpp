@@ -60,7 +60,7 @@ void GlDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsi
 // Stores our GLFW window in a global variable for now
 GLFWwindow* window;
 // The current size of our window in pixels
-glm::ivec2 windowSize = glm::ivec2(800, 800);
+glm::ivec2 windowSize = glm::ivec2(1000, 1000);
 // The title of our GLFW window
 std::string windowTitle = "100775118 - Jayce Lovell - Assignment01";
 
@@ -187,11 +187,13 @@ int main() {
 	Camera::Sptr camera = Camera::Create();
 	camera->SetPosition(glm::vec3(0, 3, 3));
 	camera->LookAt(glm::vec3(0.0f));
+	camera->SetOrthoVerticalScale(4.0f);
 
 	// Create a mat4 to store our mvp (for now)
 	glm::mat4 transform = glm::mat4(1.0f);
 	glm::mat4 transform2 = glm::mat4(1.0f);
 	glm::mat4 transform3 = glm::mat4(1.0f);
+	glm::mat4 transform4 = glm::mat4(1.0f);
 
 	// Our high-precision timer
 	double lastFrame = glfwGetTime();
@@ -204,11 +206,15 @@ int main() {
 	VertexArrayObject::Sptr vao3 = mesh.Bake();
 
 	//LOAD OBJ files here
-	VertexArrayObject::Sptr vao4 = ObjLoader::LoadFromFile("monkey.obj");
+	VertexArrayObject::Sptr vao4 = ObjLoader::LoadFromFile("egg.obj");
 
 	bool isRotating = true;
 
 	bool isButtonPressed = false;
+
+	bool isOrtho = false;
+
+	bool isInOrthoMode = false;
 
 	///// Game loop /////
 	while (!glfwWindowShouldClose(window)) {
@@ -225,6 +231,17 @@ int main() {
 		else {
 			isButtonPressed = false;
 		}
+		//Change between Ortho and Prespective
+		if (glfwGetKey(window, GLFW_KEY_SPACE)) {
+			if (!isInOrthoMode) {
+				isOrtho = !isOrtho;
+				camera->SetOrthoEnabled(isOrtho);
+			}
+			isInOrthoMode = true;
+		}
+		else {
+			isInOrthoMode = false;
+		}
 
 		// Calculate the time since our last frame (dt)
 		double thisFrame = glfwGetTime();
@@ -234,10 +251,11 @@ int main() {
 
 		// Rotate our models around the z axis
 		if (isRotating) {
-			transform  = glm::rotate(glm::mat4(1.0f), static_cast<float>(thisFrame), glm::vec3(0, 0, 1));
+			/*transform = glm::rotate(glm::mat4(1.0f), static_cast<float>(thisFrame), glm::vec3(0, 0, 1));
+			transform2 = glm::rotate(glm::mat4(1.0f), -static_cast<float>(thisFrame), glm::vec3(0, 0, 1)) * glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.0f, glm::sin(static_cast<float>(thisFrame))));*/
+			transform3 = glm::rotate(glm::mat4(1.0f), -static_cast<float>(thisFrame), glm::vec3(1, 0, 0)) * glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.0f, 0.0f));
+			transform4 = glm::rotate(glm::mat4(1.0f), -static_cast<float>(thisFrame), glm::vec3(1, 0, 0)) * glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f));
 		}
-		transform2 = glm::rotate(glm::mat4(1.0f), -static_cast<float>(thisFrame), glm::vec3(0, 0, 1)) * glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.0f, glm::sin(static_cast<float>(thisFrame))));
-		transform3 = glm::rotate(glm::mat4(1.0f), -static_cast<float>(thisFrame), glm::vec3(1, 0, 0)) * glm::translate(glm::mat4(1.0f), glm::vec3(0, glm::sin(static_cast<float>(thisFrame)), 0.0f));
 
 		// Clear the color and depth buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -245,16 +263,19 @@ int main() {
 		// Bind our shader and upload the uniform
 		shader->Bind();
 
-		// Draw spinny triangle
+		 /*Draw spinny triangle*/
 		/*shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * transform);
 		vao->Draw();*/
 
-		// Draw MeshFactory Sample
+		 /*Draw MeshFactory Sample*/
 		/*shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* transform2);
 		vao3->Draw();*/
 
 		// Draw OBJ loaded model
 		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * transform3);
+		vao4->Draw();
+
+		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* transform4);
 		vao4->Draw();
 
 		VertexArrayObject::Unbind();
