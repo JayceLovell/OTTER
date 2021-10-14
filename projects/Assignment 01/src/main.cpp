@@ -212,9 +212,11 @@ int main() {
 
 	bool isButtonPressed = false;
 
+	//ADDED FOR ASSIGNMENT 1
 	bool isOrtho = false;
 
 	bool isInOrthoMode = false;
+	////
 
 	///// Game loop /////
 	while (!glfwWindowShouldClose(window)) {
@@ -231,6 +233,7 @@ int main() {
 		else {
 			isButtonPressed = false;
 		}
+		//ADDED FOR ASSIGNMENT 1
 		//Change between Ortho and Prespective
 		if (glfwGetKey(window, GLFW_KEY_SPACE)) {
 			if (!isInOrthoMode) {
@@ -242,6 +245,7 @@ int main() {
 		else {
 			isInOrthoMode = false;
 		}
+		/////
 
 		// Calculate the time since our last frame (dt)
 		double thisFrame = glfwGetTime();
@@ -254,7 +258,9 @@ int main() {
 			/*transform = glm::rotate(glm::mat4(1.0f), static_cast<float>(thisFrame), glm::vec3(0, 0, 1));
 			transform2 = glm::rotate(glm::mat4(1.0f), -static_cast<float>(thisFrame), glm::vec3(0, 0, 1)) * glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.0f, glm::sin(static_cast<float>(thisFrame))));*/
 			transform3 = glm::rotate(glm::mat4(1.0f), -static_cast<float>(thisFrame), glm::vec3(1, 0, 0)) * glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.0f, 0.0f));
+			//ADDED FOR ASSIGNMENT 1
 			transform4 = glm::rotate(glm::mat4(1.0f), -static_cast<float>(thisFrame), glm::vec3(1, 0, 0)) * glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f));
+			///
 		}
 
 		// Clear the color and depth buffers
@@ -274,9 +280,10 @@ int main() {
 		// Draw OBJ loaded model
 		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * transform3);
 		vao4->Draw();
-
+		//ADDED FOR ASSIGNMENT 1
 		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* transform4);
 		vao4->Draw();
+		///
 
 		VertexArrayObject::Unbind();
 
