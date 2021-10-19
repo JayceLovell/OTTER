@@ -124,8 +124,13 @@ int main() {
 		-0.5f, 0.5f, -0.5f, //5
 		-0.5f, -0.5f, 0.5f, //0
 		-0.5f, 0.5f, 0.5f,  //1
-		-0.5f, 0.5f, -0.5f //5
-
+		-0.5f, 0.5f, -0.5f, //5
+		0.5f, -0.5f, -0.5f, //1 back face
+		-0.5f, -0.5f, -0.5f, //2
+		-0.5f, 0.5f, -0.5f, //3
+		0.5f, -0.5f, -0.5f, //1
+		-0.5f, 0.5f, -0.5f, //3
+		0.5f, 0.5f, -0.5f//0 
 	};
 
 	// Color data
@@ -147,11 +152,17 @@ int main() {
 		0.0f, 0.0f, 1.0f,
 		1.0f, 0.0f, 0.0f,
 		1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f
+		1.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f
 	};
 
 	/////// LECTURE 05 //////////
-
+	//This puts light
 	static const GLfloat normals[] = {
 		0.0f, 0.0f, 1.0f,
 		0.0f, 0.0f, 1.0f,
@@ -170,12 +181,18 @@ int main() {
 		-1.0f, 0.0f, 0.0f,
 		-1.0f, 0.0f, 0.0f,
 		-1.0f, 0.0f, 0.0f,
-		-1.0f, 0.0f, 0.0f //left
+		-1.0f, 0.0f, 0.0f, //left
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f // back
 	};
 
 	/// LECTURE 05
-	GLfloat cameraPos[] = { 0.0f, 0.0f, 3.0f };
-	GLfloat lightPos[] = { 0.0f, 0.0f, 3.0f };
+	GLfloat cameraPos[] = { 0.0f, 0.0f, 5.0f };
+	GLfloat lightPos[] = { 0.0f, 0.0f, 5.0f };
 	////////////
 	
 
@@ -231,7 +248,7 @@ int main() {
 	// View matrix - Camera
 
 	glm::mat4 View = glm::lookAt(
-		glm::vec3(0, 0, 3), // camera position
+		glm::vec3(0, 0, 4), // camera position
 		glm::vec3(0, 0, 0), //target
 		glm::vec3(0, 1, 0) //up vector
 	);
@@ -289,7 +306,7 @@ int main() {
 
 		/////////////////
 
-		glDrawArrays(GL_TRIANGLES, 0, 18); // will need 36 for hands on
+		glDrawArrays(GL_TRIANGLES, 0, 36); // will need 36 for hands on
 
 		
 		glfwSwapBuffers(window);
