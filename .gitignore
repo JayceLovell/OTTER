@@ -19,3 +19,4 @@ shared_assets/**
 
 
 dependencies/dll/desktop.ini
+*.zip

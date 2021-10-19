@@ -17,7 +17,7 @@ bool initGLFW() {
 	}
 
 	//Create a new GLFW window
-	window = glfwCreateWindow(800, 800, "INFR1350U", nullptr, nullptr);
+	window = glfwCreateWindow(800, 800, "Jayce Lovell - 100775118 - Lecture 5", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	return true;
@@ -88,7 +88,6 @@ void keyboard() {
 		rotY += 0.5f;
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 		rotY -= 0.5f;
-
 }
 
 ///////////////
@@ -290,6 +289,7 @@ int main() {
 		Model = glm::mat4(1.0f); // reset Model
 
 		keyboard();
+		
 
 		//Model = glm::translate(Model, glm::vec3(0.0f, 0.0f, movZ));
 		Model = glm::rotate(Model, glm::radians(rotY), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -304,9 +304,12 @@ int main() {
 		glUniform3fv(lightPosID, 1, &lightPos[0]);
 		glUniform3fv(cameraPosID, 1, &cameraPos[0]);
 
+
 		/////////////////
 
 		glDrawArrays(GL_TRIANGLES, 0, 36); // will need 36 for hands on
+
+		//std::cout << (bling ? "Blinn-Phong" : "Phong") << std::endl;
 
 		
 		glfwSwapBuffers(window);
