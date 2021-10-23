@@ -6,7 +6,11 @@
 #include <GLM/glm.hpp> // Lec 04
 #include <GLM/gtc/matrix_transform.hpp> //lec 04
 
-// Lecture 07
+// Lecture 07 ///////////
+// Load texture (images)
+// Load UVs into VBO, send to GPU
+// Set up texture parameters
+// Bind texture to use it, then draw the object
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -14,7 +18,7 @@
 unsigned char* image;
 int width, height;
 
-void LoadImage(const std::string& filename) {
+void loadImage(const std::string& filename) {
 	int channels;
 	stbi_set_flip_vertically_on_load(true); //because opengl loads it flipped
 
@@ -100,19 +104,24 @@ bool loadShaders() {
 //// Lecture 04
 
 GLfloat rotY = 0.0f;
+GLfloat tranZ = 0.0f;
 
 void keyboard() {
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 		rotY += 1.0f;
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 		rotY -= 1.0f;
-
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+		tranZ += 0.1f;
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+		tranZ -= 0.1f;
 }
 
 ///////////////
 
 
 int main() {
+
 	//Initialize GLFW
 	if (!initGLFW())
 		return 1;
@@ -237,20 +246,6 @@ int main() {
 		0.0f,1.0f,
 		1.0f,0.0f,
 		1.0f,1.0f,
-		0.0f,1.0f,
-
-		0.0f,0.0f,
-		1.0f,0.0f,
-		0.0f,1.0f,
-		1.0f,0.0f,
-		1.0f,1.0f,
-		0.0f,1.0f,
-
-		0.0f,0.0f,
-		1.0f,0.0f,
-		0.0f,1.0f,
-		1.0f,0.0f,
-		1.0f,1.0f,
 		0.0f,1.0f
 	};
 
@@ -295,6 +290,42 @@ int main() {
 	glEnableVertexAttribArray(2);//normals
 	////////////
 
+	/////////// Lec 07 ////////////////
+	
+	GLuint uv_vbo = 3;
+	glGenBuffers(1, &uv_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, uv_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(uv), uv, GL_STATIC_DRAW);
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(3);
+
+	loadImage("box.bmp");
+	
+	GLuint textureHandle;
+	glGenTextures(1, &textureHandle);
+	glBindTexture(GL_TEXTURE_2D, textureHandle);
+	glTexImage2D(GL_TEXTURE_2D,0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+
+	//Texture parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	//loadImage("checker.jpg");
+
+	//glGenTextures(2, &textureHandle);
+	//glBindTexture(GL_TEXTURE_2D, textureHandle);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+
+	////Texture parameters
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	//free image space
+	stbi_image_free(image);
+
+	//////////////////////////////////
+	
+
 	// Load our shaders
 
 	if (!loadShaders())
@@ -307,7 +338,7 @@ int main() {
 	glfwGetWindowSize(window, &width, &height);
 
 	glm::mat4 Projection = glm::perspective(glm::radians(45.0f),
-		(float)width / (float)height, 0.1f, 100.0f);
+		(float)width / (float)height, 0.0001f, 100.0f);
 
 	// View matrix - Camera
 
@@ -357,6 +388,7 @@ int main() {
 
 		//Model = glm::translate(Model, glm::vec3(0.0f, 0.0f, movZ));
 		Model = glm::rotate(Model, glm::radians(rotY), glm::vec3(0.0f, 1.0f, 0.0f));
+		Model = glm::translate(Model, glm::vec3(0.0f,0.0f,tranZ));
 		mvp = Projection * View * Model;
 		
 		// Send mvp to GPU
@@ -369,6 +401,11 @@ int main() {
 		glUniform3fv(cameraPosID, 1, &cameraPos[0]);
 
 		/////////////////
+		
+		 /*Bind texture 1 glBindTexture(GL_TEXTURE_2D, textureHandle[0]);
+		 draw
+		 Bind texture 2 glBindTexture(GL_TEXTURE_2D, textureHandle[1]);
+		 draw*/
 
 		glDrawArrays(GL_TRIANGLES, 0, 36); //36
 
