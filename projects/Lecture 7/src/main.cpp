@@ -301,24 +301,24 @@ int main() {
 
 	loadImage("box.bmp");
 	
-	GLuint textureHandle;
-	glGenTextures(1, &textureHandle);
-	glBindTexture(GL_TEXTURE_2D, textureHandle);
+	GLuint textureHandle[1];
+	glGenTextures(1, &textureHandle[0]);
+	glBindTexture(GL_TEXTURE_2D, textureHandle[0]);
 	glTexImage2D(GL_TEXTURE_2D,0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 
 	//Texture parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-	//loadImage("checker.jpg");
+	loadImage("checker.jpg");
 
-	//glGenTextures(2, &textureHandle);
-	//glBindTexture(GL_TEXTURE_2D, textureHandle);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glGenTextures(2, &textureHandle[1]);
+	glBindTexture(GL_TEXTURE_2D, textureHandle[1]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 
-	////Texture parameters
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//Texture parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 	//free image space
 	stbi_image_free(image);
