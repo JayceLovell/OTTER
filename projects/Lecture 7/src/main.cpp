@@ -39,7 +39,7 @@ bool initGLFW() {
 	}
 
 	//Create a new GLFW window
-	window = glfwCreateWindow(800, 800, "INFR1350U", nullptr, nullptr);
+	window = glfwCreateWindow(800, 800, "Lecture 7 Hands-ON, Jayce Lovell-100775118", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	return true;
@@ -402,12 +402,15 @@ int main() {
 
 		/////////////////
 		
-		 /*Bind texture 1 glBindTexture(GL_TEXTURE_2D, textureHandle[0]);
-		 draw
-		 Bind texture 2 glBindTexture(GL_TEXTURE_2D, textureHandle[1]);
-		 draw*/
+		 //Bind texture 1 
+		glBindTexture(GL_TEXTURE_2D, textureHandle[0]);
+		glDrawArrays(GL_TRIANGLES, 0, 12); 
+		//draw
+		 //Bind texture 2 
+		glBindTexture(GL_TEXTURE_2D, textureHandle[1]);
+		glDrawArrays(GL_TRIANGLES, 0, 36); 
 
-		glDrawArrays(GL_TRIANGLES, 0, 36); //36
+		//glDrawArrays(GL_TRIANGLES, 0, 36); //36
 
 		
 		glfwSwapBuffers(window);
