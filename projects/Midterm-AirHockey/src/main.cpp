@@ -605,10 +605,12 @@ int main() {
 			{ ShaderPartType::Vertex, "shaders/vertex_shader.glsl" },
 			{ ShaderPartType::Fragment, "shaders/frag_blinn_phong_textured.glsl" }
 			});
+
 		Guid PuckMesh = ResourceManager::CreateMesh("models/Puck.obj");
 		Guid PuckTex = ResourceManager::CreateTexture("textures/Puck.png");
 		Guid Paddle = ResourceManager::CreateMesh("models/Paddles.obj");
-		
+		Guid planeTexture = ResourceManager::CreateTexture("Textures/plane.jpg");
+	
 		// Save the asset manifest for all the resources we just loaded
 		ResourceManager::SaveManifest("manifest.json");
 
@@ -618,13 +620,12 @@ int main() {
 		// I hate this
 		scene->BaseShader = ResourceManager::GetShader(defaultShader);
 
-		//// Create our materials
-		// 
-		//MaterialInfo::Sptr boxMaterial = std::make_shared<MaterialInfo>();
-		//boxMaterial->Shader = scene->BaseShader;
-		//boxMaterial->Texture = ResourceManager::GetTexture(boxTexture);
-		//boxMaterial->Shininess = 8.0f;
-		//scene->Materials[boxMaterial->GetGUID()] = boxMaterial;
+		// Create our materials
+		MaterialInfo::Sptr planeMaterial = std::make_shared<MaterialInfo>();
+		planeMaterial->Shader = scene->BaseShader;
+		planeMaterial->Texture = ResourceManager::GetTexture(planeTexture);
+		planeMaterial->Shininess = 8.0f;
+		scene->Materials[planeMaterial->GetGUID()] = planeMaterial;
 
 		MaterialInfo::Sptr PuckMaterial = std::make_shared<MaterialInfo>();
 		PuckMaterial->Shader = scene->BaseShader;
@@ -650,12 +651,13 @@ int main() {
 		scene->Camera->LookAt(glm::vec3(0.0f));
 
 		// Set up all our sample objects
-		//RenderObject plane = RenderObject();
-		//plane.MeshBuilderParams.push_back(MeshBuilderParam::CreatePlane(ZERO, UNIT_Z, UNIT_X, glm::vec2(10.0f)));
-		//plane.GenerateMesh();
-		//plane.Name = "Plane";
-		////plane.Material = boxMaterial;
-		//scene->Objects.push_back(plane);
+		RenderObject plane = RenderObject();
+		plane.MeshBuilderParams.push_back(MeshBuilderParam::CreatePlane(ZERO, UNIT_Z, UNIT_X, glm::vec2(10.0f)));
+		//plane.Rotation = glm::vec3(90.0f,0.0,0.0);
+		plane.GenerateMesh();
+		plane.Name = "Plane";
+		plane.Material = planeMaterial;
+		scene->Objects.push_back(plane);
 
 		RenderObject Puck = RenderObject();
 		Puck.Position = glm::vec3(0.0f, 0.0f, 0.0f);
