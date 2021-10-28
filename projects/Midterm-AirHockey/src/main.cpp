@@ -71,9 +71,9 @@ void GlDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsi
 // Stores our GLFW window in a global variable for now
 GLFWwindow* window;
 // The current size of our window in pixels
-glm::ivec2 windowSize = glm::ivec2(800, 800);
+glm::ivec2 windowSize = glm::ivec2(1080, 1080);
 // The title of our GLFW window
-std::string windowTitle = "Midterm - AirHockey - Jayce Lovell(100775118) - Jelani Garnes ";
+std::string windowTitle = "Midterm - AirHockey - Jayce Lovell(100775118) - Jelani Garnes(100801696) ";
 
 void GlfwWindowResizedCallback(GLFWwindow * window, int width, int height) {
 	glViewport(0, 0, width, height);
@@ -661,7 +661,8 @@ int main() {
 		// Set up all our sample objects
 		RenderObject plane = RenderObject();
 		plane.MeshBuilderParams.push_back(MeshBuilderParam::CreatePlane(ZERO, UNIT_Z, UNIT_X, glm::vec2(10.0f)));
-		//plane.Rotation = glm::vec3(90.0f,0.0,0.0);
+		plane.Rotation = glm::vec3(0.0f,0.0f,90.0f);
+		plane.Scale = glm::vec3(1.8f, 2.72f, 0.0f);
 		plane.GenerateMesh();
 		plane.Name = "Plane";
 		plane.Material = planeMaterial;
