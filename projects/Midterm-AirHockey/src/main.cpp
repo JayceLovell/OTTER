@@ -73,7 +73,7 @@ GLFWwindow* window;
 // The current size of our window in pixels
 glm::ivec2 windowSize = glm::ivec2(800, 800);
 // The title of our GLFW window
-std::string windowTitle = "Midterm - AirHockey - Jayce Lovell(100775118) - Jelani ";
+std::string windowTitle = "Midterm - AirHockey - Jayce Lovell(100775118) - Jelani Garnes ";
 
 void GlfwWindowResizedCallback(GLFWwindow * window, int width, int height) {
 	glViewport(0, 0, width, height);
@@ -537,6 +537,23 @@ bool DrawLightImGui(const char* title, Light& light) {
 	return result;
 }
 
+/// <summary>
+/// think this does collision
+/// </summary>
+/// <param name="one"></param>
+/// <param name="two"></param>
+/// <returns></returns>
+bool CheckCollision(GameObject& one, GameObject& two) // AABB - AABB collision
+{
+	// collision x-axis?
+	bool collisionX = one.Position.x + one.Size.x >= two.Position.x &&
+		two.Position.x + two.Size.x >= one.Position.x;
+	// collision y-axis?
+	bool collisionY = one.Position.y + one.Size.y >= two.Position.y &&
+		two.Position.y + two.Size.y >= one.Position.y;
+	// collision only if on both axes
+	return collisionX && collisionY;
+}
 int main() {
 	Logger::Init(); // We'll borrow the logger from the toolkit, but we need to initialize it
 
