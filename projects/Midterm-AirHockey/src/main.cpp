@@ -536,32 +536,68 @@ bool DrawLightImGui(const char* title, Light& light) {
 	}
 	return result;
 }
-
+GLfloat P1posY = 0.0f;
+GLfloat P1posX = -10.0f;
+GLfloat P2posY = 0.0f;
+GLfloat P2posX = 10.0f;
 /// <summary>
-/// think this does collision
+/// Players input
 /// </summary>
-/// <param name="one"></param>
-/// <param name="two"></param>
-/// <returns></returns>
-//bool CheckCollision(Puck& one, GameObject& two) // AABB - Circle collision
-//{
-//	// get center point circle first 
-//	glm::vec2 center(one.Position + one.Radius);
-//	// calculate AABB info (center, half-extents)
-//	glm::vec2 aabb_half_extents(two.Size.x / 2.0f, two.Size.y / 2.0f);
-//	glm::vec2 aabb_center(
-//		two.Position.x + aabb_half_extents.x,
-//		two.Position.y + aabb_half_extents.y
-//	);
-//	// get difference vector between both centers
-//	glm::vec2 difference = center - aabb_center;
-//	glm::vec2 clamped = glm::clamp(difference, -aabb_half_extents, aabb_half_extents);
-//	// add clamped value to AABB_center and we get the value of box closest to circle
-//	glm::vec2 closest = aabb_center + clamped;
-//	// retrieve vector between center circle and closest point AABB and check if length <= radius
-//	difference = closest - center;
-//	return glm::length(difference) < one.Radius;
-//}
+void keyboard() {
+	//Player 1 Controls
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+		P1posX += 0.1f;
+		if (P1posX > -1.0f)
+		{
+			P1posX = -1.0f;
+		}
+	}
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+		P1posX -= 0.1f;
+		if (P1posX < -10.0f) {
+			P1posX = -10.0f;
+		}		
+	}
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+		P1posY -= 0.1f;
+		if (P1posY < -6.0f) {
+			P1posY = -6.0f;
+		}
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+		P1posY += 0.1f;
+		if (P1posY > 6.5f) {
+			P1posY = 6.5f;
+		}
+	}
+
+	//Player 2 Controls
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		P2posX += 0.1f;
+		if (P2posX > 10.0f)
+		{
+			P2posX = 10.0f;
+		}
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		P2posX -= 0.1f;
+		if (P2posX < 1.2f) {
+			P2posX = 1.2f;
+		}
+	}
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		P2posY -= 0.1f;
+		if (P2posY < -6.0f) {
+			P2posY = -6.0f;
+		}
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		P2posY += 0.1f;
+		if (P2posY > 6.5f) {
+			P2posY = 6.5f;
+		}
+	}
+}
 int main() {
 	Logger::Init(); // We'll borrow the logger from the toolkit, but we need to initialize it
 
@@ -650,8 +686,14 @@ int main() {
 
 		// Create some lights for our scene think we only need one light for the game
 		scene->Lights.resize(3);
-		scene->Lights[0].Position = glm::vec3(0.0f, 1.0f, 3.0f);
-		scene->Lights[0].Color = glm::vec3(0.5f, 0.0f, 0.7f);
+		scene->Lights[0].Position = glm::vec3(-7.0f, 0.0f, 7.0f);
+		scene->Lights[0].Color = glm::vec3(1.0f, 1.0f, 1.0f);
+
+		scene->Lights[1].Position = glm::vec3(0.0f, 0.0f, 7.0f);
+		scene->Lights[1].Color = glm::vec3(1.0f, 1.0f, 1.0f);
+
+		scene->Lights[2].Position = glm::vec3(7.0f, 0.0f, 7.0f);
+		scene->Lights[2].Color = glm::vec3(1.0f, 1.0f, 1.0f);
 
 		// Set up the scene's camera
 		scene->Camera = Camera::Create();
@@ -740,8 +782,8 @@ int main() {
 
 				// Re-fetch the models so we can do a behaviour for them
 				Puck = scene->FindObjectByName("Puck");
-				Puck = scene->FindObjectByName("Paddle P1");
-				Puck = scene->FindObjectByName("Paddle P2");
+				PaddleP1 = scene->FindObjectByName("Paddle P1");
+				PaddleP2 = scene->FindObjectByName("Paddle P2");
 			}
 			ImGui::Separator();
 		}
@@ -801,6 +843,12 @@ int main() {
 				}
 			}
 		}
+		keyboard();
+
+		//Move Player 1
+		PaddleP1->Position = glm::vec3(P1posX, P1posY, 1.0f);
+		//Move Player 2
+		PaddleP2->Position = glm::vec3(P2posX, P2posY, 1.0f);
 		// If our debug window is open, notify that we no longer will render new
 		// elements to it
 		if (isDebugWindowOpen) {
