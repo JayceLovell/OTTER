@@ -543,16 +543,38 @@ bool DrawLightImGui(const char* title, Light& light) {
 /// <param name="one"></param>
 /// <param name="two"></param>
 /// <returns></returns>
-bool CheckCollision(GameObject& one, GameObject& two) // AABB - AABB collision
+bool CheckCollision(PuckObject& one, GameObject& two) // AABB - Circle collision
 {
-	// collision x-axis?
-	bool collisionX = one.Position.x + one.Size.x >= two.Position.x &&
-		two.Position.x + two.Size.x >= one.Position.x;
-	// collision y-axis?
-	bool collisionY = one.Position.y + one.Size.y >= two.Position.y &&
-		two.Position.y + two.Size.y >= one.Position.y;
-	// collision only if on both axes
-	return collisionX && collisionY;
+	// get center point circle first 
+	glm::vec2 center(one.Position + one.Radius);
+	// calculate AABB info (center, half-extents)
+	glm::vec2 aabb_half_extents(two.Size.x / 2.0f, two.Size.y / 2.0f);
+	glm::vec2 aabb_center(
+		two.Position.x + aabb_half_extents.x,
+		two.Position.y + aabb_half_extents.y
+	);
+	// get difference vector between both centers
+	glm::vec2 difference = center - aabb_center;
+	glm::vec2 clamped = glm::clamp(difference, -aabb_half_extents, aabb_half_extents);
+	// add clamped value to AABB_center and we get the value of box closest to circle
+	glm::vec2 closest = aabb_center + clamped;
+	// retrieve vector between center circle and closest point AABB and check if length <= radius
+	difference = closest - center;
+	return glm::length(difference) < one.Radius;
+}
+void Game::DoCollisions()
+{
+	for (GameObject& box : this->Levels[this->Level].Bricks)
+	{
+		if (!box.Destroyed)
+		{
+			if (CheckCollision(*Ball, box))
+			{
+				if (!box.IsSolid)
+					box.Destroyed = true;
+			}
+		}
+	}
 }
 int main() {
 	Logger::Init(); // We'll borrow the logger from the toolkit, but we need to initialize it
