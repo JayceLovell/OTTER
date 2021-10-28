@@ -608,7 +608,9 @@ int main() {
 
 		Guid PuckMesh = ResourceManager::CreateMesh("models/Puck.obj");
 		Guid PuckTex = ResourceManager::CreateTexture("textures/Puck.png");
-		Guid Paddle = ResourceManager::CreateMesh("models/Paddles.obj");
+		Guid PaddleMesh = ResourceManager::CreateMesh("models/Paddles.obj");
+		Guid PaddleP1Tex = ResourceManager::CreateTexture("textures/PaddleP1.png");
+		Guid PaddleP2Tex = ResourceManager::CreateTexture("textures/PaddleP2.png");
 		Guid planeTexture = ResourceManager::CreateTexture("Textures/plane.jpg");
 	
 		// Save the asset manifest for all the resources we just loaded
@@ -633,11 +635,17 @@ int main() {
 		PuckMaterial->Shininess = 1.0f;
 		scene->Materials[PuckMaterial->GetGUID()] = PuckMaterial;
 
-		MaterialInfo::Sptr PaddleMaterial = std::make_shared<MaterialInfo>();
-		PaddleMaterial->Shader = scene->BaseShader;
-		PaddleMaterial->Texture = ResourceManager::GetTexture(PuckTex);
-		PaddleMaterial->Shininess = 1.0f;
-		scene->Materials[PaddleMaterial->GetGUID()] = PaddleMaterial;
+		MaterialInfo::Sptr PaddleP1Material = std::make_shared<MaterialInfo>();
+		PaddleP1Material->Shader = scene->BaseShader;
+		PaddleP1Material->Texture = ResourceManager::GetTexture(PaddleP1Tex);
+		PaddleP1Material->Shininess = 1.0f;
+		scene->Materials[PaddleP1Material->GetGUID()] = PaddleP1Material;
+
+		MaterialInfo::Sptr PaddleP2Material = std::make_shared<MaterialInfo>();
+		PaddleP2Material->Shader = scene->BaseShader;
+		PaddleP2Material->Texture = ResourceManager::GetTexture(PaddleP2Tex);
+		PaddleP2Material->Shininess = 1.0f;
+		scene->Materials[PaddleP2Material->GetGUID()] = PaddleP2Material;
 
 
 		// Create some lights for our scene think we only need one light for the game
@@ -661,12 +669,31 @@ int main() {
 		scene->Objects.push_back(plane);
 
 		RenderObject Puck = RenderObject();
-		Puck.Position = glm::vec3(0.0f, 0.0f, 0.0f);
+		Puck.Position = glm::vec3(0.0f, 0.0f, 1.0f);
 		Puck.Mesh = ResourceManager::GetMesh(PuckMesh);
 		Puck.Rotation = glm::vec3(90.0f, 0.0f, 0.0f);
+		Puck.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
 		Puck.Material = PuckMaterial;
 		Puck.Name = "Puck";
 		scene->Objects.push_back(Puck);
+		
+		RenderObject PaddleP1 = RenderObject();
+		PaddleP1.Position = glm::vec3(-5.0f, 0.0f, 1.0f);
+		PaddleP1.Mesh = ResourceManager::GetMesh(PaddleMesh);
+		PaddleP1.Rotation = glm::vec3(90.0f, 0.0f, 0.0f);
+		PaddleP1.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+		PaddleP1.Material = PaddleP1Material;
+		PaddleP1.Name = "Paddle P1";
+		scene->Objects.push_back(PaddleP1);
+
+		RenderObject PaddleP2 = RenderObject();
+		PaddleP2.Position = glm::vec3(5.0f, 0.0f, 1.0f);
+		PaddleP2.Mesh = ResourceManager::GetMesh(PaddleMesh);
+		PaddleP2.Rotation = glm::vec3(90.0f, 0.0f, 0.0f);
+		PaddleP2.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+		PaddleP2.Material = PaddleP2Material;
+		PaddleP2.Name = "Paddle P2";
+		scene->Objects.push_back(PaddleP2);
 
 
 		// Save the scene to a JSON file
@@ -676,9 +703,10 @@ int main() {
 	// Post-load setup
 	SetupShaderAndLights(scene->BaseShader, scene->Lights.data(), scene->Lights.size());
 
-	RenderObject* PuckP1 = scene->FindObjectByName("Puck");
+	RenderObject* Puck = scene->FindObjectByName("Puck");
+	RenderObject* PaddleP1 = scene->FindObjectByName("Paddle P1");
+	RenderObject* PaddleP2 = scene->FindObjectByName("Paddle P2");
 
-	/*RenderObject* monkey1 = scene->FindObjectByName("Monkey 1");*/
 
 	// We'll use this to allow editing the save/load path
 	// via ImGui, note the reserve to allocate extra space
@@ -711,7 +739,9 @@ int main() {
 				SetupShaderAndLights(scene->BaseShader, scene->Lights.data(), scene->Lights.size());
 
 				// Re-fetch the models so we can do a behaviour for them
-				PuckP1 = scene->FindObjectByName("Puck");
+				Puck = scene->FindObjectByName("Puck");
+				Puck = scene->FindObjectByName("Paddle P1");
+				Puck = scene->FindObjectByName("Paddle P2");
 			}
 			ImGui::Separator();
 		}
