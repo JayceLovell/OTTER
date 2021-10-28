@@ -75,7 +75,7 @@ GLFWwindow* window;
 // The current size of our window in pixels
 glm::ivec2 windowSize = glm::ivec2(1000, 1000);
 // The title of our GLFW window
-std::string windowTitle = "INFR-1350U";
+std::string windowTitle = "Jayce Lovell - 100775118 - Tutorial 7";
 
 void GlfwWindowResizedCallback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
@@ -592,7 +592,7 @@ int main() {
 			{ ShaderPartType::Fragment, "shaders/frag_blinn_phong_textured.glsl" }
 		});
 		Guid monkeyMesh = ResourceManager::CreateMesh("Monkey.obj");
-		Guid boxTexture = ResourceManager::CreateTexture("textures/box-diffuse.png");
+		Guid boxTexture = ResourceManager::CreateTexture("textures/replace.png");
 		Guid monkeyTex  = ResourceManager::CreateTexture("textures/monkey-uvMap.png");
 
 		// Save the asset manifest for all the resources we just loaded
