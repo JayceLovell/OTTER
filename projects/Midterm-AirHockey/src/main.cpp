@@ -672,25 +672,25 @@ int main() {
 		Puck.Position = glm::vec3(0.0f, 0.0f, 1.0f);
 		Puck.Mesh = ResourceManager::GetMesh(PuckMesh);
 		Puck.Rotation = glm::vec3(90.0f, 0.0f, 0.0f);
-		Puck.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+		Puck.Scale = glm::vec3(0.3f, 0.3f, 0.3f);
 		Puck.Material = PuckMaterial;
 		Puck.Name = "Puck";
 		scene->Objects.push_back(Puck);
 		
 		RenderObject PaddleP1 = RenderObject();
-		PaddleP1.Position = glm::vec3(-5.0f, 0.0f, 1.0f);
+		PaddleP1.Position = glm::vec3(-10.0f, 0.0f, 1.0f);
 		PaddleP1.Mesh = ResourceManager::GetMesh(PaddleMesh);
-		PaddleP1.Rotation = glm::vec3(90.0f, 0.0f, 0.0f);
-		PaddleP1.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+		PaddleP1.Rotation = glm::vec3(0.0f, 90.0f, 0.0f);
+		PaddleP1.Scale = glm::vec3(0.5f, 0.5f, 0.5f);
 		PaddleP1.Material = PaddleP1Material;
 		PaddleP1.Name = "Paddle P1";
 		scene->Objects.push_back(PaddleP1);
 
 		RenderObject PaddleP2 = RenderObject();
-		PaddleP2.Position = glm::vec3(5.0f, 0.0f, 1.0f);
+		PaddleP2.Position = glm::vec3(10.0f, 0.0f, 1.0f);
 		PaddleP2.Mesh = ResourceManager::GetMesh(PaddleMesh);
-		PaddleP2.Rotation = glm::vec3(90.0f, 0.0f, 0.0f);
-		PaddleP2.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+		PaddleP2.Rotation = glm::vec3(0.0f, 90.0f, 0.0f);
+		PaddleP2.Scale = glm::vec3(0.5f, 0.5f, 0.5f);
 		PaddleP2.Material = PaddleP2Material;
 		PaddleP2.Name = "Paddle P2";
 		scene->Objects.push_back(PaddleP2);
