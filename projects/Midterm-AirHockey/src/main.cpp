@@ -605,9 +605,12 @@ int main() {
 			{ ShaderPartType::Vertex, "shaders/vertex_shader.glsl" },
 			{ ShaderPartType::Fragment, "shaders/frag_blinn_phong_textured.glsl" }
 			});
-		
-		Guid planeTexture = ResourceManager::CreateTexture("Textures/plane.jpg");
 
+		Guid PuckMesh = ResourceManager::CreateMesh("models/Puck.obj");
+		Guid PuckTex = ResourceManager::CreateTexture("textures/Puck.png");
+		Guid Paddle = ResourceManager::CreateMesh("models/Paddles.obj");
+		Guid planeTexture = ResourceManager::CreateTexture("Textures/plane.jpg");
+	
 		// Save the asset manifest for all the resources we just loaded
 		ResourceManager::SaveManifest("manifest.json");
 
@@ -624,6 +627,19 @@ int main() {
 		planeMaterial->Shininess = 8.0f;
 		scene->Materials[planeMaterial->GetGUID()] = planeMaterial;
 
+		MaterialInfo::Sptr PuckMaterial = std::make_shared<MaterialInfo>();
+		PuckMaterial->Shader = scene->BaseShader;
+		PuckMaterial->Texture = ResourceManager::GetTexture(PuckTex);
+		PuckMaterial->Shininess = 1.0f;
+		scene->Materials[PuckMaterial->GetGUID()] = PuckMaterial;
+
+		MaterialInfo::Sptr PaddleMaterial = std::make_shared<MaterialInfo>();
+		PaddleMaterial->Shader = scene->BaseShader;
+		PaddleMaterial->Texture = ResourceManager::GetTexture(PuckTex);
+		PaddleMaterial->Shininess = 1.0f;
+		scene->Materials[PaddleMaterial->GetGUID()] = PaddleMaterial;
+
+
 		// Create some lights for our scene think we only need one light for the game
 		scene->Lights.resize(3);
 		scene->Lights[0].Position = glm::vec3(0.0f, 1.0f, 3.0f);
@@ -631,7 +647,7 @@ int main() {
 
 		// Set up the scene's camera
 		scene->Camera = Camera::Create();
-		scene->Camera->SetPosition(glm::vec3(0, 0, 10));
+		scene->Camera->SetPosition(glm::vec3(0, 0, 50));
 		scene->Camera->LookAt(glm::vec3(0.0f));
 
 		// Set up all our sample objects
@@ -644,11 +660,13 @@ int main() {
 		scene->Objects.push_back(plane);
 
 		RenderObject Puck = RenderObject();
-		/*monkey1.Position = glm::vec3(1.5f, 0.0f, 1.0f);
-		monkey1.Mesh = ResourceManager::GetMesh(monkeyMesh);
-		monkey1.Material = monkeyMaterial;
-		monkey1.Name = "Monkey 1";
-		scene->Objects.push_back(monkey1);*/
+		Puck.Position = glm::vec3(0.0f, 0.0f, 0.0f);
+		Puck.Mesh = ResourceManager::GetMesh(PuckMesh);
+		Puck.Rotation = glm::vec3(90.0f, 0.0f, 0.0f);
+		Puck.Material = PuckMaterial;
+		Puck.Name = "Puck";
+		scene->Objects.push_back(Puck);
+
 
 		// Save the scene to a JSON file
 		scene->Save("scene.json");
@@ -656,6 +674,8 @@ int main() {
 
 	// Post-load setup
 	SetupShaderAndLights(scene->BaseShader, scene->Lights.data(), scene->Lights.size());
+
+	RenderObject* PuckP1 = scene->FindObjectByName("Puck");
 
 	/*RenderObject* monkey1 = scene->FindObjectByName("Monkey 1");*/
 
@@ -690,7 +710,7 @@ int main() {
 				SetupShaderAndLights(scene->BaseShader, scene->Lights.data(), scene->Lights.size());
 
 				// Re-fetch the models so we can do a behaviour for them
-				//monkey1 = scene->FindObjectByName("Monkey 1");
+				PuckP1 = scene->FindObjectByName("Puck");
 			}
 			ImGui::Separator();
 		}
