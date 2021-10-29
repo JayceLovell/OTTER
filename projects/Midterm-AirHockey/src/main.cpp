@@ -97,7 +97,7 @@ void GlDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsi
 // Stores our GLFW window in a global variable for now
 GLFWwindow* window;
 // The current size of our window in pixels
-glm::ivec2 windowSize = glm::ivec2(1080, 1080);
+glm::ivec2 windowSize = glm::ivec2(800, 800);
 // The title of our GLFW window
 std::string windowTitle = "Midterm - AirHockey - Jayce Lovell(100775118) - Jelani Garnes(100801696) ";
 
@@ -330,7 +330,7 @@ int main() {
 		Texture2D::Sptr PuckTex = ResourceManager::CreateAsset<Texture2D>("textures/puckTexture.jpg");		
 		Texture2D::Sptr PaddleP1Tex = ResourceManager::CreateAsset<Texture2D>("textures/red.jpg");
 		Texture2D::Sptr PaddleP2Tex = ResourceManager::CreateAsset<Texture2D>("textures/blue.jpg");
-		Texture2D::Sptr planeTexture = ResourceManager::CreateAsset<Texture2D>("textures/plane.jpg");
+		Texture2D::Sptr PlaneTexture = ResourceManager::CreateAsset<Texture2D>("textures/plane.jpg");
 	
 		// Create an empty scene
 		scene = std::make_shared<Scene>();
@@ -342,27 +342,31 @@ int main() {
 		Material::Sptr planeMaterial = ResourceManager::CreateAsset<Material>();
 		{
 			planeMaterial->Name = "Plane";
-			planeMaterial->Texture = planeTexture;
+			planeMaterial->MatShader = scene->BaseShader;
+			planeMaterial->Texture = PlaneTexture;
 			planeMaterial->Shininess = 2.0f;
 		}
 
 		Material::Sptr PuckMaterial = ResourceManager::CreateAsset<Material>();
 		{
 			PuckMaterial->Name = "PuckTex";
-			PuckMaterial->Texture = planeTexture;
+			PuckMaterial->MatShader = scene->BaseShader;
+			PuckMaterial->Texture = PuckTex;
 			PuckMaterial->Shininess = 2.0f;
 		}
 
 		Material::Sptr PaddleP1Material = ResourceManager::CreateAsset<Material>();
 		{
-			PaddleP1Material->Name = "PuckTex";
+			PaddleP1Material->Name = "PaddleP1Tex";
+			PaddleP1Material->MatShader = scene->BaseShader;
 			PaddleP1Material->Texture = PaddleP1Tex;
 			PaddleP1Material->Shininess = 256.0f;
 		}
 
 		Material::Sptr PaddleP2Material = ResourceManager::CreateAsset<Material>();
 		{
-			PaddleP2Material->Name = "PuckTex";
+			PaddleP2Material->Name = "PaddleP2Tex";
+			PaddleP2Material->MatShader = scene->BaseShader;
 			PaddleP2Material->Texture = PaddleP2Tex;
 			PaddleP2Material->Shininess = 256.0f;
 		}
