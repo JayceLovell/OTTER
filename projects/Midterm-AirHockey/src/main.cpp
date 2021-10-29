@@ -446,6 +446,10 @@ int main() {
 			MaterialSwapBehaviour::Sptr triggerInteraction = Puck->Add<MaterialSwapBehaviour>();
 			triggerInteraction->EnterMaterial = planeMaterial;
 			triggerInteraction->ExitMaterial = PuckMaterial;
+
+			// This is an example of attaching a component and setting some parameters
+			RotatingBehaviour::Sptr behaviour = Puck->Add<RotatingBehaviour>();
+			behaviour->RotationSpeed = glm::vec3(0.0f, 0.0f, -90.0f);
 		}
 
 		GameObject::Sptr PaddleP1 = scene->CreateGameObject("Paddle P1");
@@ -513,6 +517,9 @@ int main() {
 	// for input!
 	std::string scenePath = "scene.json";
 	scenePath.reserve(256);
+
+	bool isRotating = true;
+	float rotateSpeed = 90.0f;
 
 	// Our high-precision timer
 	double lastFrame = glfwGetTime();
