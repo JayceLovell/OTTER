@@ -205,9 +205,9 @@ bool DrawLightImGui(const Scene::Sptr& scene, const char* title, int ix) {
 }
 
 GLfloat P1posY = 0.0f;
-GLfloat P1posX = -10.0f;
+GLfloat P1posX = -40.0f;
 GLfloat P2posY = 0.0f;
-GLfloat P2posX = 10.0f;
+GLfloat P2posX = 40.0f;
 /// <summary>
 /// Players input
 /// </summary>
@@ -222,47 +222,47 @@ void keyboard() {
 	}
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
 		P1posX -= 0.1f;
-		if (P1posX < -10.0f) {
-			P1posX = -10.0f;
+		if (P1posX < -44.0f) {
+			P1posX = -44.0f;
 		}		
 	}
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
 		P1posY -= 0.1f;
-		if (P1posY < -6.0f) {
-			P1posY = -6.0f;
+		if (P1posY < -44.0f) {
+			P1posY = -44.0f;
 		}
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
 		P1posY += 0.1f;
-		if (P1posY > 6.5f) {
-			P1posY = 6.5f;
+		if (P1posY > 44.0f) {
+			P1posY = 44.0f;
 		}
 	}
 
 	//Player 2 Controls
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 		P2posX += 0.1f;
-		if (P2posX > 10.0f)
+		if (P2posX > 45.0f)
 		{
-			P2posX = 10.0f;
+			P2posX = 45.0f;
 		}
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		P2posX -= 0.1f;
-		if (P2posX < 1.2f) {
-			P2posX = 1.2f;
+		if (P2posX < 3.0f) {
+			P2posX = 3.0f;
 		}
 	}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		P2posY -= 0.1f;
-		if (P2posY < -6.0f) {
-			P2posY = -6.0f;
+		if (P2posY < -44.0f) {
+			P2posY = -44.0f;
 		}
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
 		P2posY += 0.1f;
-		if (P2posY > 6.5f) {
-			P2posY = 6.5f;
+		if (P2posY > 44.0f) {
+			P2posY = 44.0f;
 		}
 	}
 }
@@ -375,15 +375,17 @@ int main() {
 
 		// Create some lights for our scene
 		scene->Lights.resize(3);
-		scene->Lights[0].Position = glm::vec3(0.0f, 1.0f, 3.0f);
-		scene->Lights[0].Color = glm::vec3(0.5f, 0.0f, 0.7f);
-		scene->Lights[0].Range = 10.0f;
+		scene->Lights[0].Position = glm::vec3(0.0f, 1.0f, 50.0f);
+		scene->Lights[0].Color = glm::vec3(1.0f, 1.0f, 1.0f);
+		scene->Lights[0].Range = 1000.0f;
 
-		scene->Lights[1].Position = glm::vec3(1.0f, 0.0f, 3.0f);
-		scene->Lights[1].Color = glm::vec3(0.2f, 0.8f, 0.1f);
+		scene->Lights[1].Position = glm::vec3(48.0f, 0.0f, 1.0f);
+		scene->Lights[1].Color = glm::vec3(0.373f, 0.0f, 0.0f);
+		scene->Lights[1].Range = 35.0f;
 
-		scene->Lights[2].Position = glm::vec3(0.0f, 1.0f, 3.0f);
-		scene->Lights[2].Color = glm::vec3(1.0f, 0.2f, 0.1f);
+		scene->Lights[2].Position = glm::vec3(-48.0f, 0.0f, 1.0f);
+		scene->Lights[2].Color = glm::vec3(0.373f, 0.0f, 0.0f);
+		scene->Lights[2].Range = 35.0f;
 
 		// We'll create a mesh that is a simple plane that we can resize later
 		MeshResource::Sptr planeMesh = ResourceManager::CreateAsset<MeshResource>();
@@ -393,7 +395,7 @@ int main() {
 		// Set up the scene's camera
 		GameObject::Sptr camera = scene->CreateGameObject("Main Camera");
 		{
-			camera->SetPostion(glm::vec3(0, 4, 4));
+			camera->SetPostion(glm::vec3(0, 1, 60));
 			camera->LookAt(glm::vec3(0.0f));
 
 			Camera::Sptr cam = camera->Add<Camera>();
@@ -406,7 +408,10 @@ int main() {
 			GameObject::Sptr plane = scene->CreateGameObject("Plane");
 		{
 			// Scale up the plane
-			plane->SetScale(glm::vec3(10.0F));
+			plane->SetScale(glm::vec3(100.0F));
+
+			//Rotate it horizontally
+			plane->SetRotation(glm::vec3(0.0, 0.0, 90.0));
 
 			// Create and attach a RenderComponent to the object to draw our mesh
 			RenderComponent::Sptr renderer = plane->Add<RenderComponent>();
@@ -421,7 +426,8 @@ int main() {
 		GameObject::Sptr Puck = scene->CreateGameObject("Puck");
 		{
 			// Set position in the scene
-			Puck->SetPostion(glm::vec3(1.5f, 0.0f, 1.0f));
+			Puck->SetPostion(glm::vec3(0.0f, 0.0f, 1.0f));
+			Puck->SetRotation(glm::vec3(-90.0f, 0.0f, 0.0f));
 
 			// Add some behaviour that relies on the physics body
 			//monkey1->Add<JumpBehaviour>();
@@ -433,7 +439,7 @@ int main() {
 
 			// Add a dynamic rigid body to this monkey
 			RigidBody::Sptr physics = Puck->Add<RigidBody>(RigidBodyType::Dynamic);
-			physics->AddCollider(ConvexMeshCollider::Create());
+			physics->AddCollider(ConvexMeshCollider::Create());			
 
 
 			// We'll add a behaviour that will interact with our trigger volumes
@@ -445,7 +451,8 @@ int main() {
 		GameObject::Sptr PaddleP1 = scene->CreateGameObject("Paddle P1");
 		{
 			// Set position in the scene
-			PaddleP1->SetPostion(glm::vec3(1.5f, 0.0f, 1.0f));
+			PaddleP1->SetPostion(glm::vec3(-40.0f, 0.0f, 0.0f));
+			PaddleP1->SetRotation(glm::vec3(0.0, 90.0, 0.0));
 
 			// Add some behaviour that relies on the physics body
 			//monkey1->Add<JumpBehaviour>();
@@ -469,7 +476,8 @@ int main() {
 		GameObject::Sptr PaddleP2 = scene->CreateGameObject("Paddle P2");
 		{
 			// Set position in the scene
-			PaddleP2->SetPostion(glm::vec3(1.5f, 0.0f, 1.0f));
+			PaddleP2->SetPostion(glm::vec3(40.0f, 0.0f, 0.0f));
+			PaddleP2->SetRotation(glm::vec3(0.0, 90.0, 0.0));
 
 			// Add some behaviour that relies on the physics body
 			//monkey1->Add<JumpBehaviour>();
@@ -654,7 +662,7 @@ int main() {
 		//Call keyboard funciton for players input
 		keyboard();
 
-		////Move Player 1
+		//Move Player 1	
 		//PaddleP1->Position = glm::vec3(P1posX, P1posY, 1.0f);
 		////Move Player 2
 		//PaddleP2->Position = glm::vec3(P2posX, P2posY, 1.0f);
