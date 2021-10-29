@@ -643,10 +643,10 @@ int main() {
 			});
 
 		Guid PuckMesh = ResourceManager::CreateMesh("models/Puck.obj");
-		Guid PuckTex = ResourceManager::CreateTexture("textures/Puck.png");
+		Guid PuckTex = ResourceManager::CreateTexture("textures/puckTexture.jpg");
 		Guid PaddleMesh = ResourceManager::CreateMesh("models/Paddles.obj");
-		Guid PaddleP1Tex = ResourceManager::CreateTexture("textures/PaddleP1.png");
-		Guid PaddleP2Tex = ResourceManager::CreateTexture("textures/PaddleP2.png");
+		Guid PaddleP1Tex = ResourceManager::CreateTexture("textures/red.jpg");
+		Guid PaddleP2Tex = ResourceManager::CreateTexture("textures/blue.jpg");
 		Guid planeTexture = ResourceManager::CreateTexture("Textures/plane.jpg");
 	
 		// Save the asset manifest for all the resources we just loaded
