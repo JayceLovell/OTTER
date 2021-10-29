@@ -58,7 +58,7 @@
 #include "Gameplay/Physics/Colliders/SphereCollider.h"
 #include "Gameplay/Physics/Colliders/ConvexMeshCollider.h"
 #include "Gameplay/Physics/TriggerVolume.h"
-#include "../../Sandbox/src/Graphics/DebugDraw.h"
+#include "Graphics/DebugDraw.h"
 
 //#define LOG_GL_NOTIFICATIONS
 
