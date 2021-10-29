@@ -426,8 +426,8 @@ int main() {
 		GameObject::Sptr Puck = scene->CreateGameObject("Puck");
 		{
 			// Set position in the scene
-			Puck->SetPostion(glm::vec3(0.0f, 0.0f, 1.0f));
-			Puck->SetRotation(glm::vec3(-90.0f, 0.0f, 0.0f));
+			Puck->SetPostion(glm::vec3(0.0f, 0.0f, 10.0f));
+			Puck->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));
 
 			// Add some behaviour that relies on the physics body
 			//monkey1->Add<JumpBehaviour>();
@@ -439,7 +439,7 @@ int main() {
 
 			// Add a dynamic rigid body to this monkey
 			RigidBody::Sptr physics = Puck->Add<RigidBody>(RigidBodyType::Dynamic);
-			physics->AddCollider(ConvexMeshCollider::Create());			
+			physics->AddCollider(ConvexMeshCollider::Create());		 
 
 
 			// We'll add a behaviour that will interact with our trigger volumes
