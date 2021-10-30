@@ -384,15 +384,18 @@ int main() {
 			renderer->SetMesh(PuckMesh);
 			renderer->SetMaterial(PuckMaterial);
 
+
 			// Add a dynamic rigid body to this monkey
 			RigidBody::Sptr physics = Puck->Add<RigidBody>(RigidBodyType::Dynamic);
-			physics->AddCollider(ConvexMeshCollider::Create());		 
-
+			physics->AddCollider(ConvexMeshCollider::Create());
+			/*physics->SetMass(0.5f);*/
+			
 
 			// We'll add a behaviour that will interact with our trigger volumes
 			MaterialSwapBehaviour::Sptr triggerInteraction = Puck->Add<MaterialSwapBehaviour>();
 			triggerInteraction->EnterMaterial = planeMaterial;
 			triggerInteraction->ExitMaterial = PuckMaterial;
+			
 
 			// This is an example of attaching a component and setting some parameters
 			RotatingBehaviour::Sptr behaviour = Puck->Add<RotatingBehaviour>();
@@ -432,7 +435,6 @@ int main() {
 			PaddleP2->SetRotation(glm::vec3(0.0, 90.0, 0.0));
 
 			// Add some behaviour that relies on the physics body
-			//monkey1->Add<JumpBehaviour>();
 			PaddleP2->Add<Player2MovementBehaviour>();
 
 			// Create and attach a renderer for the monkey
@@ -443,6 +445,7 @@ int main() {
 			// Add a dynamic rigid body to this monkey
 			RigidBody::Sptr physics = PaddleP2->Add<RigidBody>(RigidBodyType::Dynamic);
 			physics->AddCollider(ConvexMeshCollider::Create());
+
 
 
 			// We'll add a behaviour that will interact with our trigger volumes
@@ -486,6 +489,8 @@ int main() {
 		// Calculate the time since our last frame (dt)
 		double thisFrame = glfwGetTime();
 		float dt = static_cast<float>(thisFrame - lastFrame);
+
+		scene->IsPlaying = true;
 
 		// Showcasing how to use the imGui library!
 		bool isDebugWindowOpen = ImGui::Begin("Debugging");

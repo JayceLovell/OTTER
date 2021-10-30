@@ -104,7 +104,6 @@ namespace Gameplay {
 	Scene* GameObject::GetScene() const {
 		return _scene;
 	}
-
 	void GameObject::Awake() {
 		for (auto& component : _components) {
 			component->Awake();

@@ -107,6 +107,7 @@ namespace Gameplay {
 		}
 	}
 
+
 	void Scene::Update(float dt) {
 		if (IsPlaying) {
 			for (auto& obj : Objects) {

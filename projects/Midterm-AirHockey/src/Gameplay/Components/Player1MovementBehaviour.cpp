@@ -45,9 +45,9 @@ void Player1MovementBehaviour::Update(float deltaTime) {
 	//Player 1 Controls
 	if (glfwGetKey(GetGameObject()->GetScene()->Window, GLFW_KEY_LEFT) == GLFW_PRESS) {
 		_posX += _speed;
-		if (_posX > -1.0f)
+		if (_posX > -3.0f)
 		{
-			_posX = -1.0f;			
+			_posX = -3.0f;			
 		}
 	}
 	if (glfwGetKey(GetGameObject()->GetScene()->Window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
@@ -68,5 +68,5 @@ void Player1MovementBehaviour::Update(float deltaTime) {
 			_posY = 44.0f;
 		}
 	}
-	GetGameObject()->SetPostion(glm::vec3(_posX, _posY, 1.0f));
+	GetGameObject()->SetPostion(glm::vec3(_posX, _posY, 0.0f));
 }
