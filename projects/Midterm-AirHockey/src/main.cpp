@@ -50,6 +50,8 @@
 #include "Gameplay/Components/JumpBehaviour.h"
 #include "Gameplay/Components/RenderComponent.h"
 #include "Gameplay/Components/MaterialSwapBehaviour.h"
+#include "Gameplay/Components/Player1MovementBehaviour.h"
+#include "Gameplay/Components/Player2MovementBehaviour.h"
 
 // Physics
 #include "Gameplay/Physics/RigidBody.h"
@@ -208,64 +210,7 @@ GLfloat P1posY = 0.0f;
 GLfloat P1posX = -40.0f;
 GLfloat P2posY = 0.0f;
 GLfloat P2posX = 40.0f;
-/// <summary>
-/// Players input
-/// </summary>
-void keyboard() {
-	//Player 1 Controls
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-		P1posX += 0.1f;
-		if (P1posX > -1.0f)
-		{
-			P1posX = -1.0f;
-		}
-	}
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		P1posX -= 0.1f;
-		if (P1posX < -44.0f) {
-			P1posX = -44.0f;
-		}		
-	}
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		P1posY -= 0.1f;
-		if (P1posY < -44.0f) {
-			P1posY = -44.0f;
-		}
-	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		P1posY += 0.1f;
-		if (P1posY > 44.0f) {
-			P1posY = 44.0f;
-		}
-	}
 
-	//Player 2 Controls
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		P2posX += 0.1f;
-		if (P2posX > 45.0f)
-		{
-			P2posX = 45.0f;
-		}
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		P2posX -= 0.1f;
-		if (P2posX < 3.0f) {
-			P2posX = 3.0f;
-		}
-	}
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		P2posY -= 0.1f;
-		if (P2posY < -44.0f) {
-			P2posY = -44.0f;
-		}
-	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		P2posY += 0.1f;
-		if (P2posY > 44.0f) {
-			P2posY = 44.0f;
-		}
-	}
-}
 int main() {
 	Logger::Init(); // We'll borrow the logger from the toolkit, but we need to initialize it
 
@@ -302,6 +247,8 @@ int main() {
 	ComponentManager::RegisterType<RotatingBehaviour>();
 	ComponentManager::RegisterType<JumpBehaviour>();
 	ComponentManager::RegisterType<MaterialSwapBehaviour>();
+	ComponentManager::RegisterType<Player1MovementBehaviour>();
+	ComponentManager::RegisterType<Player2MovementBehaviour>();
 
 	// GL states, we'll enable depth testing and backface fulling
 	glEnable(GL_DEPTH_TEST);
@@ -460,6 +407,7 @@ int main() {
 
 			// Add some behaviour that relies on the physics body
 			//monkey1->Add<JumpBehaviour>();
+			PaddleP1->Add<Player1MovementBehaviour>();
 
 			// Create and attach a renderer for the monkey
 			RenderComponent::Sptr renderer = PaddleP1->Add<RenderComponent>();
@@ -485,6 +433,7 @@ int main() {
 
 			// Add some behaviour that relies on the physics body
 			//monkey1->Add<JumpBehaviour>();
+			PaddleP2->Add<Player2MovementBehaviour>();
 
 			// Create and attach a renderer for the monkey
 			RenderComponent::Sptr renderer = PaddleP2->Add<RenderComponent>();
@@ -665,14 +614,6 @@ int main() {
 			// Draw the object
 			renderable->GetMesh()->Draw();
 			});
-
-		//Call keyboard funciton for players input
-		keyboard();
-
-		//Move Player 1	
-		//PaddleP1->Position = glm::vec3(P1posX, P1posY, 1.0f);
-		////Move Player 2
-		//PaddleP2->Position = glm::vec3(P2posX, P2posY, 1.0f);
 
 		// End our ImGui window
 		ImGui::End();
