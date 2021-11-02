@@ -206,11 +206,6 @@ bool DrawLightImGui(const Scene::Sptr& scene, const char* title, int ix) {
 	return result;
 }
 
-GLfloat P1posY = 0.0f;
-GLfloat P1posX = -40.0f;
-GLfloat P2posY = 0.0f;
-GLfloat P2posX = 40.0f;
-
 int main() {
 	Logger::Init(); // We'll borrow the logger from the toolkit, but we need to initialize it
 
@@ -393,7 +388,7 @@ int main() {
 
 			// We'll add a behaviour that will interact with our trigger volumes
 			MaterialSwapBehaviour::Sptr triggerInteraction = Puck->Add<MaterialSwapBehaviour>();
-			triggerInteraction->EnterMaterial = planeMaterial;
+			triggerInteraction->EnterMaterial = PaddleP1Material;
 			triggerInteraction->ExitMaterial = PuckMaterial;
 			
 
@@ -424,7 +419,7 @@ int main() {
 
 			// We'll add a behaviour that will interact with our trigger volumes
 			MaterialSwapBehaviour::Sptr triggerInteraction = PaddleP1->Add<MaterialSwapBehaviour>();
-			triggerInteraction->EnterMaterial = planeMaterial;
+			triggerInteraction->EnterMaterial = PuckMaterial;
 			triggerInteraction->ExitMaterial = PaddleP1Material;
 		}
 
