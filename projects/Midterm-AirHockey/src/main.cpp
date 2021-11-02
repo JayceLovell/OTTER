@@ -363,6 +363,9 @@ int main() {
 			// Attach a plane collider that extends infinitely along the X/Y axis
 			RigidBody::Sptr physics = plane->Add<RigidBody>(/*static by default*/);
 			physics->AddCollider(PlaneCollider::Create());
+
+			// This object is a renderable only, it doesn't have any behaviours or
+			// physics bodies attached!
 		}
 
 		GameObject::Sptr Puck = scene->CreateGameObject("Puck");
@@ -379,16 +382,17 @@ int main() {
 			renderer->SetMesh(PuckMesh);
 			renderer->SetMaterial(PuckMaterial);
 
+			TriggerVolume::Sptr volume = Puck->Add<TriggerVolume>();
 
 			// Add a dynamic rigid body to this monkey
 			RigidBody::Sptr physics = Puck->Add<RigidBody>(RigidBodyType::Dynamic);
 			physics->AddCollider(ConvexMeshCollider::Create());
-			/*physics->SetMass(0.5f);*/
 			
+			volume->AddCollider(ConvexMeshCollider::Create());
 
 			// We'll add a behaviour that will interact with our trigger volumes
 			MaterialSwapBehaviour::Sptr triggerInteraction = Puck->Add<MaterialSwapBehaviour>();
-			triggerInteraction->EnterMaterial = PaddleP1Material;
+			triggerInteraction->EnterMaterial = PuckMaterial;
 			triggerInteraction->ExitMaterial = PuckMaterial;
 			
 
@@ -404,22 +408,21 @@ int main() {
 			PaddleP1->SetRotation(glm::vec3(0.0, 90.0, 0.0));
 
 			// Add some behaviour that relies on the physics body
-			//monkey1->Add<JumpBehaviour>();
 			PaddleP1->Add<Player1MovementBehaviour>();
 
 			// Create and attach a renderer for the monkey
 			RenderComponent::Sptr renderer = PaddleP1->Add<RenderComponent>();
 			renderer->SetMesh(PaddleMesh);
-			renderer->SetMaterial(PaddleP1Material);
+			renderer->SetMaterial(PaddleP1Material);						
 
 			// Add a dynamic rigid body to this monkey
 			RigidBody::Sptr physics = PaddleP1->Add<RigidBody>(RigidBodyType::Dynamic);
-			physics->AddCollider(ConvexMeshCollider::Create());
-
+			physics->AddCollider(ConvexMeshCollider::Create());			
+			
 
 			// We'll add a behaviour that will interact with our trigger volumes
 			MaterialSwapBehaviour::Sptr triggerInteraction = PaddleP1->Add<MaterialSwapBehaviour>();
-			triggerInteraction->EnterMaterial = PuckMaterial;
+			triggerInteraction->EnterMaterial = PaddleP1Material;
 			triggerInteraction->ExitMaterial = PaddleP1Material;
 		}
 
@@ -445,7 +448,7 @@ int main() {
 
 			// We'll add a behaviour that will interact with our trigger volumes
 			MaterialSwapBehaviour::Sptr triggerInteraction = PaddleP2->Add<MaterialSwapBehaviour>();
-			triggerInteraction->EnterMaterial = planeMaterial;
+			triggerInteraction->EnterMaterial = PaddleP2Material;
 			triggerInteraction->ExitMaterial = PaddleP2Material;
 		}
 
