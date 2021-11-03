@@ -93,5 +93,5 @@ PuckBehaviour::Sptr PuckBehaviour::FromJson(const nlohmann::json& blob) {
 void PuckBehaviour::Update(float deltaTime) {
 	_puckY = GetGameObject()->GetPosition().y;
 	//GetGameObject()->SetPostion(glm::vec3(_posX, _posY,1.0f));
-	GetGameObject()->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));
+	//GetGameObject()->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));
 }

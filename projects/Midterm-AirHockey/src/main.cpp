@@ -373,8 +373,9 @@ int main() {
 		GameObject::Sptr Puck = scene->CreateGameObject("Puck");
 		{
 			// Set position in the scene
-			Puck->SetPostion(glm::vec3(0.0f, 0.0f, 1.0f));
-			Puck->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));			
+			Puck->SetPostion(glm::vec3(0.0f, 0.0f, 10.0f));
+			//Puck->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));
+			
 
 			// Add some behaviour that relies on the physics body
 			//monkey1->Add<JumpBehaviour>();
