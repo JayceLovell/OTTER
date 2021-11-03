@@ -267,7 +267,7 @@ int main() {
 		});
 
 		//Models
-		MeshResource::Sptr PuckMesh = ResourceManager::CreateAsset<MeshResource>("Models/puck.obj");
+		MeshResource::Sptr PuckMesh = ResourceManager::CreateAsset<MeshResource>("Models/Puck.obj");
 		MeshResource::Sptr PaddleMesh = ResourceManager::CreateAsset<MeshResource>("Models/paddles.obj");		
 		MeshResource::Sptr Wall1Mesh = ResourceManager::CreateAsset<MeshResource>("Models/Wall1.obj");
 		MeshResource::Sptr Wall3Mesh = ResourceManager::CreateAsset<MeshResource>("Models/Wall3.obj");
@@ -497,6 +497,7 @@ int main() {
 			// Set position in the scene
 			Puck->SetPostion(glm::vec3(0.0f, 0.0f, 10.0f));
 			//Puck->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));
+			//Puck->SetScale(glm::vec3(2.0f, 2.0f, 1));
 			
 
 			// Add some behaviour that relies on the physics body
