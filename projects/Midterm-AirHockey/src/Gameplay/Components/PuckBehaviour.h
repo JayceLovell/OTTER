@@ -30,8 +30,8 @@ public:
 
 protected:
 	float _speed;
-	float _posX;
-	float _posY;
+	float _puckY;
+	float _paddleY;
 
 	Gameplay::Physics::RigidBody::Sptr _body;
 	RenderComponent::Sptr _renderer;
