@@ -409,7 +409,6 @@ int main() {
 
 			// Add some behaviour that relies on the physics body
 			PaddleP1->Add<Player1MovementBehaviour>();
-
 			TriggerVolume::Sptr volume = PaddleP1->Add<TriggerVolume>();
 
 			// Create and attach a renderer for the monkey
@@ -436,6 +435,7 @@ int main() {
 
 			// Add some behaviour that relies on the physics body
 			PaddleP2->Add<Player2MovementBehaviour>();
+			TriggerVolume::Sptr volume = PaddleP1->Add<TriggerVolume>();
 
 			// Create and attach a renderer for the monkey
 			RenderComponent::Sptr renderer = PaddleP2->Add<RenderComponent>();
@@ -446,7 +446,7 @@ int main() {
 			RigidBody::Sptr physics = PaddleP2->Add<RigidBody>(RigidBodyType::Dynamic);
 			physics->AddCollider(ConvexMeshCollider::Create());
 
-
+			volume->AddCollider(ConvexMeshCollider::Create());
 
 			// We'll add a behaviour that will interact with our trigger volumes
 			/*MaterialSwapBehaviour::Sptr triggerInteraction = PaddleP2->Add<MaterialSwapBehaviour>();
