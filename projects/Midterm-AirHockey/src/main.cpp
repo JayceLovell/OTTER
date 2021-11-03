@@ -52,6 +52,7 @@
 #include "Gameplay/Components/MaterialSwapBehaviour.h"
 #include "Gameplay/Components/Player1MovementBehaviour.h"
 #include "Gameplay/Components/Player2MovementBehaviour.h"
+#include "Gameplay/Components/PuckBehaviour.h"
 
 // Physics
 #include "Gameplay/Physics/RigidBody.h"
@@ -244,6 +245,7 @@ int main() {
 	ComponentManager::RegisterType<MaterialSwapBehaviour>();
 	ComponentManager::RegisterType<Player1MovementBehaviour>();
 	ComponentManager::RegisterType<Player2MovementBehaviour>();
+	ComponentManager::RegisterType<PuckBehaviour>();
 
 	// GL states, we'll enable depth testing and backface fulling
 	glEnable(GL_DEPTH_TEST);
@@ -265,8 +267,8 @@ int main() {
 		});
 
 		//Models
-		MeshResource::Sptr PuckMesh = ResourceManager::CreateAsset<MeshResource>("Models/Puck.obj");
-		MeshResource::Sptr PaddleMesh = ResourceManager::CreateAsset<MeshResource>("Models/Paddles.obj");
+		MeshResource::Sptr PuckMesh = ResourceManager::CreateAsset<MeshResource>("Models/puck.obj");
+		MeshResource::Sptr PaddleMesh = ResourceManager::CreateAsset<MeshResource>("Models/paddles.obj");
 
 		//Textures
 		Texture2D::Sptr PuckTex = ResourceManager::CreateAsset<Texture2D>("textures/puckTexture.jpg");		
@@ -371,26 +373,24 @@ int main() {
 		GameObject::Sptr Puck = scene->CreateGameObject("Puck");
 		{
 			// Set position in the scene
-			Puck->SetPostion(glm::vec3(0.0f, 0.0f, 10.0f));
-			Puck->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));
+			Puck->SetPostion(glm::vec3(0.0f, 0.0f, 1.0f));
+			Puck->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));			
 
 			// Add some behaviour that relies on the physics body
 			//monkey1->Add<JumpBehaviour>();
+			Puck->Add<PuckBehaviour>();
 
 			// Create and attach a renderer for the monkey
 			RenderComponent::Sptr renderer = Puck->Add<RenderComponent>();
 			renderer->SetMesh(PuckMesh);
 			renderer->SetMaterial(PuckMaterial);
 
-			TriggerVolume::Sptr volume = Puck->Add<TriggerVolume>();
-
 			// Add a dynamic rigid body to this monkey
 			RigidBody::Sptr physics = Puck->Add<RigidBody>(RigidBodyType::Dynamic);
 			physics->AddCollider(ConvexMeshCollider::Create());
 			
-			volume->AddCollider(ConvexMeshCollider::Create());
 
-			// We'll add a behaviour that will interact with our trigger volumes
+			 /*We'll add a behaviour that will interact with our trigger volumes*/
 			MaterialSwapBehaviour::Sptr triggerInteraction = Puck->Add<MaterialSwapBehaviour>();
 			triggerInteraction->EnterMaterial = PuckMaterial;
 			triggerInteraction->ExitMaterial = PuckMaterial;
@@ -410,6 +410,8 @@ int main() {
 			// Add some behaviour that relies on the physics body
 			PaddleP1->Add<Player1MovementBehaviour>();
 
+			TriggerVolume::Sptr volume = PaddleP1->Add<TriggerVolume>();
+
 			// Create and attach a renderer for the monkey
 			RenderComponent::Sptr renderer = PaddleP1->Add<RenderComponent>();
 			renderer->SetMesh(PaddleMesh);
@@ -418,12 +420,12 @@ int main() {
 			// Add a dynamic rigid body to this monkey
 			RigidBody::Sptr physics = PaddleP1->Add<RigidBody>(RigidBodyType::Dynamic);
 			physics->AddCollider(ConvexMeshCollider::Create());			
-			
+			volume->AddCollider(ConvexMeshCollider::Create());
 
 			// We'll add a behaviour that will interact with our trigger volumes
-			MaterialSwapBehaviour::Sptr triggerInteraction = PaddleP1->Add<MaterialSwapBehaviour>();
+			/*MaterialSwapBehaviour::Sptr triggerInteraction = PaddleP1->Add<MaterialSwapBehaviour>();
 			triggerInteraction->EnterMaterial = PaddleP1Material;
-			triggerInteraction->ExitMaterial = PaddleP1Material;
+			triggerInteraction->ExitMaterial = PaddleP1Material;*/
 		}
 
 		GameObject::Sptr PaddleP2 = scene->CreateGameObject("Paddle P2");
@@ -447,9 +449,23 @@ int main() {
 
 
 			// We'll add a behaviour that will interact with our trigger volumes
-			MaterialSwapBehaviour::Sptr triggerInteraction = PaddleP2->Add<MaterialSwapBehaviour>();
+			/*MaterialSwapBehaviour::Sptr triggerInteraction = PaddleP2->Add<MaterialSwapBehaviour>();
 			triggerInteraction->EnterMaterial = PaddleP2Material;
-			triggerInteraction->ExitMaterial = PaddleP2Material;
+			triggerInteraction->ExitMaterial = PaddleP2Material;*/
+		}
+		GameObject::Sptr GoalRightSide = scene->CreateGameObject("GoalRightSide");
+		{
+			TriggerVolume::Sptr volume = GoalRightSide->Add<TriggerVolume>();
+			BoxCollider::Sptr collider = BoxCollider::Create(glm::vec3(3.0f, 6.0f, 1.0f));
+			collider->SetPosition(glm::vec3(-50.0f, 0.0f, 0.f));
+			volume->AddCollider(collider);
+		}
+		GameObject::Sptr GoalLeftSide = scene->CreateGameObject("GoalLeftSide");
+		{
+			TriggerVolume::Sptr volume = GoalLeftSide->Add<TriggerVolume>();
+			BoxCollider::Sptr collider = BoxCollider::Create(glm::vec3(3.0f, 6.0f, 1.0f));
+			collider->SetPosition(glm::vec3(50.0f, 0.0f, 0.f));
+			volume->AddCollider(collider);
 		}
 
 		// Save the asset manifest for all the resources we just loaded
