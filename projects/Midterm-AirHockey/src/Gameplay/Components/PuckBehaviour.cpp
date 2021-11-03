@@ -30,32 +30,53 @@ void PuckBehaviour::OnEnteredTrigger(const Gameplay::Physics::TriggerVolume::Spt
 	}
 	//If Paddle P1
 	if (trigger->GetGameObject()->Name == "Paddle P1") {
-		//First get paddle's Y
-		_paddleY = trigger->GetGameObject()->GetPosition().y;
+		//First get paddle's X and Y
+		float _paddleY = trigger->GetGameObject()->GetPosition().y;
+		float _paddleX = trigger->GetGameObject()->GetPosition().x;
 
-		//Depend on Paddle's Y is where we add the impulse
-		if (_paddleY < _puckY) {
-			LOG_INFO("Paddle P1 hit from above");
-			_body->ApplyImpulse(glm::vec3(_speed, _speed, 0.0f));
+		//Check if paddle is ahead of Puck
+		if (_paddleX > _puckX) {
+			LOG_INFO("Can't hit Paddle");
 		}
-		if (_paddleY > _puckY) {
-			LOG_INFO("Paddle P1 hit from below");
-			_body->ApplyImpulse(glm::vec3(_speed, -_speed, 0.0f));
+		else {
+			//Depend on Paddle's Y is where we add the impulse		
+			if ((_paddleY + 3.0f) < _puckY) {
+				LOG_INFO("Paddle P1 hit from above");
+				_body->ApplyImpulse(glm::vec3(_speed, _speed, 0.0f));
+			}
+			else if ((_paddleY - 3.0f) > _puckY) {
+				LOG_INFO("Paddle P1 hit from below");
+				_body->ApplyImpulse(glm::vec3(_speed, -_speed, 0.0f));
+			}
+			else {
+				LOG_INFO("Paddle P1 hit direct ");
+				_body->ApplyImpulse(glm::vec3(_speed, 0.0f, 0.0f));
+			}
 		}
 	}
 	//If Paddle P2
 	if (trigger->GetGameObject()->Name == "Paddle P2") {
-		//First get paddle's Y
-		_paddleY = trigger->GetGameObject()->GetPosition().y;
-
-		//Depend on Paddle's Y is where we add the impulse
-		if (_paddleY < _puckY) {
-			LOG_INFO("Paddle P2 hit from above");
-			_body->ApplyImpulse(glm::vec3(-_speed, _speed, 0.0f));
+		//First get paddle's X and Y
+		float _paddleY = trigger->GetGameObject()->GetPosition().y;
+		float _paddleX = trigger->GetGameObject()->GetPosition().x;
+		//Check if paddle is ahead of Puck
+		if (_paddleX < _puckX) {
+			LOG_INFO("Can't hit Paddle");
 		}
-		if (_paddleY > _puckY) {
-			LOG_INFO("Paddle P2 hit from below");
-			_body->ApplyImpulse(glm::vec3(-_speed, -_speed, 0.0f));
+		else {
+			//Depend on Paddle's Y is where we add the impulse
+			if ((_paddleY + 3.0f) < _puckY) {
+				LOG_INFO("Paddle P2 hit from above");
+				_body->ApplyImpulse(glm::vec3(-_speed, _speed, 0.0f));
+			}
+			else if ((_paddleY - 3.0f) > _puckY) {
+				LOG_INFO("Paddle P2 hit from below");
+				_body->ApplyImpulse(glm::vec3(-_speed, -_speed, 0.0f));
+			}
+			else {
+				LOG_INFO("Paddle P2 hit direct ");
+				_body->ApplyImpulse(glm::vec3(-_speed, 0.0f, 0.0f));
+			}
 		}
 	}
 	//If Wall1
@@ -66,7 +87,7 @@ void PuckBehaviour::OnEnteredTrigger(const Gameplay::Physics::TriggerVolume::Spt
 	//If Wall2
 	if (trigger->GetGameObject()->Name == "Wall2") {
 		_body->ApplyImpulse(glm::vec3(0.0f, -20.0f, 0.0f));
-		LOG_INFO("Wall2 hit from below");
+		LOG_INFO("Wall2 hit from above");
 	}
 	//If Wall 3/4
 	if ((trigger->GetGameObject()->Name == "Wall3")||(trigger->GetGameObject()->Name == "Wall4")) {
@@ -91,14 +112,14 @@ void PuckBehaviour::OnLeavingTrigger(const Gameplay::Physics::TriggerVolume::Spt
 void PuckBehaviour::RenderImGui() {
 	LABEL_LEFT(ImGui::DragFloat, "Speed", &_speed, 1.0f);
 	LABEL_LEFT(ImGui::DragFloat, "Puck-Y", &_puckY, 1.0f);
-	LABEL_LEFT(ImGui::DragFloat, "Paddle-Y", &_paddleY, 1.0f);
+	LABEL_LEFT(ImGui::DragFloat, "Puck-X", &_puckX, 1.0f);
 }
 
 nlohmann::json PuckBehaviour::ToJson() const {
 	return {
 		{"Speed", _speed},
 		{"Puck-Y",_puckY},
-		{"Paddle-Y",_paddleY},
+		{"Puck-X",_puckX},
 		{ "enter_material", EnterMaterial != nullptr ? EnterMaterial->GetGUID().str() : "null" },
 		{ "exit_material", ExitMaterial != nullptr ? ExitMaterial->GetGUID().str() : "null" }
 	};
@@ -112,6 +133,5 @@ PuckBehaviour::Sptr PuckBehaviour::FromJson(const nlohmann::json& blob) {
 }
 void PuckBehaviour::Update(float deltaTime) {
 	_puckY = GetGameObject()->GetPosition().y;
-	//GetGameObject()->SetPostion(glm::vec3(_posX, _posY,1.0f));
-	//GetGameObject()->SetRotation(glm::vec3(90.0f, 0.0f, 0.0f));
+	_puckX = GetGameObject()->GetPosition().x;
 }

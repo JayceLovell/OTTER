@@ -31,7 +31,7 @@ public:
 protected:
 	float _speed;
 	float _puckY;
-	float _paddleY;
+	float _puckX;
 
 	Gameplay::Physics::RigidBody::Sptr _body;
 	RenderComponent::Sptr _renderer;
