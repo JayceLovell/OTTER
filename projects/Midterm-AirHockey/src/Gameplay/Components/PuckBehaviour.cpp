@@ -11,7 +11,7 @@ PuckBehaviour::PuckBehaviour() :
 	_renderer(nullptr),
 	EnterMaterial(nullptr),
 	ExitMaterial(nullptr),
-	_speed(10.0f)
+	_speed(15.0f)
 {}
 PuckBehaviour::~PuckBehaviour() = default;
 
@@ -99,14 +99,23 @@ void PuckBehaviour::OnEnteredTrigger(const Gameplay::Physics::TriggerVolume::Spt
 		_body->ApplyImpulse(glm::vec3(20.0f, 0.0f, 0.0f));
 		LOG_INFO("Wall5/6 hit from left");
 	}
-}
-
-void PuckBehaviour::OnLeavingTrigger(const Gameplay::Physics::TriggerVolume::Sptr& trigger) {
-	if (_renderer && ExitMaterial) {
-		_renderer->SetMaterial(ExitMaterial);
+	//Now for Scoring
+	if (trigger->GetGameObject()->Name == "GoalRightSide")
+	{
+		LOG_INFO("Player 2 Score");
+		Reset();
 	}
-	
-	//LOG_INFO("Left trigger: {}", trigger->GetGameObject()->Name);
+	if (trigger->GetGameObject()->Name == "GoalLeftSide")
+	{
+		LOG_INFO("Player 1 Score");
+		Reset();
+	}
+}
+/// <summary>
+/// Reset Puck
+/// </summary>
+void PuckBehaviour::Reset() {
+	GetGameObject()->SetPostion(glm::vec3(0.0f,0.0f,5.0f));
 }
 
 void PuckBehaviour::RenderImGui() {
