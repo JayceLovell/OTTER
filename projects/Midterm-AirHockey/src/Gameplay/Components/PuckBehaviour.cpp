@@ -28,36 +28,56 @@ void PuckBehaviour::OnEnteredTrigger(const Gameplay::Physics::TriggerVolume::Spt
 	if (_renderer && EnterMaterial) {
 		_renderer->SetMaterial(EnterMaterial);
 	}
-	
+	//If Paddle P1
 	if (trigger->GetGameObject()->Name == "Paddle P1") {
 		//First get paddle's Y
 		_paddleY = trigger->GetGameObject()->GetPosition().y;
 
 		//Depend on Paddle's Y is where we add the impulse
 		if (_paddleY < _puckY) {
-			LOG_INFO("Paddle P1 hit from below");
+			LOG_INFO("Paddle P1 hit from above");
 			_body->ApplyImpulse(glm::vec3(_speed, _speed, 0.0f));
 		}
 		if (_paddleY > _puckY) {
-			LOG_INFO("Paddle P1 hit from above");
+			LOG_INFO("Paddle P1 hit from below");
 			_body->ApplyImpulse(glm::vec3(_speed, -_speed, 0.0f));
 		}
 	}
+	//If Paddle P2
 	if (trigger->GetGameObject()->Name == "Paddle P2") {
 		//First get paddle's Y
 		_paddleY = trigger->GetGameObject()->GetPosition().y;
 
 		//Depend on Paddle's Y is where we add the impulse
 		if (_paddleY < _puckY) {
-			LOG_INFO("Paddle P2 hit from below");
+			LOG_INFO("Paddle P2 hit from above");
 			_body->ApplyImpulse(glm::vec3(-_speed, _speed, 0.0f));
 		}
 		if (_paddleY > _puckY) {
-			LOG_INFO("Paddle P2 hit from above");
+			LOG_INFO("Paddle P2 hit from below");
 			_body->ApplyImpulse(glm::vec3(-_speed, -_speed, 0.0f));
 		}
 	}
-	//LOG_INFO("Entered trigger: {}", trigger->GetGameObject()->Name);
+	//If Wall1
+	if (trigger->GetGameObject()->Name == "Wall1") {
+		_body->ApplyImpulse(glm::vec3(0.0f, 20.0f, 0.0f));
+		LOG_INFO("Wall1 hit from below");
+	}
+	//If Wall2
+	if (trigger->GetGameObject()->Name == "Wall2") {
+		_body->ApplyImpulse(glm::vec3(0.0f, -20.0f, 0.0f));
+		LOG_INFO("Wall2 hit from below");
+	}
+	//If Wall 3/4
+	if ((trigger->GetGameObject()->Name == "Wall3")||(trigger->GetGameObject()->Name == "Wall4")) {
+		_body->ApplyImpulse(glm::vec3(-20.0f, 0.0f, 0.0f));
+		LOG_INFO("Wall3/4 hit from right");
+	}
+	//If Wall 5/6
+	if ((trigger->GetGameObject()->Name == "Wall5") || (trigger->GetGameObject()->Name == "Wall6")) {
+		_body->ApplyImpulse(glm::vec3(20.0f, 0.0f, 0.0f));
+		LOG_INFO("Wall5/6 hit from left");
+	}
 }
 
 void PuckBehaviour::OnLeavingTrigger(const Gameplay::Physics::TriggerVolume::Sptr& trigger) {

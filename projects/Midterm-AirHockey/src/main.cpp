@@ -268,14 +268,16 @@ int main() {
 
 		//Models
 		MeshResource::Sptr PuckMesh = ResourceManager::CreateAsset<MeshResource>("Models/puck.obj");
-		MeshResource::Sptr PaddleMesh = ResourceManager::CreateAsset<MeshResource>("Models/paddles.obj");
-		MeshResource::Sptr WallMesh = ResourceManager::CreateAsset<MeshResource>("Models/walls.obj");
+		MeshResource::Sptr PaddleMesh = ResourceManager::CreateAsset<MeshResource>("Models/paddles.obj");		
+		MeshResource::Sptr Wall1Mesh = ResourceManager::CreateAsset<MeshResource>("Models/Wall1.obj");
+		MeshResource::Sptr Wall3Mesh = ResourceManager::CreateAsset<MeshResource>("Models/Wall3.obj");
+
 
 		//Textures
 		Texture2D::Sptr PuckTex = ResourceManager::CreateAsset<Texture2D>("textures/puckTexture.jpg");		
 		Texture2D::Sptr PaddleP1Tex = ResourceManager::CreateAsset<Texture2D>("textures/red.jpg");
 		Texture2D::Sptr PaddleP2Tex = ResourceManager::CreateAsset<Texture2D>("textures/blue.jpg");
-		Texture2D::Sptr PlaneTexture = ResourceManager::CreateAsset<Texture2D>("textures/plane.jpg");
+		Texture2D::Sptr PlaneTexture = ResourceManager::CreateAsset<Texture2D>("textures/Plane.jpg");
 		Texture2D::Sptr WallTexture = ResourceManager::CreateAsset<Texture2D>("textures/walltexture.jpg");
 	
 		// Create an empty scene
@@ -382,104 +384,112 @@ int main() {
 
 		//Top-wall
 		GameObject::Sptr Wall1 = scene->CreateGameObject("Wall1"); 
-		{
-			Wall1->SetScale(glm::vec3(3.0f,1.1f,0.97f));
-			Wall1->SetPostion(glm::vec3(0.0f,-47.980f,0.760f));
-			Wall1->SetRotation(glm::vec3(0.0f, 90.0f, 0.0f));
+		{			
+			Wall1->SetPostion(glm::vec3(0.0f,-47.980f,0.760f));			
 
+			TriggerVolume::Sptr volume = Wall1->Add<TriggerVolume>();
 			// Create and attach a RenderComponent to the object to draw our mesh
 			RenderComponent::Sptr renderer = Wall1->Add<RenderComponent>();
-			renderer->SetMesh(WallMesh);
+			renderer->SetMesh(Wall1Mesh);
 			renderer->SetMaterial(WallMaterial);
 
 			// Attach a wall collider that extends infinitely along the X/Y axis
 			RigidBody::Sptr physics = Wall1->Add<RigidBody>(/*static by default*/);
-			physics->AddCollider(BoxCollider::Create());
+			physics->AddCollider(ConvexMeshCollider::Create());
+			volume->AddCollider(ConvexMeshCollider::Create());
 		}
 
 		//Bottom-wall
 		GameObject::Sptr Wall2 = scene->CreateGameObject("Wall2");
 		{
-			Wall2->SetScale(glm::vec3(3.0f, 1.1f, 0.97f));
 			Wall2->SetPostion(glm::vec3(0.0f, 47.980f, 0.760f));
-			Wall2->SetRotation(glm::vec3(0.0f, 90.0f, 0.0f));
+
+			TriggerVolume::Sptr volume = Wall2->Add<TriggerVolume>();
 
 			// Create and attach a RenderComponent to the object to draw our mesh
 			RenderComponent::Sptr renderer = Wall2->Add<RenderComponent>();
-			renderer->SetMesh(WallMesh);
+			renderer->SetMesh(Wall1Mesh);
 			renderer->SetMaterial(WallMaterial);
 
 			// Attach a wall collider that extends infinitely along the X/Y axis
 			RigidBody::Sptr physics = Wall2->Add<RigidBody>(/*static by default*/);
-			physics->AddCollider(BoxCollider::Create());
+			physics->AddCollider(ConvexMeshCollider::Create());
+			volume->AddCollider(ConvexMeshCollider::Create());
 		}
 
 		//Top-Left wall
 		GameObject::Sptr Wall3 = scene->CreateGameObject("Wall3");
 		{
-			Wall3->SetScale(glm::vec3(3.0f, 1.1f, 0.420f));
+
 			Wall3->SetPostion(glm::vec3(49.110f, -27.710f, 0.760f));
-			Wall3->SetRotation(glm::vec3(0.0f, 90.0f, 90.0f));
+
+			TriggerVolume::Sptr volume = Wall3->Add<TriggerVolume>();
 
 			// Create and attach a RenderComponent to the object to draw our mesh
 			RenderComponent::Sptr renderer = Wall3->Add<RenderComponent>();
-			renderer->SetMesh(WallMesh);
+			renderer->SetMesh(Wall3Mesh);
 			renderer->SetMaterial(WallMaterial);
 
 			// Attach a wall collider that extends infinitely along the X/Y axis
 			RigidBody::Sptr physics = Wall3->Add<RigidBody>(/*static by default*/);
-			physics->AddCollider(BoxCollider::Create());
+			physics->AddCollider(ConvexMeshCollider::Create());
+			volume->AddCollider(ConvexMeshCollider::Create());
 		}
 
 		//Bottom-left wall
 		GameObject::Sptr Wall4 = scene->CreateGameObject("Wall4");
 		{
-			Wall4->SetScale(glm::vec3(3.0f, 1.1f, 0.420f));
+
 			Wall4->SetPostion(glm::vec3(49.110f, 27.710f, 0.760f));
-			Wall4->SetRotation(glm::vec3(0.0f, 90.0f, 90.0f));
+
+			TriggerVolume::Sptr volume = Wall4->Add<TriggerVolume>();
 
 			// Create and attach a RenderComponent to the object to draw our mesh
 			RenderComponent::Sptr renderer = Wall4->Add<RenderComponent>();
-			renderer->SetMesh(WallMesh);
+			renderer->SetMesh(Wall3Mesh);
 			renderer->SetMaterial(WallMaterial);
 
 			// Attach a wall collider that extends infinitely along the X/Y axis
 			RigidBody::Sptr physics = Wall4->Add<RigidBody>(/*static by default*/);
-			physics->AddCollider(BoxCollider::Create());
+			physics->AddCollider(ConvexMeshCollider::Create());
+			volume->AddCollider(ConvexMeshCollider::Create());
 		}
 
 		//Top-right wall
 		GameObject::Sptr Wall5 = scene->CreateGameObject("Wall5");
 		{
-			Wall5->SetScale(glm::vec3(3.0f, 1.1f, 0.420f));
+
 			Wall5->SetPostion(glm::vec3(-49.110f, -27.710f, 0.760f));
-			Wall5->SetRotation(glm::vec3(0.0f, 90.0f, 90.0f));
+
+			TriggerVolume::Sptr volume = Wall5->Add<TriggerVolume>();
 
 			// Create and attach a RenderComponent to the object to draw our mesh
 			RenderComponent::Sptr renderer = Wall5->Add<RenderComponent>();
-			renderer->SetMesh(WallMesh);
+			renderer->SetMesh(Wall3Mesh);
 			renderer->SetMaterial(WallMaterial);
 
 			// Attach a wall collider that extends infinitely along the X/Y axis
 			RigidBody::Sptr physics = Wall5->Add<RigidBody>(/*static by default*/);
-			physics->AddCollider(BoxCollider::Create());
+			physics->AddCollider(ConvexMeshCollider::Create());
+			volume->AddCollider(ConvexMeshCollider::Create());
 		}
 
 		//Bottom-right wall
 		GameObject::Sptr Wall6 = scene->CreateGameObject("Wall6");
 		{
-			Wall6->SetScale(glm::vec3(3.0f, 1.1f, 0.420f));
+
 			Wall6->SetPostion(glm::vec3(-49.110f, 27.710f, 0.760f));
-			Wall6->SetRotation(glm::vec3(0.0f, 90.0f, 90.0f));
+			TriggerVolume::Sptr volume = Wall6->Add<TriggerVolume>();
 
 			// Create and attach a RenderComponent to the object to draw our mesh
 			RenderComponent::Sptr renderer = Wall6->Add<RenderComponent>();
-			renderer->SetMesh(WallMesh);
+			renderer->SetMesh(Wall3Mesh);
 			renderer->SetMaterial(WallMaterial);
 
 			// Attach a wall collider that extends infinitely along the X/Y axis
 			RigidBody::Sptr physics = Wall6 ->Add<RigidBody>(/*static by default*/);
-			physics->AddCollider(BoxCollider::Create());
+			physics->AddCollider(ConvexMeshCollider::Create());
+			volume->AddCollider(ConvexMeshCollider::Create());
 		}
 
 		GameObject::Sptr Puck = scene->CreateGameObject("Puck");
