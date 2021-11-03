@@ -2,7 +2,6 @@
 #include "IComponent.h"
 #include "Gameplay/Physics/TriggerVolume.h"
 #include "Gameplay/Components/RenderComponent.h"
-#include "Gameplay/Physics/TriggerVolume.h"
 #include "Gameplay/Physics/RigidBody.h"
 /// <summary>
 /// Puck Class
