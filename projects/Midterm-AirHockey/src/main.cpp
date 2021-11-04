@@ -279,6 +279,7 @@ int main() {
 		Texture2D::Sptr PaddleP2Tex = ResourceManager::CreateAsset<Texture2D>("textures/blue.jpg");
 		Texture2D::Sptr PlaneTexture = ResourceManager::CreateAsset<Texture2D>("textures/Plane.jpg");
 		Texture2D::Sptr WallTexture = ResourceManager::CreateAsset<Texture2D>("textures/walltexture.jpg");
+		Texture2D::Sptr Text0 = ResourceManager::CreateAsset<Texture2D>("textures/numbers/0.jpg");
 		Texture2D::Sptr Text1 = ResourceManager::CreateAsset<Texture2D>("textures/numbers/1.jpg");
 		Texture2D::Sptr Text2 = ResourceManager::CreateAsset<Texture2D>("textures/numbers/2.jpg");
 		Texture2D::Sptr Text3 = ResourceManager::CreateAsset<Texture2D>("textures/numbers/3.jpg");
@@ -308,16 +309,16 @@ int main() {
 
 		Material::Sptr score1Material = ResourceManager::CreateAsset<Material>();
 		{
-			score1Material->Name = "Text1";
+			score1Material->Name = "Text0";
 			score1Material->MatShader = scene->BaseShader;
-			score1Material->Texture = Text1;
+			score1Material->Texture = Text0;
 			score1Material->Shininess = 2.0f;
 		}
 		Material::Sptr score2Material = ResourceManager::CreateAsset<Material>();
 		{
-			score2Material->Name = "Text2";
+			score2Material->Name = "Text0";
 			score2Material->MatShader = scene->BaseShader;
-			score2Material->Texture = Text1;
+			score2Material->Texture = Text0;
 			score2Material->Shininess = 2.0f;
 		}
 
