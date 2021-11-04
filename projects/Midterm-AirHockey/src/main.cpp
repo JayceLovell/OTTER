@@ -632,6 +632,18 @@ int main() {
 			RenderComponent::Sptr renderer = Score1->Add<RenderComponent>();
 			renderer->SetMesh(planeMesh);
 			renderer->SetMaterial(score1Material);
+
+			MaterialSwapBehaviour::Sptr Score1Swap = Score1->Add<MaterialSwapBehaviour>();
+			Score1Swap->Text1Material = Text1;
+			Score1Swap->Text2Material = Text2;
+			Score1Swap->Text3Material = Text3;
+			Score1Swap->Text4Material = Text4;
+			Score1Swap->Text5Material = Text5;
+			Score1Swap->Text6Material = Text6;
+			Score1Swap->Text7Material = Text7;
+			Score1Swap->Text8Material = Text8;
+			Score1Swap->Text9Material = Text9;
+			Score1Swap->Text10Material = Text10;
 		}
 		GameObject::Sptr Score2 = scene->CreateGameObject("Score2");
 		{
@@ -647,6 +659,18 @@ int main() {
 			RenderComponent::Sptr renderer = Score2->Add<RenderComponent>();
 			renderer->SetMesh(planeMesh);
 			renderer->SetMaterial(score1Material);
+
+			MaterialSwapBehaviour::Sptr Score2Swap = Score2->Add<MaterialSwapBehaviour>();
+			Score2Swap->Text1Material = Text1;
+			Score2Swap->Text2Material = Text2;
+			Score2Swap->Text3Material = Text3;
+			Score2Swap->Text4Material = Text4;
+			Score2Swap->Text5Material = Text5;
+			Score2Swap->Text6Material = Text6;
+			Score2Swap->Text7Material = Text7;
+			Score2Swap->Text8Material = Text8;
+			Score2Swap->Text9Material = Text9;
+			Score2Swap->Text10Material = Text10;
 		}
 
 		// Save the asset manifest for all the resources we just loaded

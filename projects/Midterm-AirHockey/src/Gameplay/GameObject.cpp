@@ -216,4 +216,6 @@ namespace Gameplay {
 		}
 		return result;
 	}
+
+	void SwapScore(int value);
 }

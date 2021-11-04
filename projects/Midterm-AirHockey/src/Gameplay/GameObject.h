@@ -198,6 +198,8 @@ namespace Gameplay {
 		/// </summary>
 		nlohmann::json ToJson() const;
 
+		void SwapScore(int value);
+
 	private:
 		friend class Scene;
 

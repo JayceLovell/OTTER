@@ -8,6 +8,7 @@
 #include "Gameplay/Physics/RigidBody.h"
 #include "Gameplay/Physics/TriggerVolume.h"
 
+
 #include "Graphics/DebugDraw.h"
 
 namespace Gameplay {
@@ -37,11 +38,14 @@ namespace Gameplay {
 		if (Player == "Player 1") {
 			Player1Score++;
 			LOG_INFO("Updated Player 1 Score");
-			
+			GameObject::Sptr object = FindObjectByName("Score1");
+			object->SwapScore(Player1Score);
 		}
 		if (Player == "Player 2") {
 			Player2Score++;
 			LOG_INFO("Updated Player 2 Score");
+			GameObject::Sptr object = FindObjectByName("Score2");
+			object->SwapScore(Player2Score);
 		}
 
 	}
