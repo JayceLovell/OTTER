@@ -20,7 +20,9 @@ namespace Gameplay {
 		_isAwake(false),
 		_filePath(""),
 		_ambientLight(glm::vec3(0.1f)),
-		_gravity(glm::vec3(0.0f, 0.0f, -9.81f))
+		_gravity(glm::vec3(0.0f, 0.0f, -9.81f)),
+		Player1Score(0),
+		Player2Score(0)
 	{
 		_InitPhysics();
 	}
@@ -28,6 +30,19 @@ namespace Gameplay {
 	Scene::~Scene() {
 		Objects.clear();
 		_CleanupPhysics();
+	}
+
+	void Scene::UpdateScore(string Player)
+	{
+		if (Player == "Player 1") {
+			Player1Score++;
+			LOG_INFO("Updated Player 1 Score");
+		}
+		if (Player == "Player 2") {
+			Player2Score++;
+			LOG_INFO("Updated Player 2 Score");
+		}
+
 	}
 
 	void Scene::SetPhysicsDebugDrawMode(BulletDebugMode mode) {

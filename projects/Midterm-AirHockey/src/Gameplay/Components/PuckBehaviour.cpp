@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include "Gameplay/Scene.h"
 #include "Utils/ImGuiHelper.h"
+#include "Gameplay/Scene.h"
 
 PuckBehaviour::PuckBehaviour() :
 	IComponent(),
@@ -102,11 +103,13 @@ void PuckBehaviour::OnEnteredTrigger(const Gameplay::Physics::TriggerVolume::Spt
 	if (trigger->GetGameObject()->Name == "GoalRightSide")
 	{
 		LOG_INFO("Player 2 Score");
+		GetGameObject()->GetScene()->UpdateScore("Player 2");
 		Reset();
 	}
 	if (trigger->GetGameObject()->Name == "GoalLeftSide")
 	{
 		LOG_INFO("Player 1 Score");
+		GetGameObject()->GetScene()->UpdateScore("Player 1");
 		Reset();
 	}
 }

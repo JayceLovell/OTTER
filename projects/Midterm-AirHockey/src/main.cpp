@@ -282,6 +282,7 @@ int main() {
 	
 		// Create an empty scene
 		scene = std::make_shared<Scene>();
+		
 
 		// I hate this
 		scene->BaseShader = uboShader;

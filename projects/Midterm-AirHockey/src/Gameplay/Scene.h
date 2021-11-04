@@ -6,6 +6,7 @@
 #include "Gameplay/GameObject.h"
 #include "Gameplay/Light.h"
 #include "Physics/BulletDebugDraw.h"
+using namespace std;
 
 struct GLFWwindow;
 
@@ -36,10 +37,15 @@ namespace Gameplay {
 
 		// Whether the application is in "play mode", lets us leverage editors!
 		bool                       IsPlaying;
+		int Player1Score;
+		int Player2Score;
+		
 
 
 		Scene();
 		~Scene();
+
+		void UpdateScore(string Player);
 
 		void SetPhysicsDebugDrawMode(BulletDebugMode mode);
 
@@ -194,5 +200,5 @@ namespace Gameplay {
 		/// Handles cleaning up bullet physics for this scene
 		/// </summary>
 		void _CleanupPhysics();
-	};
+};
 }
