@@ -279,7 +279,17 @@ int main() {
 		Texture2D::Sptr PaddleP2Tex = ResourceManager::CreateAsset<Texture2D>("textures/blue.jpg");
 		Texture2D::Sptr PlaneTexture = ResourceManager::CreateAsset<Texture2D>("textures/Plane.jpg");
 		Texture2D::Sptr WallTexture = ResourceManager::CreateAsset<Texture2D>("textures/walltexture.jpg");
-	
+		Texture2D::Sptr Text1 = ResourceManager::CreateAsset<Texture2D>("textures/numbers/1.jpg");
+		Texture2D::Sptr Text2 = ResourceManager::CreateAsset<Texture2D>("textures/numbers/2.jpg");
+		Texture2D::Sptr Text3 = ResourceManager::CreateAsset<Texture2D>("textures/numbers/3.jpg");
+		Texture2D::Sptr Text4 = ResourceManager::CreateAsset<Texture2D>("textures/numbers/4.jpg");
+		Texture2D::Sptr Text5 = ResourceManager::CreateAsset<Texture2D>("textures/numbers/5.jpg");
+		Texture2D::Sptr Text6 = ResourceManager::CreateAsset<Texture2D>("textures/numbers/6.jpg");
+		Texture2D::Sptr Text7 = ResourceManager::CreateAsset<Texture2D>("textures/numbers/7.jpg");
+		Texture2D::Sptr Text8 = ResourceManager::CreateAsset<Texture2D>("textures/numbers/8.jpg");
+		Texture2D::Sptr Text9 = ResourceManager::CreateAsset<Texture2D>("textures/numbers/9.jpg");
+		Texture2D::Sptr Text10 = ResourceManager::CreateAsset<Texture2D>("textures/numbers/10.jpg");
+
 		// Create an empty scene
 		scene = std::make_shared<Scene>();
 		
@@ -294,6 +304,21 @@ int main() {
 			planeMaterial->MatShader = scene->BaseShader;
 			planeMaterial->Texture = PlaneTexture;
 			planeMaterial->Shininess = 2.0f;
+		}
+
+		Material::Sptr score1Material = ResourceManager::CreateAsset<Material>();
+		{
+			score1Material->Name = "Text1";
+			score1Material->MatShader = scene->BaseShader;
+			score1Material->Texture = Text1;
+			score1Material->Shininess = 2.0f;
+		}
+		Material::Sptr score2Material = ResourceManager::CreateAsset<Material>();
+		{
+			score2Material->Name = "Text2";
+			score2Material->MatShader = scene->BaseShader;
+			score2Material->Texture = Text1;
+			score2Material->Shininess = 2.0f;
 		}
 
 		Material::Sptr PuckMaterial = ResourceManager::CreateAsset<Material>();
@@ -591,6 +616,37 @@ int main() {
 			BoxCollider::Sptr collider = BoxCollider::Create(glm::vec3(3.0f, 6.0f, 1.0f));
 			collider->SetPosition(glm::vec3(50.0f, 0.0f, 0.f));
 			volume->AddCollider(collider);
+		}
+
+		GameObject::Sptr Score1 = scene->CreateGameObject("Score1");
+		{
+			// Scale up the plane
+			Score1->SetScale(glm::vec3(10.0f));
+
+			Score1->SetPostion(glm::vec3(-36.0f,-45.0f,10.0f));
+
+			//Rotate it horizontally
+			Score1->SetRotation(glm::vec3(0.0f, 0.0f, 180.0f));
+
+			// Create and attach a RenderComponent to the object to draw our mesh
+			RenderComponent::Sptr renderer = Score1->Add<RenderComponent>();
+			renderer->SetMesh(planeMesh);
+			renderer->SetMaterial(score1Material);
+		}
+		GameObject::Sptr Score2 = scene->CreateGameObject("Score2");
+		{
+			// Scale up the plane
+			Score2->SetScale(glm::vec3(10.0f));
+
+			Score2->SetPostion(glm::vec3(36.0f, -45.0f, 10.0f));
+
+			//Rotate it horizontally
+			Score2->SetRotation(glm::vec3(0.0f, 0.0f, 180.0f));
+
+			// Create and attach a RenderComponent to the object to draw our mesh
+			RenderComponent::Sptr renderer = Score2->Add<RenderComponent>();
+			renderer->SetMesh(planeMesh);
+			renderer->SetMaterial(score1Material);
 		}
 
 		// Save the asset manifest for all the resources we just loaded

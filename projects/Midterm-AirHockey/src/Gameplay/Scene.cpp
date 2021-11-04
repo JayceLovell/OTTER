@@ -37,6 +37,7 @@ namespace Gameplay {
 		if (Player == "Player 1") {
 			Player1Score++;
 			LOG_INFO("Updated Player 1 Score");
+			
 		}
 		if (Player == "Player 2") {
 			Player2Score++;
