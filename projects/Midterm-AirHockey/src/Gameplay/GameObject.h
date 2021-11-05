@@ -34,6 +34,11 @@ namespace Gameplay {
 		Guid                    GUID;
 
 		/// <summary>
+		/// Swap Score
+		/// </summary>
+		void SwapScore(int value);
+
+		/// <summary>
 		/// Rotates this object to look at the given point in world coordinates
 		/// </summary>
 		void LookAt(const glm::vec3& point);
@@ -198,7 +203,6 @@ namespace Gameplay {
 		/// </summary>
 		nlohmann::json ToJson() const;
 
-		void SwapScore(int value);
 
 	private:
 		friend class Scene;

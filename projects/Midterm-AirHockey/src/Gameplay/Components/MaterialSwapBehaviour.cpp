@@ -47,9 +47,14 @@ nlohmann::json MaterialSwapBehaviour::ToJson() const {
 	};
 }
 
-void MaterialSwapBehaviour::SwapScore(int value)
+/// <summary>
+/// /Switch score material DON'T KNOW WHY IT WON'T CALL
+/// </summary>
+/// <param name="WhichMaterial"></param>
+void MaterialSwapBehaviour::SwapScore(int WhichMaterial)
 {
-	switch (value) {
+	LOG_INFO("Swaping Score with value {}", WhichMaterial);
+	switch (WhichMaterial) {
 	case 1:
 		_renderer->SetMaterial(Text1Material);
 	case 2:

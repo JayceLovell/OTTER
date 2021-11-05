@@ -34,10 +34,10 @@ public:
 
 	virtual void OnEnteredTrigger(const std::shared_ptr<Gameplay::Physics::TriggerVolume>& trigger) override;
 	virtual void OnLeavingTrigger(const std::shared_ptr<Gameplay::Physics::TriggerVolume>& trigger) override;
+	void SwapScore(int WhichMaterial);
 	virtual void Awake() override;
 	virtual void RenderImGui() override;
 	virtual nlohmann::json ToJson() const override;
-	virtual void SwapScore(int value);
 	static MaterialSwapBehaviour::Sptr FromJson(const nlohmann::json& blob);
 	MAKE_TYPENAME(MaterialSwapBehaviour);
 
