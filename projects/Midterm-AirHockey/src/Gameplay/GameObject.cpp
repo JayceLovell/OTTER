@@ -30,6 +30,14 @@ namespace Gameplay {
 		SetRotation(glm::quat(rot));
 	}
 
+	/// <summary>
+	/// PUT THIS HERE FOR REASONS
+	/// </summary>
+	/// <param name="value"></param>
+	void GameObject::SwapScore(int value)
+	{
+		LOG_INFO("Wrong one !!!");
+	}
 
 	void GameObject::OnEnteredTrigger(const std::shared_ptr<Physics::TriggerVolume>& trigger) {
 		for (auto& component : _components) {
@@ -216,4 +224,7 @@ namespace Gameplay {
 		}
 		return result;
 	}
+
+
+
 }

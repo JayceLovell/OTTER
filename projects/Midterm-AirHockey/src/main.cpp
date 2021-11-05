@@ -307,20 +307,84 @@ int main() {
 			planeMaterial->Shininess = 2.0f;
 		}
 
-		Material::Sptr score1Material = ResourceManager::CreateAsset<Material>();
+		Material::Sptr Text0Material = ResourceManager::CreateAsset<Material>();
 		{
-			score1Material->Name = "Text0";
-			score1Material->MatShader = scene->BaseShader;
-			score1Material->Texture = Text0;
-			score1Material->Shininess = 2.0f;
+			Text0Material->Name = "Text0Material";
+			Text0Material->MatShader = scene->BaseShader;
+			Text0Material->Texture = Text0;
+			Text0Material->Shininess = 2.0f;
 		}
-		Material::Sptr score2Material = ResourceManager::CreateAsset<Material>();
+		Material::Sptr Text1Material = ResourceManager::CreateAsset<Material>();
 		{
-			score2Material->Name = "Text0";
-			score2Material->MatShader = scene->BaseShader;
-			score2Material->Texture = Text0;
-			score2Material->Shininess = 2.0f;
+			Text1Material->Name = "Text1Material";
+			Text1Material->MatShader = scene->BaseShader;
+			Text1Material->Texture = Text1;
+			Text1Material->Shininess = 2.0f;
 		}
+		Material::Sptr Text2Material = ResourceManager::CreateAsset<Material>();
+		{
+			Text2Material->Name = "Text2Material";
+			Text2Material->MatShader = scene->BaseShader;
+			Text2Material->Texture = Text2;
+			Text2Material->Shininess = 2.0f;
+		}
+		Material::Sptr Text3Material = ResourceManager::CreateAsset<Material>();
+		{
+			Text3Material->Name = "Text3Material";
+			Text3Material->MatShader = scene->BaseShader;
+			Text3Material->Texture = Text3;
+			Text3Material->Shininess = 2.0f;
+		}
+		Material::Sptr Text4Material = ResourceManager::CreateAsset<Material>();
+		{
+			Text4Material->Name = "Text4Material";
+			Text4Material->MatShader = scene->BaseShader;
+			Text4Material->Texture = Text4;
+			Text4Material->Shininess = 2.0f;
+		}
+		Material::Sptr Text5Material = ResourceManager::CreateAsset<Material>();
+		{
+			Text5Material->Name = "Text5Material";
+			Text5Material->MatShader = scene->BaseShader;
+			Text5Material->Texture = Text5;
+			Text5Material->Shininess = 2.0f;
+		}
+		Material::Sptr Text6Material = ResourceManager::CreateAsset<Material>();
+		{
+			Text6Material->Name = "Text6Material";
+			Text6Material->MatShader = scene->BaseShader;
+			Text6Material->Texture = Text6;
+			Text6Material->Shininess = 2.0f;
+		}
+		Material::Sptr Text7Material = ResourceManager::CreateAsset<Material>();
+		{
+			Text7Material->Name = "Text7Material";
+			Text7Material->MatShader = scene->BaseShader;
+			Text7Material->Texture = Text7;
+			Text7Material->Shininess = 2.0f;
+		}
+		Material::Sptr Text8Material = ResourceManager::CreateAsset<Material>();
+		{
+			Text8Material->Name = "Text8Material";
+			Text8Material->MatShader = scene->BaseShader;
+			Text8Material->Texture = Text8;
+			Text8Material->Shininess = 2.0f;
+		}
+		Material::Sptr Text9Material = ResourceManager::CreateAsset<Material>();
+		{
+			Text9Material->Name = "Text9Material";
+			Text9Material->MatShader = scene->BaseShader;
+			Text9Material->Texture = Text9;
+			Text9Material->Shininess = 2.0f;
+		}
+		Material::Sptr Text10Material = ResourceManager::CreateAsset<Material>();
+		{
+			Text10Material->Name = "Text10Material";
+			Text10Material->MatShader = scene->BaseShader;
+			Text10Material->Texture = Text10;
+			Text10Material->Shininess = 2.0f;
+		}
+
 
 		Material::Sptr PuckMaterial = ResourceManager::CreateAsset<Material>();
 		{
@@ -632,7 +696,19 @@ int main() {
 			// Create and attach a RenderComponent to the object to draw our mesh
 			RenderComponent::Sptr renderer = Score1->Add<RenderComponent>();
 			renderer->SetMesh(planeMesh);
-			renderer->SetMaterial(score1Material);
+			renderer->SetMaterial(Text0Material);
+
+			MaterialSwapBehaviour::Sptr ScoreSwap = Score1->Add<MaterialSwapBehaviour>();
+			ScoreSwap->Text1Material = Text1Material;
+			ScoreSwap->Text2Material = Text2Material;
+			ScoreSwap->Text3Material = Text3Material;
+			ScoreSwap->Text4Material = Text4Material;
+			ScoreSwap->Text5Material = Text5Material;
+			ScoreSwap->Text6Material = Text6Material;
+			ScoreSwap->Text7Material = Text7Material;
+			ScoreSwap->Text8Material = Text8Material;
+			ScoreSwap->Text9Material = Text9Material;
+			ScoreSwap->Text10Material = Text10Material;
 		}
 		GameObject::Sptr Score2 = scene->CreateGameObject("Score2");
 		{
@@ -647,7 +723,19 @@ int main() {
 			// Create and attach a RenderComponent to the object to draw our mesh
 			RenderComponent::Sptr renderer = Score2->Add<RenderComponent>();
 			renderer->SetMesh(planeMesh);
-			renderer->SetMaterial(score1Material);
+			renderer->SetMaterial(Text0Material);
+
+			MaterialSwapBehaviour::Sptr ScoreSwap = Score2->Add<MaterialSwapBehaviour>();
+			ScoreSwap->Text1Material = Text1Material;
+			ScoreSwap->Text2Material = Text2Material;
+			ScoreSwap->Text3Material = Text3Material;
+			ScoreSwap->Text4Material = Text4Material;
+			ScoreSwap->Text5Material = Text5Material;
+			ScoreSwap->Text6Material = Text6Material;
+			ScoreSwap->Text7Material = Text7Material;
+			ScoreSwap->Text8Material = Text8Material;
+			ScoreSwap->Text9Material = Text9Material;
+			ScoreSwap->Text10Material = Text10Material;
 		}
 
 		// Save the asset manifest for all the resources we just loaded
@@ -717,6 +805,14 @@ int main() {
 			// Make a new area for the scene saving/loading
 			ImGui::Separator();
 			if (DrawSaveLoadImGui(scene, scenePath)) {
+				/*scene->Save(scenePath);
+				std::string newFilename = std::filesystem::path(scenePath).stem().string() + "-manifest.json";
+				ResourceManager::SaveManifest(newFilename);
+
+				std::string newFilename = std::filesystem::path(scenePath).stem().string() + "-manifest.json";
+				ResourceManager::LoadManifest(newFilename);*/
+				scene = Scene::Load(scenePath);
+
 				// C++ strings keep internal lengths which can get annoying
 				// when we edit it's underlying datastore, so recalcualte size
 				scenePath.resize(strlen(scenePath.c_str()));

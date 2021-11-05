@@ -8,6 +8,7 @@
 #include "Gameplay/Physics/RigidBody.h"
 #include "Gameplay/Physics/TriggerVolume.h"
 
+
 #include "Graphics/DebugDraw.h"
 
 namespace Gameplay {
@@ -32,16 +33,24 @@ namespace Gameplay {
 		_CleanupPhysics();
 	}
 
-	void Scene::UpdateScore(string Player)
+	void Scene::UpdateScore(const std::string Player)
 	{
 		if (Player == "Player 1") {
 			Player1Score++;
 			LOG_INFO("Updated Player 1 Score");
-			
+			GameObject::Sptr object = FindObjectByName("Score1");
+			if (Player1Score > 0) {
+				LOG_INFO("Calling score swap");
+				object->SwapScore(Player1Score);
+			}			
 		}
 		if (Player == "Player 2") {
 			Player2Score++;
 			LOG_INFO("Updated Player 2 Score");
+			GameObject::Sptr object = FindObjectByName("Score2");
+			if (Player2Score > 0) {
+				object->SwapScore(Player2Score);
+			}
 		}
 
 	}

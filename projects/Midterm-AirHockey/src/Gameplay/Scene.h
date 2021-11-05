@@ -6,7 +6,6 @@
 #include "Gameplay/GameObject.h"
 #include "Gameplay/Light.h"
 #include "Physics/BulletDebugDraw.h"
-using namespace std;
 
 struct GLFWwindow;
 
@@ -45,7 +44,7 @@ namespace Gameplay {
 		Scene();
 		~Scene();
 
-		void UpdateScore(string Player);
+		void UpdateScore(const std::string Player);
 
 		void SetPhysicsDebugDrawMode(BulletDebugMode mode);
 
@@ -200,5 +199,6 @@ namespace Gameplay {
 		/// Handles cleaning up bullet physics for this scene
 		/// </summary>
 		void _CleanupPhysics();
+
 };
 }
