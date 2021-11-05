@@ -53,6 +53,7 @@
 #include "Gameplay/Components/Player1MovementBehaviour.h"
 #include "Gameplay/Components/Player2MovementBehaviour.h"
 #include "Gameplay/Components/PuckBehaviour.h"
+#include "Gameplay/Components/ScoreSwapBehaviour.h"
 
 // Physics
 #include "Gameplay/Physics/RigidBody.h"
@@ -246,6 +247,7 @@ int main() {
 	ComponentManager::RegisterType<Player1MovementBehaviour>();
 	ComponentManager::RegisterType<Player2MovementBehaviour>();
 	ComponentManager::RegisterType<PuckBehaviour>();
+	ComponentManager::RegisterType<ScoreSwapBehaviour>();
 
 	// GL states, we'll enable depth testing and backface fulling
 	glEnable(GL_DEPTH_TEST);
@@ -698,7 +700,8 @@ int main() {
 			renderer->SetMesh(planeMesh);
 			renderer->SetMaterial(Text0Material);
 
-			MaterialSwapBehaviour::Sptr ScoreSwap = Score1->Add<MaterialSwapBehaviour>();
+
+			ScoreSwapBehaviour::Sptr ScoreSwap = Score1->Add<ScoreSwapBehaviour>();
 			ScoreSwap->Text1Material = Text1Material;
 			ScoreSwap->Text2Material = Text2Material;
 			ScoreSwap->Text3Material = Text3Material;
@@ -725,7 +728,7 @@ int main() {
 			renderer->SetMesh(planeMesh);
 			renderer->SetMaterial(Text0Material);
 
-			MaterialSwapBehaviour::Sptr ScoreSwap = Score2->Add<MaterialSwapBehaviour>();
+			ScoreSwapBehaviour::Sptr ScoreSwap = Score2->Add<ScoreSwapBehaviour>();			
 			ScoreSwap->Text1Material = Text1Material;
 			ScoreSwap->Text2Material = Text2Material;
 			ScoreSwap->Text3Material = Text3Material;

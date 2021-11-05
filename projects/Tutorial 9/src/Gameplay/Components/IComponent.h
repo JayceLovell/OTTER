@@ -39,12 +39,6 @@ namespace Gameplay {
 		virtual ~IComponent();
 
 		/// <summary>
-		/// PUT THIS HERE FOR REASONS
-		/// </summary>
-		/// <param name="value"></param>
-		virtual void SwapScore(int value){};
-
-		/// <summary>
 		/// Invoked when a dynamic rigidbody attached to the parent gameobject has entered
 		/// a trigger volume
 		/// </summary>
