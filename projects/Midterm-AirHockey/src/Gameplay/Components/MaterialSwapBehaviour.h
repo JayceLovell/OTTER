@@ -18,23 +18,12 @@ public:
 	Gameplay::Material::Sptr        EnterMaterial;
 	Gameplay::Material::Sptr        ExitMaterial;
 
-	Gameplay::Material::Sptr Text1Material;
-	Gameplay::Material::Sptr Text2Material;
-	Gameplay::Material::Sptr Text3Material;
-	Gameplay::Material::Sptr Text4Material;
-	Gameplay::Material::Sptr Text5Material;
-	Gameplay::Material::Sptr Text6Material;
-	Gameplay::Material::Sptr Text7Material;
-	Gameplay::Material::Sptr Text8Material;
-	Gameplay::Material::Sptr Text9Material;
-	Gameplay::Material::Sptr Text10Material;
 
 
 	// Inherited from IComponent
 
 	virtual void OnEnteredTrigger(const std::shared_ptr<Gameplay::Physics::TriggerVolume>& trigger) override;
 	virtual void OnLeavingTrigger(const std::shared_ptr<Gameplay::Physics::TriggerVolume>& trigger) override;
-	void SwapScore(int WhichMaterial);
 	virtual void Awake() override;
 	virtual void RenderImGui() override;
 	virtual nlohmann::json ToJson() const override;
