@@ -700,6 +700,7 @@ int main() {
 			renderer->SetMesh(planeMesh);
 			renderer->SetMaterial(Text0Material);
 
+
 			ScoreSwapBehaviour::Sptr ScoreSwap = Score1->Add<ScoreSwapBehaviour>();
 			ScoreSwap->Text1Material = Text1Material;
 			ScoreSwap->Text2Material = Text2Material;
@@ -727,7 +728,7 @@ int main() {
 			renderer->SetMesh(planeMesh);
 			renderer->SetMaterial(Text0Material);
 
-			ScoreSwapBehaviour::Sptr ScoreSwap = Score2->Add<ScoreSwapBehaviour>();
+			ScoreSwapBehaviour::Sptr ScoreSwap = Score2->Add<ScoreSwapBehaviour>();			
 			ScoreSwap->Text1Material = Text1Material;
 			ScoreSwap->Text2Material = Text2Material;
 			ScoreSwap->Text3Material = Text3Material;

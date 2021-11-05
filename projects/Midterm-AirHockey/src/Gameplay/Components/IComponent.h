@@ -42,7 +42,7 @@ namespace Gameplay {
 		/// PUT THIS HERE FOR REASONS
 		/// </summary>
 		/// <param name="value"></param>
-		void SwapScore(int value){};
+		virtual void SwapScore(int value){};
 
 		/// <summary>
 		/// Invoked when a dynamic rigidbody attached to the parent gameobject has entered

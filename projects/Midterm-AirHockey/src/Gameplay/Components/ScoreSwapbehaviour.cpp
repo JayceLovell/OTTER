@@ -54,24 +54,37 @@ void ScoreSwapBehaviour::SwapScore(int WhichMaterial)
 	switch (WhichMaterial) {
 	case 1:
 		_renderer->SetMaterial(Text1Material);
+		break;
 	case 2:
 		_renderer->SetMaterial(Text2Material);
+		break;
 	case 3:
 		_renderer->SetMaterial(Text3Material);
+		break;
 	case 4:
 		_renderer->SetMaterial(Text4Material);
+		break;
 	case 5:
 		_renderer->SetMaterial(Text5Material);
+		break;
 	case 6:
 		_renderer->SetMaterial(Text6Material);
+		break;
 	case 7:
 		_renderer->SetMaterial(Text7Material);
+		break;
 	case 8:
 		_renderer->SetMaterial(Text8Material);
+		break;
 	case 9:
 		_renderer->SetMaterial(Text9Material);
+		break;
 	case 10:
 		_renderer->SetMaterial(Text10Material);
+		break;
+	default:
+		LOG_INFO("No Texture for value {}", WhichMaterial);
+		break;
 	}
 }
 

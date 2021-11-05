@@ -40,10 +40,12 @@ namespace Gameplay {
 		if (Player == "Player 1") {
 			Player1Score++;
 			LOG_INFO("Updated Player 1 Score");
-			GameObject::Sptr object = Scene().FindObjectByName("Score1");
+			GameObject::Sptr object = FindObjectByName("Score1");
+			object->Get<ScoreSwapBehaviour>()->SwapScore(Player1Score);
+			
 			if (Player1Score > 0) {
 				LOG_INFO("Calling score swap");
-				object->SwapScore(Player1Score);				
+				object->Get<ScoreSwapBehaviour>()->SwapScore(Player1Score);
 			}			
 		}
 		if (Player == "Player 2") {
