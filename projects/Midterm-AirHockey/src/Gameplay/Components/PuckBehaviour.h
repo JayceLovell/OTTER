@@ -19,7 +19,7 @@ public:
 
 	virtual void Awake() override;
 	virtual void Update(float deltaTime) override;
-	virtual void Reset();
+	virtual void Reset(std::string WhoScored);
 	virtual void OnEnteredTrigger(const std::shared_ptr<Gameplay::Physics::TriggerVolume>& trigger) override;
 	virtual void RenderImGui() override;
 	virtual nlohmann::json ToJson() const override;

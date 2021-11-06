@@ -104,20 +104,28 @@ void PuckBehaviour::OnEnteredTrigger(const Gameplay::Physics::TriggerVolume::Spt
 	{
 		LOG_INFO("Player 2 Score");
 		GetGameObject()->GetScene()->UpdateScore("Player 2");
-		Reset();
+		Reset("Player 2");
 	}
 	if (trigger->GetGameObject()->Name == "GoalLeftSide")
 	{
 		LOG_INFO("Player 1 Score");
 		GetGameObject()->GetScene()->UpdateScore("Player 1");
-		Reset();
+		Reset("Player 1");
 	}
 }
 /// <summary>
 /// Reset Puck
 /// </summary>
-void PuckBehaviour::Reset() {
-	GetGameObject()->SetPostion(glm::vec3(0.0f,0.0f,5.0f));
+void PuckBehaviour::Reset(std::string WhoScored) {
+	if (WhoScored == "Player 1") {
+		GetGameObject()->SetPostion(glm::vec3(-15.0f, 0.0f, 5.0f));
+	}
+	else if (WhoScored == "Player 2") {
+		GetGameObject()->SetPostion(glm::vec3(15.0f, 0.0f, 5.0f));
+	}
+	else {
+		GetGameObject()->SetPostion(glm::vec3(0.0f, 0.0f, 5.0f));
+	}
 }
 
 void PuckBehaviour::RenderImGui() {
