@@ -423,18 +423,34 @@ int main() {
 
 
 		// Create some lights for our scene
-		scene->Lights.resize(3);
+		scene->Lights.resize(7);
 		scene->Lights[0].Position = glm::vec3(0.0f, 1.0f, 50.0f);
 		scene->Lights[0].Color = glm::vec3(1.0f, 1.0f, 1.0f);
 		scene->Lights[0].Range = 1000.0f;
 
 		scene->Lights[1].Position = glm::vec3(48.0f, 0.0f, 1.0f);
-		scene->Lights[1].Color = glm::vec3(0.373f, 0.0f, 0.0f);
+		scene->Lights[1].Color = glm::vec3(0.0f, 0.0f, 0.255f);
 		scene->Lights[1].Range = 35.0f;
 
 		scene->Lights[2].Position = glm::vec3(-48.0f, 0.0f, 1.0f);
 		scene->Lights[2].Color = glm::vec3(0.373f, 0.0f, 0.0f);
 		scene->Lights[2].Range = 35.0f;
+
+		scene->Lights[3].Position = glm::vec3(36.0f, 46.0f, 14.0f);
+		scene->Lights[3].Color = glm::vec3(0.255f, 0.255f, 0.255f);
+		scene->Lights[3].Range = 73.0f;
+
+		scene->Lights[4].Position = glm::vec3(-36.0f, 46.0f, 14.0f);
+		scene->Lights[4].Color = glm::vec3(0.255f, 0.255f, 0.255f);
+		scene->Lights[4].Range = 73.0f;
+		//Lights for score
+		scene->Lights[5].Position = glm::vec3(-36.0f, -46.0f, 14.0f);
+		scene->Lights[5].Color = glm::vec3(0.255f, 0.255f, 0.255f);
+		scene->Lights[5].Range = 73.0f;
+
+		scene->Lights[6].Position = glm::vec3(36.0f, -46.0f, 14.0f);
+		scene->Lights[6].Color = glm::vec3(0.255f, 0.255f, 0.255f);
+		scene->Lights[6].Range = 73.0f;
 
 		// We'll create a mesh that is a simple plane that we can resize later
 		MeshResource::Sptr planeMesh = ResourceManager::CreateAsset<MeshResource>();
