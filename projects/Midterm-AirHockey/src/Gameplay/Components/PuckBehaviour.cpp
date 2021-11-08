@@ -118,10 +118,10 @@ void PuckBehaviour::OnEnteredTrigger(const Gameplay::Physics::TriggerVolume::Spt
 /// </summary>
 void PuckBehaviour::Reset(std::string WhoScored) {
 	if (WhoScored == "Player 1") {
-		GetGameObject()->SetPostion(glm::vec3(-15.0f, 0.0f, 5.0f));
+		GetGameObject()->SetPostion(glm::vec3(15.0f, 0.0f, 5.0f));
 	}
 	else if (WhoScored == "Player 2") {
-		GetGameObject()->SetPostion(glm::vec3(15.0f, 0.0f, 5.0f));
+		GetGameObject()->SetPostion(glm::vec3(-15.0f, 0.0f, 5.0f));
 	}
 	else {
 		GetGameObject()->SetPostion(glm::vec3(0.0f, 0.0f, 5.0f));
