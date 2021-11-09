@@ -124,6 +124,53 @@ void keyboard() {
 		tz -= 0.01;
 	}
 
+}//keyboard
+
+// Lecture 9
+GLuint filter_mode = GL_NEAREST;
+GLboolean aniso = GL_TRUE;
+GLboolean mipmap = GL_TRUE;
+void keyboard_callback(GLFWwindow*, int key, int scancode, int action, int mods) {
+	if (key == GLFW_KEY_F && action==GLFW_PRESS) {
+		if (filter_mode == GL_LINEAR) {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			filter_mode = GL_NEAREST;
+			printf("Filter: GL_NEAREST\n");
+		}
+		else {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			filter_mode = GL_LINEAR;
+			printf("Filter: GL_LINEAR\n");
+		}
+	}
+
+	if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+		if (aniso == GL_TRUE) {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, 1.0f);
+			aniso = GL_FALSE;
+			printf("ANiso: OFF\n");
+		}
+		else {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, 16.0f);
+			aniso = GL_TRUE;
+			printf("ANiso: ON\n");
+		}
+	}
+
+	if (key == GLFW_KEY_M && action == GLFW_PRESS) {
+		if (mipmap == GL_TRUE) {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter_mode);
+			mipmap = GL_FALSE;
+			printf("Mipmap: OFF\n");
+		}
+		else {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			mipmap = GL_TRUE;
+			printf("Mipmap: ON\n");
+		}
+	}
 }
 
 
@@ -275,6 +322,9 @@ int main() {
 
 	/////// TEXTURE
 	glUniform1i(glGetUniformLocation(shader_program, "myTextureSampler"), 0);
+
+	//lecture 9
+	glfwSetKeyCallback(window, keyboard_callback);
 
 	///// Game loop /////
 	while (!glfwWindowShouldClose(window)) {
