@@ -47,7 +47,7 @@ void main() {
 	vec3 environmentDir = reflect(-toEye, normal);
 	vec3 reflected = SampleEnvironmentMap(environmentDir);
 
-	float textureSpecular=1.00f;
+	float textureSpecular=0.10f;
 
 	// Will accumulate the contributions of all lights on this fragment
 	// This is defined in the fragment file "multiple_point_lights.glsl"

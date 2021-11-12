@@ -314,6 +314,7 @@ int main() {
 			testMaterial->Name = "Test";
 			testMaterial->MatShader = TestShader;
 			testMaterial->Specular = textTexture;
+			testMaterial->Texture = boxTexture;
 		}
 
 
@@ -333,7 +334,6 @@ int main() {
 			monkeyMaterial->MatShader = reflectiveShader;
 			monkeyMaterial->Texture = monkeyTex; 
 			monkeyMaterial->Shininess = 1.0f;
-
 		}
 
 		// Create some lights for our scene
