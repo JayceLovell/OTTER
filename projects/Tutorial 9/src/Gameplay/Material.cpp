@@ -5,20 +5,19 @@ namespace Gameplay {
 	void Material::Apply() {
 		// Material properties
 		//MatShader->SetUniform("u_Material.Shininess", Shininess);
-
 		MatShader->SetUniform("u_Material.Specular", 1);
 
 		if (Specular != nullptr) {
 			Specular->Bind(1);
 		}
-
-		// For textures, we pass the *slot* that the texture sure draw from
-		MatShader->SetUniform("u_Material.Diffuse", 1);	
-
-		// Bind the texture
-		if (Texture != nullptr) {
-			Texture->Bind(1);
-		}
+		
+			// For textures, we pass the *slot* that the texture sure draw from
+			MatShader->SetUniform("u_Material.Diffuse", 1);
+			// Bind the texture
+			if (Texture != nullptr) {
+				Texture->Bind(1);
+			}
+		
 
 	}
 
@@ -42,6 +41,7 @@ namespace Gameplay {
 			{ "shader", MatShader ? MatShader->GetGUID().str() : "null" },
 
 			{ "texture", Texture ? Texture->IResource::GetGUID().str() : "null" },
+			{"specular", Specular ? Specular ->IResource::GetGUID().str() : "null"},
 			//{ "shininess", Shininess },
 		};
 	}

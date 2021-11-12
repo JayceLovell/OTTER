@@ -102,7 +102,7 @@ GLFWwindow* window;
 // The current size of our window in pixels
 glm::ivec2 windowSize = glm::ivec2(800, 800);
 // The title of our GLFW window
-std::string windowTitle = "Tutorial 9";
+std::string windowTitle = "Tutorial 9 - I GIVE UP";
 
 // using namespace should generally be avoided, and if used, make sure it's ONLY in cpp files
 using namespace Gameplay;
@@ -314,7 +314,7 @@ int main() {
 			testMaterial->Name = "Test";
 			testMaterial->MatShader = TestShader;
 			testMaterial->Specular = textTexture;
-			testMaterial->Texture = boxTexture;
+			testMaterial->Texture = boxTexture; 
 		}
 
 
