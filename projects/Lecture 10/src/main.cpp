@@ -307,7 +307,7 @@ int main() {
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	loadImage("fence.png");
+	loadImage("box2.bmp");
 
 	GLuint textureHandle;
 

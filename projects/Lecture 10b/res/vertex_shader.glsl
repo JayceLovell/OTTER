@@ -21,8 +21,10 @@ void main() {
 	//Lec 10b
 	vec3 vert = vertex_pos;
 
+	vert.y = texture(myTextureSampler,vertex_uv).r;
+
 	// sin animation
-	vert.y = sin(vert.x * 5.0 + delta) * 0.2;
+	//vert.y = sin(vert.x * 5.0 + delta) * 0.2;
 
 	gl_Position = MVP * vec4(vert,1.0);
 
