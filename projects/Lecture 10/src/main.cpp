@@ -117,10 +117,10 @@ void keyboard() {
 		rx += 0.05;
 	}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		tz += 0.001;
+		tz += 0.01;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		tz -= 0.001;
+		tz -= 0.01;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {

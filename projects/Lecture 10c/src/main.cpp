@@ -105,22 +105,22 @@ GLuint filter_mode = GL_NEAREST;
 
 void keyboard() {
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		ry += 0.05;
+		ry += 0.50;
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-		ry -= 0.05;
+		ry -= 0.50;
 	}
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		rx -= 0.05;
+		rx -= 0.50;
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		rx += 0.05;
+		rx += 0.50;
 	}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		tz += 0.001;
+		tz += 0.50;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		tz -= 0.001;
+		tz -= 0.50;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
