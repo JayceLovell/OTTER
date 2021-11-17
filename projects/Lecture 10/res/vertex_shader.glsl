@@ -12,8 +12,9 @@ void main() {
 	outcolor = vertex_color;
 	texUV = vertex_uv;
 	//Lec10
+	//Flatten object
 	vec3 vert = vertex_pos;
-	vert.x = 0.0;
+	vert.y = 0.0;
 
 	gl_Position = MVP * vec4(vert, 1.0);
 	//gl_Position = MVP * vec4(vertex_pos, 1.0);

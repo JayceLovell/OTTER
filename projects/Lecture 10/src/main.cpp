@@ -36,7 +36,7 @@ bool initGLFW() {
 	}
 
 	//Create a new GLFW window
-	window = glfwCreateWindow(800, 800, "Window", nullptr, nullptr);
+	window = glfwCreateWindow(800, 800, "Jayce Lovell", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	return true;
@@ -117,10 +117,10 @@ void keyboard() {
 		rx += 0.05;
 	}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		tz += 0.01;
+		tz += 0.001;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		tz -= 0.01;
+		tz -= 0.001;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
@@ -231,7 +231,7 @@ int main() {
 		0.0f, 1.0f, 1.0f,
 		0.0f, 1.0f, 1.0f
 	};
-	
+
 	///////// TEXTURES ///////
 	static const GLfloat uv[] = {
 		0.0f, 0.0f,
@@ -284,13 +284,13 @@ int main() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, pos_vbo);
-	
+
 	//			(index, size, type, normalized, stride, pointer)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	//			(stride: byte offset between consecutive values)
 	//			(pointer: offset of the first component of the 
 	//			first attribute in the array - initial value is 0)
-	
+
 	glBindBuffer(GL_ARRAY_BUFFER, color_vbo);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
@@ -308,15 +308,15 @@ int main() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	loadImage("fence.png");
-	
+
 	GLuint textureHandle;
-	
-	
+
+
 	glGenTextures(1, &textureHandle);
-	
+
 	// "Bind" the newly created texture : all future texture functions will modify this texture
 	glBindTexture(GL_TEXTURE_2D, textureHandle);
-	
+
 	// Give the image to OpenGL
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 
@@ -327,7 +327,7 @@ int main() {
 	// Release the space used for your image once you're done
 	stbi_image_free(image);
 
-   
+
 	///////////////////////////
 
 
@@ -339,9 +339,9 @@ int main() {
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 	int width, height;
 	glfwGetWindowSize(window, &width, &height);
-	glm::mat4 Projection = 
-		glm::perspective(glm::radians(45.0f), 
-		(float)width / (float)height, 0.0001f, 100.0f);
+	glm::mat4 Projection =
+		glm::perspective(glm::radians(45.0f),
+			(float)width / (float)height, 0.0001f, 100.0f);
 
 	// Camera matrix
 	glm::mat4 View = glm::lookAt(
@@ -377,11 +377,11 @@ int main() {
 	/////// TEXTURE
 	glUniform1i(glGetUniformLocation(shader_program, "myTextureSampler"), 0);
 
-	
+
 	///// Game loop /////
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
-		
+
 		glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -390,20 +390,20 @@ int main() {
 		//Model = glm::mat4(1.0f);
 
 		keyboard();
-		
+
 		Model = glm::rotate(Model, glm::radians(ry), glm::vec3(0.0f, 1.0f, 0.0f));
 		Model = glm::rotate(Model, glm::radians(rx), glm::vec3(1.0f, 0.0f, 0.0f));
 		Model = glm::translate(Model, glm::vec3(0.0f, 0.0f, tz));
 		mvp = Projection * View * Model;
 		rx = ry = tz = 0;
-		
+
 		//Lecture 04
 		// Send our transformation to the currently bound shader, in the "MVP" uniform
 		// This is done in the main loop since each model will have a different MVP matrix (At least for the M part)
-		glUniformMatrix4fv(MatrixID, 1, 
+		glUniformMatrix4fv(MatrixID, 1,
 			GL_FALSE, &mvp[0][0]);
 
-		
+
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
