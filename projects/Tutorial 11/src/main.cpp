@@ -103,7 +103,7 @@ GLFWwindow* window;
 // The current size of our window in pixels
 glm::ivec2 windowSize = glm::ivec2(800, 800);
 // The title of our GLFW window
-std::string windowTitle = "Jayce Lovell - 100775118";
+std::string windowTitle = "INFR-1350U";
 
 // using namespace should generally be avoided, and if used, make sure it's ONLY in cpp files
 using namespace Gameplay;
@@ -260,9 +260,6 @@ void CreateScene() {
 			{ ShaderPartType::Fragment, "shaders/fragment_shaders/textured_specular.glsl" }
 		});
 
-
-		///////////////////// NEW SHADERS ////////////////////////////////////////////
-
 		// This shader handles our foliage vertex shader example
 		Shader::Sptr foliageShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
 			{ ShaderPartType::Vertex, "shaders/vertex_shaders/foliage.glsl" },
@@ -275,16 +272,38 @@ void CreateScene() {
 			{ ShaderPartType::Fragment, "shaders/fragment_shaders/toon_shading.glsl" }
 		});
 
+
+		///////////////////// NEW SHADERS ////////////////////////////////////////////
+
+		// This shader handles our displacement mapping example
+		Shader::Sptr displacementShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
+			{ ShaderPartType::Vertex, "shaders/vertex_shaders/displacement_mapping.glsl" }, 
+			{ ShaderPartType::Fragment, "shaders/fragment_shaders/frag_tangentspace_normal_maps.glsl" }
+		});    
+
+		// This shader handles our displacement mapping example
+		Shader::Sptr tangentSpaceMapping = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
+			{ ShaderPartType::Vertex, "shaders/vertex_shaders/basic.glsl" },
+			{ ShaderPartType::Fragment, "shaders/fragment_shaders/frag_tangentspace_normal_maps.glsl" }
+		});
+
+		// This shader handles our multitexturing example
+		Shader::Sptr multiTextureShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
+			{ ShaderPartType::Vertex, "shaders/vertex_shaders/vert_multitextured.glsl" },
+			{ ShaderPartType::Fragment, "shaders/fragment_shaders/frag_multitextured.glsl" }
+		});
+
 		// Load in the meshes
 		MeshResource::Sptr monkeyMesh = ResourceManager::CreateAsset<MeshResource>("Monkey.obj");
 
 		// Load in some textures
-		Texture2D::Sptr    boxTexture = ResourceManager::CreateAsset<Texture2D>("textures/box-diffuse.png");
-		Texture2D::Sptr    boxSpec    = ResourceManager::CreateAsset<Texture2D>("textures/box-specular.png");
-		Texture2D::Sptr    monkeyTex  = ResourceManager::CreateAsset<Texture2D>("textures/monkey-uvMap.png");
-		Texture2D::Sptr    leafTex    = ResourceManager::CreateAsset<Texture2D>("textures/leaves.png");
+		Texture2D::Sptr    boxTexture   = ResourceManager::CreateAsset<Texture2D>("textures/box-diffuse.png");
+		Texture2D::Sptr    boxSpec      = ResourceManager::CreateAsset<Texture2D>("textures/box-specular.png");
+		Texture2D::Sptr    monkeyTex    = ResourceManager::CreateAsset<Texture2D>("textures/monkey-uvMap.png");
+		Texture2D::Sptr    leafTex      = ResourceManager::CreateAsset<Texture2D>("textures/leaves.png");
 		leafTex->SetMinFilter(MinFilter::Nearest);
 		leafTex->SetMagFilter(MagFilter::Nearest);
+
 
 		// Here we'll load in the cubemap, as well as a special shader to handle drawing the skybox
 		TextureCube::Sptr testCubemap = ResourceManager::CreateAsset<TextureCube>("cubemaps/ocean/ocean.jpg");
@@ -327,8 +346,6 @@ void CreateScene() {
 			testMaterial->Set("u_Material.Specular", boxSpec);
 		}
 
-		/////////////// NEW MATERIALS ////////////////////
-
 		// Our foliage vertex shader material
 		Material::Sptr foliageMaterial = ResourceManager::CreateAsset<Material>(foliageShader);
 		{
@@ -352,6 +369,46 @@ void CreateScene() {
 			toonMaterial->Set("u_Material.Steps", 8);
 		}
 
+		/////////////// NEW MATERIALS ////////////////////
+
+		Material::Sptr displacementTest = ResourceManager::CreateAsset<Material>(displacementShader);
+		{
+			Texture2D::Sptr displacementMap = ResourceManager::CreateAsset<Texture2D>("textures/displacement_map.png");
+			Texture2D::Sptr normalMap       = ResourceManager::CreateAsset<Texture2D>("textures/normal_map.png");
+			Texture2D::Sptr diffuseMap      = ResourceManager::CreateAsset<Texture2D>("textures/bricks_diffuse.png");
+
+			displacementTest->Name = "Displacement Map";
+			displacementTest->Set("u_Material.Diffuse", diffuseMap);   
+			displacementTest->Set("s_Heightmap", displacementMap);
+			displacementTest->Set("s_NormalMap", normalMap);  
+			displacementTest->Set("u_Material.Shininess", 0.5f); 
+			displacementTest->Set("u_Scale", 0.1f);   
+		}
+
+		Material::Sptr normalmapMat = ResourceManager::CreateAsset<Material>(tangentSpaceMapping);
+		{
+			Texture2D::Sptr normalMap       = ResourceManager::CreateAsset<Texture2D>("textures/normal_map.png");
+			Texture2D::Sptr diffuseMap      = ResourceManager::CreateAsset<Texture2D>("textures/bricks_diffuse.png");
+
+			normalmapMat->Name = "Tangent Space Normal Map";
+			normalmapMat->Set("u_Material.Diffuse", diffuseMap);
+			normalmapMat->Set("s_NormalMap", normalMap);
+			normalmapMat->Set("u_Material.Shininess", 0.5f);
+			normalmapMat->Set("u_Scale", 0.1f);
+		}
+
+		Material::Sptr multiTextureMat = ResourceManager::CreateAsset<Material>(multiTextureShader); 
+		{
+			Texture2D::Sptr sand  = ResourceManager::CreateAsset<Texture2D>("textures/terrain/sand.png");
+			Texture2D::Sptr grass = ResourceManager::CreateAsset<Texture2D>("textures/terrain/grass.png");
+
+			multiTextureMat->Name = "Multitexturing";
+			multiTextureMat->Set("u_Material.DiffuseA", sand);
+			multiTextureMat->Set("u_Material.DiffuseB", grass); 
+			multiTextureMat->Set("u_Material.Shininess", 0.5f);
+			multiTextureMat->Set("u_Scale", 0.1f); 
+		}
+
 		// Create some lights for our scene
 		scene->Lights.resize(3);
 		scene->Lights[0].Position = glm::vec3(0.0f, 1.0f, 3.0f);
@@ -369,8 +426,12 @@ void CreateScene() {
 		planeMesh->AddParam(MeshBuilderParam::CreatePlane(ZERO, UNIT_Z, UNIT_X, glm::vec2(1.0f)));
 		planeMesh->GenerateMesh();
 
+		MeshResource::Sptr sphere = ResourceManager::CreateAsset<MeshResource>();
+		sphere->AddParam(MeshBuilderParam::CreateIcoSphere(ZERO, ONE, 5));
+		sphere->GenerateMesh();
+
 		// Set up the scene's camera
-		GameObject::Sptr camera = scene->CreateGameObject("Main Camera");
+		GameObject::Sptr camera = scene->CreateGameObject("Main Camera"); 
 		{
 			camera->SetPostion(glm::vec3(5.0f));
 			camera->LookAt(glm::vec3(0.0f));
@@ -400,7 +461,7 @@ void CreateScene() {
 			physics->AddCollider(BoxCollider::Create(glm::vec3(50.0f, 50.0f, 1.0f)))->SetPosition({ 0,0,-1 });
 		}
 
-		GameObject::Sptr monkey1 = scene->CreateGameObject("Monkey 1");
+		GameObject::Sptr monkey1 = scene->CreateGameObject("Monkey 1"); 
 		{
 			// Set position in the scene
 			monkey1->SetPostion(glm::vec3(1.5f, 0.0f, 1.0f));
@@ -416,6 +477,13 @@ void CreateScene() {
 			// Add a dynamic rigid body to this monkey
 			RigidBody::Sptr physics = monkey1->Add<RigidBody>(RigidBodyType::Dynamic);
 			physics->AddCollider(ConvexMeshCollider::Create());
+
+			// Example of a trigger that interacts with static and kinematic bodies as well as dynamic bodies
+			TriggerVolume::Sptr trigger = monkey1->Add<TriggerVolume>();
+			trigger->SetFlags(TriggerTypeFlags::Statics | TriggerTypeFlags::Kinematics);
+			trigger->AddCollider(BoxCollider::Create(glm::vec3(1.0f)));
+
+			monkey1->Add<TriggerVolumeEnterBehaviour>();
 		}
 
 		GameObject::Sptr monkey2 = scene->CreateGameObject("Complex Object");
@@ -435,7 +503,7 @@ void CreateScene() {
 		}
 
 		// Box to showcase the specular material
-		GameObject::Sptr specBox = scene->CreateGameObject("Specular Object");
+		GameObject::Sptr specBox = scene->CreateGameObject("Specular Object"); 
 		{
 			MeshResource::Sptr boxMesh = ResourceManager::CreateAsset<MeshResource>();
 			boxMesh->AddParam(MeshBuilderParam::CreateCube(ZERO, ONE));
@@ -450,15 +518,9 @@ void CreateScene() {
 			renderer->SetMaterial(testMaterial);
 		}
 
-		///// NEW OBJECTS ////
-
 		// sphere to showcase the foliage material
 		GameObject::Sptr foliageBall = scene->CreateGameObject("Foliage Sphere");
 		{
-			MeshResource::Sptr sphere = ResourceManager::CreateAsset<MeshResource>();
-			sphere->AddParam(MeshBuilderParam::CreateIcoSphere(ZERO, ONE, 8));
-			sphere->GenerateMesh(); 
-
 			// Set and rotation position in the scene
 			foliageBall->SetPostion(glm::vec3(-4.0f, -4.0f, 1.0f));
 
@@ -487,17 +549,48 @@ void CreateScene() {
 		// Box to showcase the specular material
 		GameObject::Sptr toonBall = scene->CreateGameObject("Toon Object");
 		{
-			MeshResource::Sptr sphere = ResourceManager::CreateAsset<MeshResource>();
-			sphere->AddParam(MeshBuilderParam::CreateIcoSphere(ZERO, ONE, 8));
-			sphere->GenerateMesh();
-
 			// Set and rotation position in the scene
 			toonBall->SetPostion(glm::vec3(-2.0f, -4.0f, 1.0f));
 
 			// Add a render component
 			RenderComponent::Sptr renderer = toonBall->Add<RenderComponent>();
 			renderer->SetMesh(sphere);
-			renderer->SetMaterial(toonMaterial);
+			renderer->SetMaterial(toonMaterial); 
+		}
+
+		///// NEW OBJECTS ////
+
+		GameObject::Sptr displacementBall = scene->CreateGameObject("Displacement Object");
+		{
+			// Set and rotation position in the scene
+			displacementBall->SetPostion(glm::vec3(2.0f, -4.0f, 1.0f));
+
+			// Add a render component
+			RenderComponent::Sptr renderer = displacementBall->Add<RenderComponent>();
+			renderer->SetMesh(sphere);
+			renderer->SetMaterial(displacementTest);
+		}
+
+		GameObject::Sptr multiTextureBall = scene->CreateGameObject("Multitextured Object");
+		{
+			// Set and rotation position in the scene 
+			multiTextureBall->SetPostion(glm::vec3(4.0f, -4.0f, 1.0f)); 
+
+			// Add a render component 
+			RenderComponent::Sptr renderer = multiTextureBall->Add<RenderComponent>();
+			renderer->SetMesh(sphere);
+			renderer->SetMaterial(multiTextureMat);
+		}
+
+		GameObject::Sptr normalMapBall = scene->CreateGameObject("Normal Mapped Object");
+		{
+			// Set and rotation position in the scene 
+			normalMapBall->SetPostion(glm::vec3(6.0f, -4.0f, 1.0f));
+
+			// Add a render component 
+			RenderComponent::Sptr renderer = normalMapBall->Add<RenderComponent>();
+			renderer->SetMesh(sphere);
+			renderer->SetMaterial(normalmapMat);
 		}
 
 		// Kinematic rigid bodies are those controlled by some outside controller
