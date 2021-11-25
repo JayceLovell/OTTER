@@ -102,7 +102,7 @@ GLFWwindow* window;
 // The current size of our window in pixels
 glm::ivec2 windowSize = glm::ivec2(800, 800);
 // The title of our GLFW window
-std::string windowTitle = "Tutorial 9";
+std::string windowTitle = "Tutorial 9 - I GIVE UP";
 
 // using namespace should generally be avoided, and if used, make sure it's ONLY in cpp files
 using namespace Gameplay;
@@ -270,6 +270,10 @@ int main() {
 		scene->Awake();
 	} 
 	else {
+		Shader::Sptr TestShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
+			{ ShaderPartType::Vertex, "shaders/vertex_shader.glsl" },
+			{ ShaderPartType::Fragment, "shaders/new_frag_shader.glsl" }
+		});
 		// This time we'll have 2 different shaders, and share data between both of them using the UBO
 		// This shader will handle reflective materials
 		Shader::Sptr reflectiveShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
@@ -285,6 +289,7 @@ int main() {
 
 		MeshResource::Sptr monkeyMesh = ResourceManager::CreateAsset<MeshResource>("Monkey.obj");
 		Texture2D::Sptr    boxTexture = ResourceManager::CreateAsset<Texture2D>("textures/box-diffuse.png");
+		Texture2D::Sptr	textTexture = ResourceManager::CreateAsset<Texture2D>("textures/box-specular.png");
 		Texture2D::Sptr    monkeyTex  = ResourceManager::CreateAsset<Texture2D>("textures/monkey-uvMap.png");  
 
 		// Here we'll load in the cubemap, as well as a special shader to handle drawing the skybox
@@ -302,8 +307,17 @@ int main() {
 		scene->SetSkyboxShader(skyboxShader);
 		// Since the skybox I used was for Y-up, we need to rotate it 90 deg around the X-axis to convert it to z-up
 		scene->SetSkyboxRotation(glm::rotate(MAT4_IDENTITY, glm::half_pi<float>(), glm::vec3(1.0f, 0.0f, 0.0f)));
-
+		
 		// Create our materials
+		Material::Sptr testMaterial = ResourceManager::CreateAsset<Material>();
+		{
+			testMaterial->Name = "Test";
+			testMaterial->MatShader = TestShader;
+			testMaterial->Specular = textTexture;
+			testMaterial->Texture = boxTexture; 
+		}
+
+
 		// This will be our box material, with no environment reflections
 		Material::Sptr boxMaterial = ResourceManager::CreateAsset<Material>();
 		{
@@ -320,7 +334,6 @@ int main() {
 			monkeyMaterial->MatShader = reflectiveShader;
 			monkeyMaterial->Texture = monkeyTex; 
 			monkeyMaterial->Shininess = 1.0f;
-
 		}
 
 		// Create some lights for our scene
@@ -419,6 +432,19 @@ int main() {
 			// This is an example of attaching a component and setting some parameters
 			RotatingBehaviour::Sptr behaviour = monkey2->Add<RotatingBehaviour>();
 			behaviour->RotationSpeed = glm::vec3(0.0f, 0.0f, -90.0f);
+		}
+
+		GameObject::Sptr cube = scene->CreateGameObject("Cube"); {
+			cube->SetPostion(glm::vec3(0.0f, -10.0f, 5.0f));
+
+			MeshResource::Sptr cubeMesh = ResourceManager::CreateAsset<MeshResource>();
+			cubeMesh->AddParam(MeshBuilderParam::CreateCube(ZERO, glm::vec3(10.0f), glm::vec3(0.0f), glm::vec4(1.0f)));
+			cubeMesh->GenerateMesh();
+
+			// Create and attach a RenderComponent to the object to draw our mesh
+			RenderComponent::Sptr renderer = cube->Add<RenderComponent>();
+			renderer->SetMesh(cubeMesh);
+			renderer->SetMaterial(testMaterial);
 		}
 
 		// Kinematic rigid bodies are those controlled by some outside controller

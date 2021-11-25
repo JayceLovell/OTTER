@@ -1,3 +1,4 @@
+//Jayce Lovell(100775118) - Jelani Garnes(100801696)
 #include <Logging.h>
 #include <iostream>
 

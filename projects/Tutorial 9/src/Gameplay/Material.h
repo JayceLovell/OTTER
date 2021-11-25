@@ -24,6 +24,8 @@ namespace Gameplay {
 		/// Material shader parameters
 		/// </summary>
 		Texture2D::Sptr Texture;
+
+		Texture2D::Sptr Specular;
 		/// <summary>
 		/// How reflective the material is, between 0 and 256, controls specular power
 		/// </summary>
