@@ -1,10 +1,14 @@
 #version 410
-
-layout(location = 1) in vec3 inColor;
+in vec3 color;
+in vec2 texUV;
 
 out vec4 frag_color;
 
-void main() { 
+uniform sampler2D myTextureSampler;
+
+void main() {
+
+	frag_color = texture(myTextureSampler, texUV);// * vec4(color, 1.0);
 	
-	frag_color = vec4(inColor, 1.0);
+	
 }

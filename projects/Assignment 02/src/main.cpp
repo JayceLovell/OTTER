@@ -106,7 +106,7 @@ GLFWwindow* window;
 // The current size of our window in pixels
 glm::ivec2 windowSize = glm::ivec2(800, 800);
 // The title of our GLFW window
-std::string windowTitle = "INFR-1350U";
+std::string windowTitle = "Assigment 2";
 
 // using namespace should generally be avoided, and if used, make sure it's ONLY in cpp files
 using namespace Gameplay;
@@ -274,6 +274,16 @@ void CreateScene() {
 			{ ShaderPartType::Vertex, "shaders/vertex_shaders/basic.glsl" },
 			{ ShaderPartType::Fragment, "shaders/fragment_shaders/toon_shading.glsl" }
 		});
+		//height map shader
+		/*Shader::Sptr HeightShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
+			{ ShaderPartType::Vertex, "shaders/vertex_shaders/heightmap.glsl" },
+			{ ShaderPartType::Fragment, "shaders/fragment_shaders/frag_shader.glsl" }
+		});*/
+		//waves shader
+		/*Shader::Sptr WaveShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
+			{ ShaderPartType::Vertex, "shaders/vertex_shaders/waves.glsl" },
+			{ ShaderPartType::Fragment, "shaders/fragment_shader/frag_shader.glsl" }
+		});*/
 
 
 		///////////////////// NEW SHADERS ////////////////////////////////////////////
@@ -310,11 +320,13 @@ void CreateScene() {
 		scene = std::make_shared<Scene>();
 
 		//Materials
-		Material::Sptr grassMaterial = ResourceManager::CreateAsset<Material>(basicShader);
+		Material::Sptr grassMaterial = ResourceManager::CreateAsset<Material>(multiTextureShader);
 		{
 			grassMaterial->Name = "Grass";
-			grassMaterial->Set("u_Material.Diffuse", grassTexture);
-			grassMaterial->Set("u_Material.Shininess", 0.1f);
+			grassMaterial->Set("u_Material.DiffuseA", grassTexture);
+			grassMaterial->Set("u_Material.DiffuseB", sandTexture);
+			grassMaterial->Set("u_Material.Shininess", 0.5f);
+			grassMaterial->Set("u_Scale", 0.5f);			
 		}
 
 		// Create some lights for our scene
