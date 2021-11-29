@@ -11,7 +11,7 @@ uniform sampler2D s_NormalMap;
 uniform float u_Scale;
 
 void main() {
-    
+
     // Read our displacement value from the texture and apply the scale
     float displacement = textureLod(s_Heightmap, inUV, 0).r * u_Scale;
     // We'll use our surface normal for the dispalcement. We could use a normal map,

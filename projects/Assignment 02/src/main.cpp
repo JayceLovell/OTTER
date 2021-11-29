@@ -263,27 +263,11 @@ void CreateScene() {
 			{ ShaderPartType::Fragment, "shaders/fragment_shaders/textured_specular.glsl" }
 		});
 
-		// This shader handles our foliage vertex shader example
-		Shader::Sptr foliageShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
-			{ ShaderPartType::Vertex, "shaders/vertex_shaders/foliage.glsl" },
-			{ ShaderPartType::Fragment, "shaders/fragment_shaders/screendoor_transparency.glsl" }
-		});
-
 		// This shader handles our cel shading example
 		Shader::Sptr toonShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
 			{ ShaderPartType::Vertex, "shaders/vertex_shaders/basic.glsl" },
 			{ ShaderPartType::Fragment, "shaders/fragment_shaders/toon_shading.glsl" }
 		});
-		//height map shader
-		/*Shader::Sptr HeightShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
-			{ ShaderPartType::Vertex, "shaders/vertex_shaders/heightmap.glsl" },
-			{ ShaderPartType::Fragment, "shaders/fragment_shaders/frag_shader.glsl" }
-		});*/
-		//waves shader
-		/*Shader::Sptr WaveShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
-			{ ShaderPartType::Vertex, "shaders/vertex_shaders/waves.glsl" },
-			{ ShaderPartType::Fragment, "shaders/fragment_shader/frag_shader.glsl" }
-		});*/
 
 
 		///////////////////// NEW SHADERS ////////////////////////////////////////////
@@ -306,11 +290,18 @@ void CreateScene() {
 			{ ShaderPartType::Fragment, "shaders/fragment_shaders/frag_multitextured.glsl" }
 		});
 
+		Shader::Sptr WaterShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
+			{ ShaderPartType::Vertex, "shaders/vertex_shaders/water.glsl" },
+			{ ShaderPartType::Fragment, "shaders/fragment_shaders/frag_water.glsl" }
+		});
+
 		//Mesh
 		MeshResource::Sptr planeMesh = ResourceManager::CreateAsset<MeshResource>("plane.obj");
 
 		//Texture
 		Texture2D::Sptr	grassTexture = ResourceManager::CreateAsset<Texture2D>("textures/grass.jpg");
+		Texture2D::Sptr	HeightMap2 = ResourceManager::CreateAsset<Texture2D>("textures/heightmap2.png");
+		Texture2D::Sptr	HeightMap = ResourceManager::CreateAsset<Texture2D>("textures/grassheight.png");
 		Texture2D::Sptr	sandTexture = ResourceManager::CreateAsset<Texture2D>("textures/sand.jpg");
 		Texture2D::Sptr	snowTexture = ResourceManager::CreateAsset<Texture2D>("textures/snow.jpg");
 		Texture2D::Sptr	stoneTexture = ResourceManager::CreateAsset<Texture2D>("textures/stone.jpg");
@@ -320,20 +311,60 @@ void CreateScene() {
 		scene = std::make_shared<Scene>();
 
 		//Materials
-		Material::Sptr grassMaterial = ResourceManager::CreateAsset<Material>(multiTextureShader);
+		Material::Sptr SandMaterial = ResourceManager::CreateAsset<Material>(displacementShader);
 		{
-			grassMaterial->Name = "Grass";
-			grassMaterial->Set("u_Material.DiffuseA", grassTexture);
-			grassMaterial->Set("u_Material.DiffuseB", sandTexture);
-			grassMaterial->Set("u_Material.Shininess", 0.5f);
-			grassMaterial->Set("u_Scale", 0.5f);			
+
+			SandMaterial->Name = "SandMaterial";
+			SandMaterial->Set("u_Material.Diffuse", sandTexture);
+			SandMaterial->Set("s_Heightmap", HeightMap2);
+			SandMaterial->Set("s_NormalMap", sandTexture);
+			SandMaterial->Set("u_Material.Shininess", 0.5f);
+			SandMaterial->Set("u_Scale", 0.1f);
+		}
+
+		Material::Sptr GrassMaterial = ResourceManager::CreateAsset<Material>(displacementShader);
+		{
+			GrassMaterial->Name = "Grass";
+			GrassMaterial->Set("u_Material.Diffuse", grassTexture);
+			GrassMaterial->Set("s_Heightmap", HeightMap2);
+			GrassMaterial->Set("s_NormalMap", grassTexture);
+			GrassMaterial->Set("u_Material.Shininess", 0.5f);
+			GrassMaterial->Set("u_Scale", 0.2f);			
+		}
+		Material::Sptr StoneMaterial = ResourceManager::CreateAsset<Material>(displacementShader);
+		{
+			StoneMaterial->Name = "Stone";
+			StoneMaterial->Set("u_Material.Diffuse", stoneTexture);
+			StoneMaterial->Set("s_Heightmap", HeightMap2);
+			StoneMaterial->Set("s_NormalMap", stoneTexture);
+			StoneMaterial->Set("u_Material.Shininess", 0.5f);
+			StoneMaterial->Set("u_Scale", 0.3f);
+		}
+		Material::Sptr SnowMaterial = ResourceManager::CreateAsset<Material>(displacementShader);
+		{
+			SnowMaterial->Name = "Snow";
+			SnowMaterial->Set("u_Material.Diffuse", snowTexture);
+			SnowMaterial->Set("s_Heightmap", HeightMap2);
+			SnowMaterial->Set("s_NormalMap", snowTexture);
+			SnowMaterial->Set("u_Material.Shininess", 0.5f);
+			SnowMaterial->Set("u_Scale", 0.4f);
+		}
+
+		Material::Sptr WaterMaterial = ResourceManager::CreateAsset<Material>(WaterShader);
+		{
+			WaterMaterial->Name = "WaterMaterial";
+			WaterMaterial->Set("u_Material.Diffuse", waterTexture);
+			WaterMaterial->Set("u_Material.Shininess", 0.1f);
 		}
 
 		// Create some lights for our scene
 		scene->Lights.resize(3);
-		scene->Lights[0].Position = glm::vec3(0.0f, 1.0f, 3.0f);
+		scene->Lights[0].Position = glm::vec3(-2.45f, 2.0f, -1.420f);
 		scene->Lights[0].Color = glm::vec3(1.0f, 1.0f, 1.0f);
 		scene->Lights[0].Range = 100.0f;
+		scene->Lights[1].Position = glm::vec3(-0.09f, -2.95f, 0.0f);
+		scene->Lights[1].Color = glm::vec3(1.0f, 1.0f, 1.0f);
+		scene->Lights[1].Range = 100.0f;
 
 		// Set up the scene's camera
 		GameObject::Sptr camera = scene->CreateGameObject("Main Camera");
@@ -349,18 +380,56 @@ void CreateScene() {
 		}
 
 		// Set up all our sample objects
-		GameObject::Sptr plane = scene->CreateGameObject("Plane");
+		GameObject::Sptr SandPlane = scene->CreateGameObject("SandPlane");
 		{
-			// Make a big tiled mesh
-			MeshResource::Sptr planeMesh = ResourceManager::CreateAsset<MeshResource>();
-			planeMesh->AddParam(MeshBuilderParam::CreatePlane(ZERO, UNIT_Z, UNIT_X, glm::vec2(100.0f), glm::vec2(20.0f)));
-			planeMesh->GenerateMesh();
+			SandPlane->SetScale(glm::vec3(5.0f));
 
 			// Create and attach a RenderComponent to the object to draw our mesh
-			RenderComponent::Sptr renderer = plane->Add<RenderComponent>();
+			RenderComponent::Sptr renderer = SandPlane->Add<RenderComponent>();
 			renderer->SetMesh(planeMesh);
-			renderer->SetMaterial(grassMaterial);
+			renderer->SetMaterial(SandMaterial);
 		}
+		GameObject::Sptr WaterPlane = scene->CreateGameObject("WaterPlane");
+		{
+			WaterPlane->SetScale(glm::vec3(1.8f));
+			WaterPlane->SetPostion(glm::vec3(0.0f, 0.0f, 0.03f));
+
+			// Create and attach a RenderComponent to the object to draw our mesh
+			RenderComponent::Sptr renderer = WaterPlane->Add<RenderComponent>();
+			renderer->SetMesh(planeMesh);
+			renderer->SetMaterial(WaterMaterial);
+		}
+		GameObject::Sptr GrassPlane = scene->CreateGameObject("GrassPlane");
+		{
+			GrassPlane->SetScale(glm::vec3(5.0f));
+			GrassPlane->SetPostion(glm::vec3(0.0f, 0.0f, -0.06f));
+
+			// Create and attach a RenderComponent to the object to draw our mesh
+			RenderComponent::Sptr renderer = GrassPlane->Add<RenderComponent>();
+			renderer->SetMesh(planeMesh);
+			renderer->SetMaterial(GrassMaterial);
+		}
+		GameObject::Sptr StonePlane = scene->CreateGameObject("StonePlane");
+		{
+			StonePlane->SetScale(glm::vec3(5.0f));
+			StonePlane->SetPostion(glm::vec3(0.0f, 0.0f, -0.31f));
+
+			// Create and attach a RenderComponent to the object to draw our mesh
+			RenderComponent::Sptr renderer = StonePlane->Add<RenderComponent>();
+			renderer->SetMesh(planeMesh);
+			renderer->SetMaterial(StoneMaterial);
+		}
+		GameObject::Sptr SnowPlane = scene->CreateGameObject("SnowPlane");
+		{
+			SnowPlane->SetScale(glm::vec3(5.0f));
+			SnowPlane->SetPostion(glm::vec3(0.0f, 0.0f, -0.67f));
+
+			// Create and attach a RenderComponent to the object to draw our mesh
+			RenderComponent::Sptr renderer = SnowPlane->Add<RenderComponent>();
+			renderer->SetMesh(planeMesh);
+			renderer->SetMaterial(SnowMaterial);
+		}
+		
 		// Call scene awake to start up all of our components
 		scene->Window = window;
 		scene->Awake();
@@ -381,6 +450,7 @@ int main() {
 			//Initialize GLAD
 			if (!initGLAD())
 				return 1;
+
 
 			// Let OpenGL know that we want debug output, and route it to our handler function
 			glEnable(GL_DEBUG_OUTPUT);
