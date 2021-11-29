@@ -274,16 +274,6 @@ void CreateScene() {
 			{ ShaderPartType::Vertex, "shaders/vertex_shaders/basic.glsl" },
 			{ ShaderPartType::Fragment, "shaders/fragment_shaders/toon_shading.glsl" }
 		});
-		//height map shader
-		/*Shader::Sptr HeightShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
-			{ ShaderPartType::Vertex, "shaders/vertex_shaders/heightmap.glsl" },
-			{ ShaderPartType::Fragment, "shaders/fragment_shaders/frag_shader.glsl" }
-		});*/
-		//waves shader
-		Shader::Sptr WaveShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
-			{ ShaderPartType::Vertex, "shaders/vertex_shaders/waves.glsl" },
-			{ ShaderPartType::Fragment, "shaders/fragment_shader/frag_shader.glsl" }
-		});
 
 
 		///////////////////// NEW SHADERS ////////////////////////////////////////////
@@ -311,6 +301,7 @@ void CreateScene() {
 
 		//Texture
 		Texture2D::Sptr	grassTexture = ResourceManager::CreateAsset<Texture2D>("textures/grass.jpg");
+		Texture2D::Sptr	HeightMap = ResourceManager::CreateAsset<Texture2D>("textures/grassheight.png");
 		Texture2D::Sptr	sandTexture = ResourceManager::CreateAsset<Texture2D>("textures/sand.jpg");
 		Texture2D::Sptr	snowTexture = ResourceManager::CreateAsset<Texture2D>("textures/snow.jpg");
 		Texture2D::Sptr	stoneTexture = ResourceManager::CreateAsset<Texture2D>("textures/stone.jpg");
@@ -320,13 +311,32 @@ void CreateScene() {
 		scene = std::make_shared<Scene>();
 
 		//Materials
-		Material::Sptr LandMaterial = ResourceManager::CreateAsset<Material>(multiTextureShader);
+		Material::Sptr GrassMaterial = ResourceManager::CreateAsset<Material>(displacementShader);
 		{
-			LandMaterial->Name = "Grass";
-			LandMaterial->Set("u_Material.DiffuseA", grassTexture);
-			LandMaterial->Set("u_Material.DiffuseB", snowTexture);
-			LandMaterial->Set("u_Material.Shininess", 0.5f);
-			LandMaterial->Set("u_Scale", 0.5f);			
+			GrassMaterial->Name = "Grass";
+			GrassMaterial->Set("u_Material.Diffuse", grassTexture);
+			GrassMaterial->Set("s_Heightmap", HeightMap);
+			GrassMaterial->Set("s_NormalMap", grassTexture);
+			GrassMaterial->Set("u_Material.Shininess", 0.5f);
+			GrassMaterial->Set("u_Scale", 0.3f);			
+		}
+		Material::Sptr StoneMaterial = ResourceManager::CreateAsset<Material>(displacementShader);
+		{
+			StoneMaterial->Name = "Stone";
+			StoneMaterial->Set("u_Material.Diffuse", stoneTexture);
+			StoneMaterial->Set("s_Heightmap", HeightMap);
+			StoneMaterial->Set("s_NormalMap", stoneTexture);
+			StoneMaterial->Set("u_Material.Shininess", 0.5f);
+			StoneMaterial->Set("u_Scale", 0.4f);
+		}
+		Material::Sptr SnowMaterial = ResourceManager::CreateAsset<Material>(displacementShader);
+		{
+			SnowMaterial->Name = "Snow";
+			SnowMaterial->Set("u_Material.Diffuse", snowTexture);
+			SnowMaterial->Set("s_Heightmap", HeightMap);
+			SnowMaterial->Set("s_NormalMap", snowTexture);
+			SnowMaterial->Set("u_Material.Shininess", 0.5f);
+			SnowMaterial->Set("u_Scale", 0.5f);
 		}
 
 		Material::Sptr SandMaterial = ResourceManager::CreateAsset<Material>(displacementShader);
@@ -339,33 +349,21 @@ void CreateScene() {
 			SandMaterial->Set("u_Material.Shininess", 0.5f);
 			SandMaterial->Set("u_Scale", 0.1f);
 		}
-		Material::Sptr WaterMaterial = ResourceManager::CreateAsset<Material>(WaveShader);
+		Material::Sptr WaterMaterial = ResourceManager::CreateAsset<Material>(basicShader);
 		{
 			WaterMaterial->Name = "WaterMaterial";
-			WaterMaterial->Set("myTextureSampler", waterTexture);
-
-			//WaterMaterial->Set("u_Material.Diffuse", waterTexture);
-			//WaterMaterial->Set("s_Heightmap", waterTexture);
-			//WaterMaterial->Set("s_NormalMap", waterTexture);
-			//WaterMaterial->Set("u_Material.Shininess", 0.5f);
-			//WaterMaterial->Set("u_Scale", 0.1f);
-
-			/*WaterMaterial->Name = "Foliage Shader";
 			WaterMaterial->Set("u_Material.Diffuse", waterTexture);
 			WaterMaterial->Set("u_Material.Shininess", 0.1f);
-			WaterMaterial->Set("u_Material.Threshold", 0.1f);
-
-			WaterMaterial->Set("u_WindDirection", glm::vec3(1.0f, 1.0f, 0.0f));
-			WaterMaterial->Set("u_WindStrength", 0.5f);
-			WaterMaterial->Set("u_VerticalScale", 1.0f);
-			WaterMaterial->Set("u_WindSpeed", 1.0f);*/
 		}
 
 		// Create some lights for our scene
 		scene->Lights.resize(3);
-		scene->Lights[0].Position = glm::vec3(0.0f, 1.0f, 3.0f);
+		scene->Lights[0].Position = glm::vec3(-2.45f, 2.0f, -1.420f);
 		scene->Lights[0].Color = glm::vec3(1.0f, 1.0f, 1.0f);
 		scene->Lights[0].Range = 100.0f;
+		scene->Lights[1].Position = glm::vec3(-0.09f, -2.95f, 0.0f);
+		scene->Lights[1].Color = glm::vec3(1.0f, 1.0f, 1.0f);
+		scene->Lights[1].Range = 100.0f;
 
 		// Set up the scene's camera
 		GameObject::Sptr camera = scene->CreateGameObject("Main Camera");
@@ -393,13 +391,43 @@ void CreateScene() {
 		GameObject::Sptr WaterPlane = scene->CreateGameObject("WaterPlane");
 		{
 			WaterPlane->SetScale(glm::vec3(5.0f));
-			WaterPlane->SetPostion(glm::vec3(0.0f, 0.0f, 1.0f));
+			WaterPlane->SetPostion(glm::vec3(0.0f, 0.0f, 0.45f));
 
 			// Create and attach a RenderComponent to the object to draw our mesh
 			RenderComponent::Sptr renderer = WaterPlane->Add<RenderComponent>();
 			renderer->SetMesh(planeMesh);
 			renderer->SetMaterial(WaterMaterial);
 		}
+		GameObject::Sptr GrassPlane = scene->CreateGameObject("GrassPlane");
+		{
+			GrassPlane->SetScale(glm::vec3(5.0f));
+
+			// Create and attach a RenderComponent to the object to draw our mesh
+			RenderComponent::Sptr renderer = GrassPlane->Add<RenderComponent>();
+			renderer->SetMesh(planeMesh);
+			renderer->SetMaterial(GrassMaterial);
+		}
+		GameObject::Sptr StonePlane = scene->CreateGameObject("StonePlane");
+		{
+			StonePlane->SetScale(glm::vec3(5.0f));
+			StonePlane->SetPostion(glm::vec3(0.0f, 0.0f, -0.39f));
+
+			// Create and attach a RenderComponent to the object to draw our mesh
+			RenderComponent::Sptr renderer = StonePlane->Add<RenderComponent>();
+			renderer->SetMesh(planeMesh);
+			renderer->SetMaterial(StoneMaterial);
+		}
+		GameObject::Sptr SnowPlane = scene->CreateGameObject("SnowPlane");
+		{
+			SnowPlane->SetScale(glm::vec3(5.0f));
+			SnowPlane->SetPostion(glm::vec3(0.0f, 0.0f, -0.83f));
+
+			// Create and attach a RenderComponent to the object to draw our mesh
+			RenderComponent::Sptr renderer = SnowPlane->Add<RenderComponent>();
+			renderer->SetMesh(planeMesh);
+			renderer->SetMaterial(SnowMaterial);
+		}
+		
 		// Call scene awake to start up all of our components
 		scene->Window = window;
 		scene->Awake();
