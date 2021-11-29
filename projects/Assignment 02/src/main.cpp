@@ -264,7 +264,7 @@ void CreateScene() {
 		});
 
 		// This shader handles our foliage vertex shader example
-		Shader::Sptr foliageShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
+		Shader::Sptr WaterShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
 			{ ShaderPartType::Vertex, "shaders/vertex_shaders/foliage.glsl" },
 			{ ShaderPartType::Fragment, "shaders/fragment_shaders/screendoor_transparency.glsl" }
 		});
@@ -280,10 +280,10 @@ void CreateScene() {
 			{ ShaderPartType::Fragment, "shaders/fragment_shaders/frag_shader.glsl" }
 		});*/
 		//waves shader
-		/*Shader::Sptr WaveShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
+		Shader::Sptr WaveShader = ResourceManager::CreateAsset<Shader>(std::unordered_map<ShaderPartType, std::string>{
 			{ ShaderPartType::Vertex, "shaders/vertex_shaders/waves.glsl" },
 			{ ShaderPartType::Fragment, "shaders/fragment_shader/frag_shader.glsl" }
-		});*/
+		});
 
 
 		///////////////////// NEW SHADERS ////////////////////////////////////////////
@@ -320,13 +320,45 @@ void CreateScene() {
 		scene = std::make_shared<Scene>();
 
 		//Materials
-		Material::Sptr grassMaterial = ResourceManager::CreateAsset<Material>(multiTextureShader);
+		Material::Sptr LandMaterial = ResourceManager::CreateAsset<Material>(multiTextureShader);
 		{
-			grassMaterial->Name = "Grass";
-			grassMaterial->Set("u_Material.DiffuseA", grassTexture);
-			grassMaterial->Set("u_Material.DiffuseB", sandTexture);
-			grassMaterial->Set("u_Material.Shininess", 0.5f);
-			grassMaterial->Set("u_Scale", 0.5f);			
+			LandMaterial->Name = "Grass";
+			LandMaterial->Set("u_Material.DiffuseA", grassTexture);
+			LandMaterial->Set("u_Material.DiffuseB", snowTexture);
+			LandMaterial->Set("u_Material.Shininess", 0.5f);
+			LandMaterial->Set("u_Scale", 0.5f);			
+		}
+
+		Material::Sptr SandMaterial = ResourceManager::CreateAsset<Material>(displacementShader);
+		{
+
+			SandMaterial->Name = "SandMaterial";
+			SandMaterial->Set("u_Material.Diffuse", sandTexture);
+			SandMaterial->Set("s_Heightmap", sandTexture);
+			SandMaterial->Set("s_NormalMap", sandTexture);
+			SandMaterial->Set("u_Material.Shininess", 0.5f);
+			SandMaterial->Set("u_Scale", 0.1f);
+		}
+		Material::Sptr WaterMaterial = ResourceManager::CreateAsset<Material>(WaveShader);
+		{
+			WaterMaterial->Name = "WaterMaterial";
+			WaterMaterial->Set("myTextureSampler", waterTexture);
+
+			//WaterMaterial->Set("u_Material.Diffuse", waterTexture);
+			//WaterMaterial->Set("s_Heightmap", waterTexture);
+			//WaterMaterial->Set("s_NormalMap", waterTexture);
+			//WaterMaterial->Set("u_Material.Shininess", 0.5f);
+			//WaterMaterial->Set("u_Scale", 0.1f);
+
+			/*WaterMaterial->Name = "Foliage Shader";
+			WaterMaterial->Set("u_Material.Diffuse", waterTexture);
+			WaterMaterial->Set("u_Material.Shininess", 0.1f);
+			WaterMaterial->Set("u_Material.Threshold", 0.1f);
+
+			WaterMaterial->Set("u_WindDirection", glm::vec3(1.0f, 1.0f, 0.0f));
+			WaterMaterial->Set("u_WindStrength", 0.5f);
+			WaterMaterial->Set("u_VerticalScale", 1.0f);
+			WaterMaterial->Set("u_WindSpeed", 1.0f);*/
 		}
 
 		// Create some lights for our scene
@@ -349,17 +381,24 @@ void CreateScene() {
 		}
 
 		// Set up all our sample objects
-		GameObject::Sptr plane = scene->CreateGameObject("Plane");
+		GameObject::Sptr SandPlane = scene->CreateGameObject("SandPlane");
 		{
-			// Make a big tiled mesh
-			MeshResource::Sptr planeMesh = ResourceManager::CreateAsset<MeshResource>();
-			planeMesh->AddParam(MeshBuilderParam::CreatePlane(ZERO, UNIT_Z, UNIT_X, glm::vec2(100.0f), glm::vec2(20.0f)));
-			planeMesh->GenerateMesh();
+			SandPlane->SetScale(glm::vec3(5.0f));
 
 			// Create and attach a RenderComponent to the object to draw our mesh
-			RenderComponent::Sptr renderer = plane->Add<RenderComponent>();
+			RenderComponent::Sptr renderer = SandPlane->Add<RenderComponent>();
 			renderer->SetMesh(planeMesh);
-			renderer->SetMaterial(grassMaterial);
+			renderer->SetMaterial(SandMaterial);
+		}
+		GameObject::Sptr WaterPlane = scene->CreateGameObject("WaterPlane");
+		{
+			WaterPlane->SetScale(glm::vec3(5.0f));
+			WaterPlane->SetPostion(glm::vec3(0.0f, 0.0f, 1.0f));
+
+			// Create and attach a RenderComponent to the object to draw our mesh
+			RenderComponent::Sptr renderer = WaterPlane->Add<RenderComponent>();
+			renderer->SetMesh(planeMesh);
+			renderer->SetMaterial(WaterMaterial);
 		}
 		// Call scene awake to start up all of our components
 		scene->Window = window;
