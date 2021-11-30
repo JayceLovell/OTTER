@@ -318,35 +318,35 @@ void CreateScene() {
 			SandMaterial->Set("u_Material.Diffuse", sandTexture);
 			SandMaterial->Set("s_Heightmap", HeightMap2);
 			SandMaterial->Set("s_NormalMap", sandTexture);
-			SandMaterial->Set("u_Material.Shininess", 0.5f);
+			SandMaterial->Set("u_Material.Shininess", 0.1f);
 			SandMaterial->Set("u_Scale", 0.1f);
 		}
 
 		Material::Sptr GrassMaterial = ResourceManager::CreateAsset<Material>(displacementShader);
 		{
-			GrassMaterial->Name = "Grass";
+			GrassMaterial->Name = "GrassMaterial";
 			GrassMaterial->Set("u_Material.Diffuse", grassTexture);
 			GrassMaterial->Set("s_Heightmap", HeightMap2);
 			GrassMaterial->Set("s_NormalMap", grassTexture);
-			GrassMaterial->Set("u_Material.Shininess", 0.5f);
+			GrassMaterial->Set("u_Material.Shininess", 0.1f);
 			GrassMaterial->Set("u_Scale", 0.2f);			
 		}
 		Material::Sptr StoneMaterial = ResourceManager::CreateAsset<Material>(displacementShader);
 		{
-			StoneMaterial->Name = "Stone";
+			StoneMaterial->Name = "StoneMaterial";
 			StoneMaterial->Set("u_Material.Diffuse", stoneTexture);
 			StoneMaterial->Set("s_Heightmap", HeightMap2);
 			StoneMaterial->Set("s_NormalMap", stoneTexture);
-			StoneMaterial->Set("u_Material.Shininess", 0.5f);
+			StoneMaterial->Set("u_Material.Shininess", 0.1f);
 			StoneMaterial->Set("u_Scale", 0.3f);
 		}
 		Material::Sptr SnowMaterial = ResourceManager::CreateAsset<Material>(displacementShader);
 		{
-			SnowMaterial->Name = "Snow";
+			SnowMaterial->Name = "SnowMaterial";
 			SnowMaterial->Set("u_Material.Diffuse", snowTexture);
 			SnowMaterial->Set("s_Heightmap", HeightMap2);
 			SnowMaterial->Set("s_NormalMap", snowTexture);
-			SnowMaterial->Set("u_Material.Shininess", 0.5f);
+			SnowMaterial->Set("u_Material.Shininess", 0.1f);
 			SnowMaterial->Set("u_Scale", 0.4f);
 		}
 
@@ -354,7 +354,8 @@ void CreateScene() {
 		{
 			WaterMaterial->Name = "WaterMaterial";
 			WaterMaterial->Set("u_Material.Diffuse", waterTexture);
-			WaterMaterial->Set("u_Material.Shininess", 0.1f);
+			WaterMaterial->Set("u_Material.Shininess", 0.5f);
+			WaterMaterial->Set("u_Material.Threshold", 0.5f);
 		}
 
 		// Create some lights for our scene
