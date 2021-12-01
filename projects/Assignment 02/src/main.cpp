@@ -106,7 +106,7 @@ GLFWwindow* window;
 // The current size of our window in pixels
 glm::ivec2 windowSize = glm::ivec2(800, 800);
 // The title of our GLFW window
-std::string windowTitle = "Assigment 2";
+std::string windowTitle = "Assigment 2 - Jayce Lovell(100775118) - Jelani Garnes(100801696) ";
 
 // using namespace should generally be avoided, and if used, make sure it's ONLY in cpp files
 using namespace Gameplay;
