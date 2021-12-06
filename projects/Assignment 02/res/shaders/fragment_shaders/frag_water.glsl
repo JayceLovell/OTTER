@@ -15,6 +15,7 @@ layout(location = 0) out vec4 frag_color;
 struct Material {
 	sampler2D Diffuse;
 	float     Shininess;
+	float     Threshold;
 };
 // Create a uniform for the material
 uniform Material u_Material;
@@ -33,14 +34,20 @@ uniform Material u_Material;
 
 // https://learnopengl.com/Advanced-Lighting/Advanced-Lighting
 void main() {
+
+	// Get the albedo from the diffuse / albedo map
+	vec4 textureColor = texture(u_Material.Diffuse, inUV);
+
+	if (textureColor.a < u_Material.Threshold) {
+        discard;
+    }
+
 	// Normalize our input normal
 	vec3 normal = normalize(inNormal);
 
 	// Use the lighting calculation that we included from our partial file
 	vec3 lightAccumulation = CalcAllLightContribution(inWorldPos, normal, u_CamPos.xyz, u_Material.Shininess);
 
-	// Get the albedo from the diffuse / albedo map
-	vec4 textureColor = texture(u_Material.Diffuse, inUV);
 
 	// combine for the final result
 	vec3 result = lightAccumulation  * inColor * textureColor.rgb;

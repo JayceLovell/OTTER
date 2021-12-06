@@ -890,6 +890,10 @@ int main() {
 		glm::mat4 viewProj = camera->GetViewProjection();
 		DebugDrawer::Get().SetViewProjection(viewProj);
 
+		// Make sure depth testing and culling are re-enabled
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
+
 		// Update our worlds physics!
 		scene->DoPhysics(dt);
 
@@ -907,9 +911,6 @@ int main() {
 		TextureCube::Sptr environment = scene->GetSkyboxTexture();
 		if (environment) environment->Bind(0); 
 
-		// Make sure depth testing and culling are re-enabled
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
 
 		// Here we'll bind all the UBOs to their corresponding slots
 		scene->PreRender();
