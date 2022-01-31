@@ -513,8 +513,13 @@ void DefaultSceneLayer::_CreateScene()
 		}
 		GameObject::Sptr MyParticles = scene->CreateGameObject("MyParticle"); {
 			ParticleSystem::Sptr Emitter = MyParticles->Add<ParticleSystem>();
-			Emitter->AddEmitter(glm::vec3(0.0f,-20.0f,0.0f), glm::vec3(20.0f, -1.0f, 10.0f), 20.0f, glm::vec4(0.0f, 0.18f, 1.0f, 1.0f));
+			Emitter->AddEmitter(glm::vec3(0.0f, -20.0f, 0.0f), glm::vec3(20.0f, -1.0f, 10.0f), 20.0f, glm::vec4(0.0f, 0.18f, 1.0f, 1.0f));
 			Emitter->AddEmitter(glm::vec3(10.0f, -20.0f, 0.0f), glm::vec3(-20.0f, -1.0f, 10.0f), 20.0f, glm::vec4(0.0f, 0.18f, 1.0f, 1.0f));
+
+			MyParticles->SetPostion(glm::vec3(0.0f, -20.0f, 0.0f));
+			RenderComponent::Sptr renderer = MyParticles->Add<RenderComponent>();
+			renderer->SetMesh(sphere);
+			renderer->SetMaterial(multiTextureMat);
 		}
 
 		GuiBatcher::SetDefaultTexture(ResourceManager::CreateAsset<Texture2D>("textures/ui-sprite.png"));
