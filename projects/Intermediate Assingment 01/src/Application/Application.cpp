@@ -11,17 +11,21 @@
 #include "Layers/GLAppLayer.h"
 #include "Utils/FileHelpers.h"
 #include "Utils/ResourceManager/ResourceManager.h"
+#include "Utils/ImGuiHelper.h"
 
 // Graphics
-#include "Graphics/IndexBuffer.h"
-#include "Graphics/VertexBuffer.h"
+#include "Graphics/Buffers/IndexBuffer.h"
+#include "Graphics/Buffers/VertexBuffer.h"
 #include "Graphics/VertexArrayObject.h"
 #include "Graphics/ShaderProgram.h"
-#include "Graphics/Texture2D.h"
-#include "Graphics/TextureCube.h"
+#include "Graphics/Textures/Texture1D.h"
+#include "Graphics/Textures/Texture2D.h"
+#include "Graphics/Textures/Texture3D.h"
+#include "Graphics/Textures/TextureCube.h"
 #include "Graphics/VertexTypes.h"
 #include "Graphics/Font.h"
 #include "Graphics/GuiBatcher.h"
+#include "Graphics/Framebuffer.h"
 
 // Gameplay
 #include "Gameplay/Material.h"
@@ -37,36 +41,42 @@
 #include "Gameplay/Components/MaterialSwapBehaviour.h"
 #include "Gameplay/Components/TriggerVolumeEnterBehaviour.h"
 #include "Gameplay/Components/SimpleCameraControl.h"
+#include "Gameplay/Components/ParticleSystem.h"
+#include "Gameplay/Components/Light.h"
 
 // GUI
 #include "Gameplay/Components/GUI/RectTransform.h"
 #include "Gameplay/Components/GUI/GuiPanel.h"
 #include "Gameplay/Components/GUI/GuiText.h"
+#include "Gameplay/Components/ComponentManager.h"
+
+// Layers
 #include "Layers/RenderLayer.h"
 #include "Layers/InterfaceLayer.h"
 #include "Layers/DefaultSceneLayer.h"
 #include "Layers/LogicUpdateLayer.h"
 #include "Layers/ImGuiDebugLayer.h"
-#include "Utils/ImGuiHelper.h"
-#include "Gameplay/Components/ComponentManager.h"
+#include "Layers/InstancedRenderingTestLayer.h"
+#include "Layers/ParticleLayer.h"
 
 Application* Application::_singleton = nullptr;
-std::string Application::_applicationName = "Assignment 01";
+std::string Application::_applicationName = "Assignment 1";
 
-#define DEFAULT_WINDOW_WIDTH 800
-#define DEFAULT_WINDOW_HEIGHT 600
+#define DEFAULT_WINDOW_WIDTH 1280
+#define DEFAULT_WINDOW_HEIGHT 720
 
 Application::Application() :
 	_window(nullptr),
 	_windowSize({DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT}),
 	_isRunning(false),
 	_isEditor(true),
-	_windowTitle("Assignment 01"),
+	_windowTitle("INFR - 2350U"),
 	_currentScene(nullptr),
-	_targetScene(nullptr)
+	_targetScene(nullptr),
+	_renderOutput(nullptr)
 { }
 
-Application::~Application() = default;
+Application::~Application() = default; 
 
 Application& Application::Get() {
 	LOG_ASSERT(_singleton != nullptr, "Failed to get application! Get was called before the application was started!");
@@ -102,7 +112,7 @@ void Application::Quit() {
 }
 
 bool Application::LoadScene(const std::string& path) {
-	if (std::filesystem::exists(path)) {
+	if (std::filesystem::exists(path)) { 
 
 		std::string manifestPath = std::filesystem::path(path).stem().string() + "-manifest.json";
 		if (std::filesystem::exists(manifestPath)) {
@@ -138,9 +148,11 @@ void Application::_Run()
 	// TODO: Register layers
 	_layers.push_back(std::make_shared<GLAppLayer>());
 	_layers.push_back(std::make_shared<DefaultSceneLayer>());
-	_layers.push_back(std::make_shared<RenderLayer>());
-	_layers.push_back(std::make_shared<InterfaceLayer>());
 	_layers.push_back(std::make_shared<LogicUpdateLayer>());
+	_layers.push_back(std::make_shared<RenderLayer>());
+	_layers.push_back(std::make_shared<ParticleLayer>());
+	//_layers.push_back(std::make_shared<InstancedRenderingTestLayer>());
+	_layers.push_back(std::make_shared<InterfaceLayer>());
 
 	// If we're in editor mode, we add all the editor layers
 	if (_isEditor) {
@@ -208,7 +220,7 @@ void Application::_Run()
 			_Update();
 			_LateUpdate();
 			_PreRender();
-			_RenderScene();
+			_RenderScene(); 
 			_PostRender();
 		}
 
@@ -235,12 +247,15 @@ void Application::_RegisterClasses()
 	ResourceManager::Init();
 
 	// Register all our resource types so we can load them from manifest files
+	ResourceManager::RegisterType<Texture1D>();
 	ResourceManager::RegisterType<Texture2D>();
+	ResourceManager::RegisterType<Texture3D>();
 	ResourceManager::RegisterType<TextureCube>();
 	ResourceManager::RegisterType<ShaderProgram>();
 	ResourceManager::RegisterType<Material>();
 	ResourceManager::RegisterType<MeshResource>();
 	ResourceManager::RegisterType<Font>();
+	ResourceManager::RegisterType<Framebuffer>();
 
 	// Register all of our component types so we can load them from files
 	ComponentManager::RegisterType<Camera>();
@@ -255,6 +270,8 @@ void Application::_RegisterClasses()
 	ComponentManager::RegisterType<RectTransform>();
 	ComponentManager::RegisterType<GuiPanel>();
 	ComponentManager::RegisterType<GuiText>();
+	ComponentManager::RegisterType<ParticleSystem>();
+	ComponentManager::RegisterType<Light>();
 }
 
 void Application::_Load() {
@@ -308,11 +325,16 @@ void Application::_PreRender()
 
 void Application::_RenderScene() {
 
+	Framebuffer::Sptr result = nullptr;
 	for (const auto& layer : _layers) {
 		if (layer->Enabled && *(layer->Overrides & AppLayerFunctions::OnRender)) {
-			layer->OnRender();
+			layer->OnRender(result);
+			Framebuffer::Sptr layerResult = layer->GetRenderOutput(); 
+			result = layerResult != nullptr ? layerResult : result;
 		}
 	}
+	_renderOutput = result;
+
 }
 
 void Application::_PostRender() {

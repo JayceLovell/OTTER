@@ -17,6 +17,7 @@ namespace Gameplay {
 	GameObject::GameObject() :
 		IResource(),
 		Name("Unknown"),
+		HideInHierarchy(false),
 		_components(std::vector<IComponent::Sptr>()),
 		_scene(nullptr),
 		_position(ZERO),
@@ -117,6 +118,10 @@ namespace Gameplay {
 
 	const glm::vec3& GameObject::GetPosition() const {
 		return _position;
+	}
+
+	glm::vec3 GameObject::GetWorldPosition() const {
+		return this->GetTransform()[3];
 	}
 
 	void GameObject::SetRotation(const glm::quat& value) {
@@ -457,6 +462,7 @@ namespace Gameplay {
 		result->_position = (data["position"]);
 		result->_rotation = (data["rotation"]);
 		result->_scale    = (data["scale"]);
+		result->HideInHierarchy = JsonGet(data, "hide_in_inspector", false);
 		result->_isLocalTransformDirty = true;
 		result->_isWorldTransformDirty = true;
 
@@ -487,6 +493,7 @@ namespace Gameplay {
 			{ "rotation", _rotation },
 			{ "scale",    _scale },
 			{ "parent",   parent == nullptr ? "null" : parent->_guid.str() },
+			{ "hide_in_inspector", HideInHierarchy }
 		};
 		result["components"] = nlohmann::json();
 		for (auto& component : _components) {
@@ -507,23 +514,27 @@ namespace Gameplay {
 		ResourceGUID = ptr->GetGUID();
 		SceneContext = ptr->GetScene();
 		Ptr = ptr;
+		isNull = ptr == nullptr;
 		return *this;
 	}
 
 	GameObject::WeakRef::WeakRef(const GameObject::Sptr& ptr) {
 		*this = ptr;
+		isNull = ptr == nullptr;
 	}
 
 	GameObject::WeakRef::WeakRef() :
 		ResourceGUID(Guid()),
 		SceneContext(nullptr),
-		Ptr(std::weak_ptr<GameObject>())
+		Ptr(std::weak_ptr<GameObject>()),
+		isNull(true)
 	{ }
 
 	GameObject::WeakRef::WeakRef(const Guid& guid, const Scene* scene) :
 		ResourceGUID(guid),
 		SceneContext(scene),
-		Ptr(std::weak_ptr<GameObject>())
+		Ptr(std::weak_ptr<GameObject>()),
+		isNull(false)
 	{ }
 
 	bool GameObject::WeakRef::operator==(const GameObject::Sptr& other) {
@@ -543,15 +554,21 @@ namespace Gameplay {
 	}
 
 	GameObject::Sptr GameObject::WeakRef::Resolve() const {
+		// If we already determined the value is null, return null now
+		if (isNull) { return nullptr; }
+
 		// If the Ptr is uninitialized, try and look up the object in the scene
 		if (GetIsEmpty()) {
 			// We need a reference to the scene in order to search gameobjects :pensive:
 			if (SceneContext != nullptr) {
-				Ptr = SceneContext->FindObjectByGUID(ResourceGUID);
-				return Ptr.lock();
+				GameObject::Sptr result = SceneContext->FindObjectByGUID(ResourceGUID);
+				Ptr = result;
+				isNull = result == nullptr;
+				return result;
 			}
 			// If there's no scene, return null
 			else {
+				isNull = true;
 				return nullptr;
 			}
 		}
@@ -573,10 +590,15 @@ namespace Gameplay {
 		ResourceGUID = Guid();
 		Ptr.reset();
 		SceneContext = nullptr;
+		isNull = true;
 	}
 
 	GameObject::WeakRef::operator GameObject::Sptr() const {
 		return Resolve();
+	}
+
+	GameObject::WeakRef::operator Guid() const {
+		return ResourceGUID;
 	}
 
 }

@@ -18,9 +18,6 @@ public:
 	Gameplay::Material::Sptr        EnterMaterial;
 	Gameplay::Material::Sptr        ExitMaterial;
 
-	Gameplay::Material::Sptr DiffuseMaterial;
-	Gameplay::Material::Sptr SpecularMaterial;
-
 
 	// Inherited from IComponent
 
