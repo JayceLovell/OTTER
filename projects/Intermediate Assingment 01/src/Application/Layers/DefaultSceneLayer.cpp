@@ -79,7 +79,7 @@ DefaultSceneLayer::DefaultSceneLayer() :
 
 DefaultSceneLayer::~DefaultSceneLayer() = default;
 
-void DefaultSceneLayer::OnAppLoad(const nlohmann::json & config) {
+void DefaultSceneLayer::OnAppLoad(const nlohmann::json& config) {
 	_CreateScene();
 }
 
@@ -94,29 +94,28 @@ void DefaultSceneLayer::_CreateScene()
 	// For now we can use a toggle to generate our scene vs load from file
 	if (loadScene && std::filesystem::exists("scene.json")) {
 		app.LoadScene("scene.json");
-	}
-	else {
-
+	} else {
+		 
 		// Basic gbuffer generation with no vertex manipulation
 		ShaderProgram::Sptr deferredForward = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
 			{ ShaderPartType::Vertex, "shaders/vertex_shaders/basic.glsl" },
 			{ ShaderPartType::Fragment, "shaders/fragment_shaders/deferred_forward.glsl" }
 		});
-		deferredForward->SetDebugName("Deferred - GBuffer Generation");
+		deferredForward->SetDebugName("Deferred - GBuffer Generation");  
 
 		// Our foliage shader which manipulates the vertices of the mesh
 		ShaderProgram::Sptr foliageShader = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
 			{ ShaderPartType::Vertex, "shaders/vertex_shaders/foliage.glsl" },
 			{ ShaderPartType::Fragment, "shaders/fragment_shaders/deferred_forward.glsl" }
-		});
-		foliageShader->SetDebugName("Foliage");
+		});  
+		foliageShader->SetDebugName("Foliage");   
 
 		// This shader handles our multitexturing example
 		ShaderProgram::Sptr multiTextureShader = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
-			{ ShaderPartType::Vertex, "shaders/vertex_shaders/vert_multitextured.glsl" },
+			{ ShaderPartType::Vertex, "shaders/vertex_shaders/vert_multitextured.glsl" },  
 			{ ShaderPartType::Fragment, "shaders/fragment_shaders/frag_multitextured.glsl" }
 		});
-		multiTextureShader->SetDebugName("Multitexturing");
+		multiTextureShader->SetDebugName("Multitexturing"); 
 
 		// This shader handles our displacement mapping example
 		ShaderProgram::Sptr displacementShader = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
@@ -136,13 +135,23 @@ void DefaultSceneLayer::_CreateScene()
 		// Load in the meshes
 		MeshResource::Sptr monkeyMesh = ResourceManager::CreateAsset<MeshResource>("Monkey.obj");
 
+		MeshResource::Sptr HeartMesh = ResourceManager::CreateAsset<MeshResource>("Heart.obj");
+		MeshResource::Sptr LargeEnemy = ResourceManager::CreateAsset<MeshResource>("Large Enemy.obj");
+		MeshResource::Sptr WhiteBloodCell = ResourceManager::CreateAsset<MeshResource>("White Blood Cell.obj");
+		MeshResource::Sptr WhiteBloodCell2 = ResourceManager::CreateAsset<MeshResource>("White Blood Cell2.obj");
+		
 		// Load in some textures
-		Texture2D::Sptr    boxTexture = ResourceManager::CreateAsset<Texture2D>("textures/box-diffuse.png");
-		Texture2D::Sptr    boxSpec = ResourceManager::CreateAsset<Texture2D>("textures/box-specular.png");
-		Texture2D::Sptr    monkeyTex = ResourceManager::CreateAsset<Texture2D>("textures/monkey-uvMap.png");
-		Texture2D::Sptr    leafTex = ResourceManager::CreateAsset<Texture2D>("textures/leaves.png");
+		Texture2D::Sptr    boxTexture   = ResourceManager::CreateAsset<Texture2D>("textures/box-diffuse.png");
+		Texture2D::Sptr    boxSpec      = ResourceManager::CreateAsset<Texture2D>("textures/box-specular.png");
+		Texture2D::Sptr    monkeyTex    = ResourceManager::CreateAsset<Texture2D>("textures/monkey-uvMap.png");
+		Texture2D::Sptr    leafTex      = ResourceManager::CreateAsset<Texture2D>("textures/leaves.png");
 		leafTex->SetMinFilter(MinFilter::Nearest);
 		leafTex->SetMagFilter(MagFilter::Nearest);
+
+		Texture2D::Sptr HeartTexture = ResourceManager::CreateAsset<Texture2D>("textures/Heart.jpg");
+		Texture2D::Sptr LargeEnemyTexture = ResourceManager::CreateAsset<Texture2D>("textures/Large Enemy.png");
+		Texture2D::Sptr WhiteBloodCellTexture = ResourceManager::CreateAsset<Texture2D>("textures/White Blood Cell.png");
+		Texture2D::Sptr WhiteBloodCell2Texture = ResourceManager::CreateAsset<Texture2D>("textures/White Blood Cell2.png");
 
 #pragma region Basic Texture Creation
 		Texture2DDescription singlePixelDescriptor;
@@ -168,32 +177,38 @@ void DefaultSceneLayer::_CreateScene()
 #pragma endregion 
 
 		// Loading in a 1D LUT
-		Texture1D::Sptr toonLut = ResourceManager::CreateAsset<Texture1D>("luts/toon-1D.png");
+		Texture1D::Sptr toonLut = ResourceManager::CreateAsset<Texture1D>("luts/toon-1D.png"); 
 		toonLut->SetWrap(WrapMode::ClampToEdge);
 
 		// Here we'll load in the cubemap, as well as a special shader to handle drawing the skybox
 		TextureCube::Sptr testCubemap = ResourceManager::CreateAsset<TextureCube>("cubemaps/ocean/ocean.jpg");
 		ShaderProgram::Sptr      skyboxShader = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
 			{ ShaderPartType::Vertex, "shaders/vertex_shaders/skybox_vert.glsl" },
-			{ ShaderPartType::Fragment, "shaders/fragment_shaders/skybox_frag.glsl" }
+			{ ShaderPartType::Fragment, "shaders/fragment_shaders/skybox_frag.glsl" } 
 		});
-
+		  
 		// Create an empty scene
-		Scene::Sptr scene = std::make_shared<Scene>();
+		Scene::Sptr scene = std::make_shared<Scene>();  
 
 		// Setting up our enviroment map
-		scene->SetSkyboxTexture(testCubemap);
+		scene->SetSkyboxTexture(testCubemap); 
 		scene->SetSkyboxShader(skyboxShader);
 		// Since the skybox I used was for Y-up, we need to rotate it 90 deg around the X-axis to convert it to z-up 
 		scene->SetSkyboxRotation(glm::rotate(MAT4_IDENTITY, glm::half_pi<float>(), glm::vec3(1.0f, 0.0f, 0.0f)));
 
 		// Loading in a color lookup table
-		Texture3D::Sptr lut = ResourceManager::CreateAsset<Texture3D>("luts/cool.CUBE");
+		Texture3D::Sptr lut = ResourceManager::CreateAsset<Texture3D>("luts/cool.CUBE");   
 
 		// Configure the color correction LUT
 		scene->SetColorLUT(lut);
 
 		// Create our materials
+		Material::Sptr HeartMaterial = ResourceManager::CreateAsset<Material>(deferredForward); {
+			HeartMaterial->Name = "Heart";
+			HeartMaterial->Set("u_Material.AlbedoMap", HeartTexture);
+			HeartMaterial->Set("u_Material.Shininess", 0.1f);
+			HeartMaterial->Set("u_Material.NormalMap", normalMapDefault);
+		}
 		// This will be our box material, with no environment reflections
 		Material::Sptr boxMaterial = ResourceManager::CreateAsset<Material>(deferredForward);
 		{
@@ -213,10 +228,10 @@ void DefaultSceneLayer::_CreateScene()
 		}
 
 		// This will be the reflective material, we'll make the whole thing 50% reflective
-		Material::Sptr testMaterial = ResourceManager::CreateAsset<Material>(deferredForward);
+		Material::Sptr testMaterial = ResourceManager::CreateAsset<Material>(deferredForward); 
 		{
 			testMaterial->Name = "Box-Specular";
-			testMaterial->Set("u_Material.AlbedoMap", boxTexture);
+			testMaterial->Set("u_Material.AlbedoMap", boxTexture); 
 			testMaterial->Set("u_Material.Specular", boxSpec);
 			testMaterial->Set("u_Material.NormalMap", normalMapDefault);
 		}
@@ -239,11 +254,11 @@ void DefaultSceneLayer::_CreateScene()
 		// Our toon shader material
 		Material::Sptr toonMaterial = ResourceManager::CreateAsset<Material>(celShader);
 		{
-			toonMaterial->Name = "Toon";
+			toonMaterial->Name = "Toon"; 
 			toonMaterial->Set("u_Material.AlbedoMap", boxTexture);
 			toonMaterial->Set("u_Material.NormalMap", normalMapDefault);
 			toonMaterial->Set("s_ToonTerm", toonLut);
-			toonMaterial->Set("u_Material.Shininess", 0.1f);
+			toonMaterial->Set("u_Material.Shininess", 0.1f); 
 			toonMaterial->Set("u_Material.Steps", 8);
 		}
 
@@ -251,8 +266,8 @@ void DefaultSceneLayer::_CreateScene()
 		Material::Sptr displacementTest = ResourceManager::CreateAsset<Material>(displacementShader);
 		{
 			Texture2D::Sptr displacementMap = ResourceManager::CreateAsset<Texture2D>("textures/displacement_map.png");
-			Texture2D::Sptr normalMap = ResourceManager::CreateAsset<Texture2D>("textures/normal_map.png");
-			Texture2D::Sptr diffuseMap = ResourceManager::CreateAsset<Texture2D>("textures/bricks_diffuse.png");
+			Texture2D::Sptr normalMap       = ResourceManager::CreateAsset<Texture2D>("textures/normal_map.png");
+			Texture2D::Sptr diffuseMap      = ResourceManager::CreateAsset<Texture2D>("textures/bricks_diffuse.png");
 
 			displacementTest->Name = "Displacement Map";
 			displacementTest->Set("u_Material.AlbedoMap", diffuseMap);
@@ -264,8 +279,8 @@ void DefaultSceneLayer::_CreateScene()
 
 		Material::Sptr normalmapMat = ResourceManager::CreateAsset<Material>(deferredForward);
 		{
-			Texture2D::Sptr normalMap = ResourceManager::CreateAsset<Texture2D>("textures/normal_map.png");
-			Texture2D::Sptr diffuseMap = ResourceManager::CreateAsset<Texture2D>("textures/bricks_diffuse.png");
+			Texture2D::Sptr normalMap       = ResourceManager::CreateAsset<Texture2D>("textures/normal_map.png");
+			Texture2D::Sptr diffuseMap      = ResourceManager::CreateAsset<Texture2D>("textures/bricks_diffuse.png");
 
 			normalmapMat->Name = "Tangent Space Normal Map";
 			normalmapMat->Set("u_Material.AlbedoMap", diffuseMap);
@@ -276,7 +291,7 @@ void DefaultSceneLayer::_CreateScene()
 
 		Material::Sptr multiTextureMat = ResourceManager::CreateAsset<Material>(multiTextureShader);
 		{
-			Texture2D::Sptr sand = ResourceManager::CreateAsset<Texture2D>("textures/terrain/sand.png");
+			Texture2D::Sptr sand  = ResourceManager::CreateAsset<Texture2D>("textures/terrain/sand.png");
 			Texture2D::Sptr grass = ResourceManager::CreateAsset<Texture2D>("textures/terrain/grass.png");
 
 			multiTextureMat->Name = "Multitexturing";
@@ -285,7 +300,7 @@ void DefaultSceneLayer::_CreateScene()
 			multiTextureMat->Set("u_Material.NormalMapA", normalMapDefault);
 			multiTextureMat->Set("u_Material.NormalMapB", normalMapDefault);
 			multiTextureMat->Set("u_Material.Shininess", 0.5f);
-			multiTextureMat->Set("u_Scale", 0.1f);
+			multiTextureMat->Set("u_Scale", 0.1f); 
 		}
 
 		// Create some lights for our scene
@@ -300,7 +315,16 @@ void DefaultSceneLayer::_CreateScene()
 			lightComponent->SetColor(glm::linearRand(glm::vec3(0.0f), glm::vec3(1.0f)));
 			lightComponent->SetRadius(glm::linearRand(0.1f, 10.0f));
 			lightComponent->SetIntensity(glm::linearRand(1.0f, 2.0f));
+
+
+			scene->Lights.push_back(light);
 		}
+
+		/*GameObject::Sptr light = scene->CreateGameObject("Diffuse"); {
+			Light::Sptr lightComponent = light->Add<Light>();
+			lightComponent->SetIntensity(glm::linearRand(10.0f, 10.0f));
+			lightParent->AddChild(light);
+		}*/
 
 		// We'll create a mesh that is a simple plane that we can resize later
 		MeshResource::Sptr planeMesh = ResourceManager::CreateAsset<MeshResource>();
@@ -363,164 +387,28 @@ void DefaultSceneLayer::_CreateScene()
 
 			monkey1->Add<TriggerVolumeEnterBehaviour>();
 		}
-
-		GameObject::Sptr demoBase = scene->CreateGameObject("Demo Parent");
-
-		// Box to showcase the specular material
-		GameObject::Sptr specBox = scene->CreateGameObject("Specular Object");
+		GameObject::Sptr Heart = scene->CreateGameObject("Heart");
 		{
-			MeshResource::Sptr boxMesh = ResourceManager::CreateAsset<MeshResource>();
-			boxMesh->AddParam(MeshBuilderParam::CreateCube(ZERO, ONE));
-			boxMesh->GenerateMesh();
+			// Set position in the scene
+			Heart->SetPostion(glm::vec3(10.0f, 0.0f, 5.0f));
+			Heart->SetRotation(glm::vec3(0.0f, -30.0f, 0.0f));
 
-			// Set and rotation position in the scene
-			specBox->SetPostion(glm::vec3(0, -4.0f, 1.0f));
+			Heart->Add<RotatingBehaviour>();
+			Heart->Get<RotatingBehaviour>()->RotationSpeed= glm::vec3(0.0f,0.0f,1.0f);
 
-			// Add a render component
-			RenderComponent::Sptr renderer = specBox->Add<RenderComponent>();
-			renderer->SetMesh(boxMesh);
-			renderer->SetMaterial(testMaterial);
 
-			demoBase->AddChild(specBox);
+			// Create and attach a renderer for the monkey
+			RenderComponent::Sptr renderer = Heart->Add<RenderComponent>();
+			renderer->SetMesh(HeartMesh);
+			renderer->SetMaterial(HeartMaterial);
+
 		}
 
-		// sphere to showcase the foliage material
-		GameObject::Sptr foliageBall = scene->CreateGameObject("Foliage Sphere");
+		/*GameObject::Sptr particles = scene->CreateGameObject("Particles");
 		{
-			// Set and rotation position in the scene
-			foliageBall->SetPostion(glm::vec3(-4.0f, -4.0f, 1.0f));
-
-			// Add a render component
-			RenderComponent::Sptr renderer = foliageBall->Add<RenderComponent>();
-			renderer->SetMesh(sphere);
-			renderer->SetMaterial(foliageMaterial);
-
-			demoBase->AddChild(foliageBall);
-		}
-
-		// Box to showcase the foliage material
-		GameObject::Sptr foliageBox = scene->CreateGameObject("Foliage Box");
-		{
-			MeshResource::Sptr box = ResourceManager::CreateAsset<MeshResource>();
-			box->AddParam(MeshBuilderParam::CreateCube(glm::vec3(0, 0, 0.5f), ONE));
-			box->GenerateMesh();
-
-			// Set and rotation position in the scene
-			foliageBox->SetPostion(glm::vec3(-6.0f, -4.0f, 1.0f));
-
-			// Add a render component
-			RenderComponent::Sptr renderer = foliageBox->Add<RenderComponent>();
-			renderer->SetMesh(box);
-			renderer->SetMaterial(foliageMaterial);
-
-			demoBase->AddChild(foliageBox);
-		}
-
-		// Box to showcase the specular material
-		GameObject::Sptr toonBall = scene->CreateGameObject("Toon Object");
-		{
-			// Set and rotation position in the scene
-			toonBall->SetPostion(glm::vec3(-2.0f, -4.0f, 1.0f));
-
-			// Add a render component
-			RenderComponent::Sptr renderer = toonBall->Add<RenderComponent>();
-			renderer->SetMesh(sphere);
-			renderer->SetMaterial(toonMaterial);
-
-			demoBase->AddChild(toonBall);
-		}
-
-		GameObject::Sptr displacementBall = scene->CreateGameObject("Displacement Object");
-		{
-			// Set and rotation position in the scene
-			displacementBall->SetPostion(glm::vec3(2.0f, -4.0f, 1.0f));
-
-			// Add a render component
-			RenderComponent::Sptr renderer = displacementBall->Add<RenderComponent>();
-			renderer->SetMesh(sphere);
-			renderer->SetMaterial(displacementTest);
-
-			demoBase->AddChild(displacementBall);
-		}
-
-		GameObject::Sptr multiTextureBall = scene->CreateGameObject("Multitextured Object");
-		{
-			// Set and rotation position in the scene 
-			multiTextureBall->SetPostion(glm::vec3(4.0f, -4.0f, 1.0f));
-
-			// Add a render component 
-			RenderComponent::Sptr renderer = multiTextureBall->Add<RenderComponent>();
-			renderer->SetMesh(sphere);
-			renderer->SetMaterial(multiTextureMat);
-
-			demoBase->AddChild(multiTextureBall);
-		}
-
-		GameObject::Sptr normalMapBall = scene->CreateGameObject("Normal Mapped Object");
-		{
-			// Set and rotation position in the scene 
-			normalMapBall->SetPostion(glm::vec3(6.0f, -4.0f, 1.0f));
-
-			// Add a render component 
-			RenderComponent::Sptr renderer = normalMapBall->Add<RenderComponent>();
-			renderer->SetMesh(sphere);
-			renderer->SetMaterial(normalmapMat);
-
-			demoBase->AddChild(normalMapBall);
-		}
-
-		// Create a trigger volume for testing how we can detect collisions with objects!
-		GameObject::Sptr trigger = scene->CreateGameObject("Trigger");
-		{
-			TriggerVolume::Sptr volume = trigger->Add<TriggerVolume>();
-			CylinderCollider::Sptr collider = CylinderCollider::Create(glm::vec3(3.0f, 3.0f, 1.0f));
-			collider->SetPosition(glm::vec3(0.0f, 0.0f, 0.5f));
-			volume->AddCollider(collider);
-
-			trigger->Add<TriggerVolumeEnterBehaviour>();
-		}
-
-		/////////////////////////// UI //////////////////////////////
-		/*
-		GameObject::Sptr canvas = scene->CreateGameObject("UI Canvas");
-		{
-			RectTransform::Sptr transform = canvas->Add<RectTransform>();
-			transform->SetMin({ 16, 16 });
-			transform->SetMax({ 256, 256 });
-
-			GuiPanel::Sptr canPanel = canvas->Add<GuiPanel>();
-
-
-			GameObject::Sptr subPanel = scene->CreateGameObject("Sub Item");
-			{
-				RectTransform::Sptr transform = subPanel->Add<RectTransform>();
-				transform->SetMin({ 10, 10 });
-				transform->SetMax({ 128, 128 });
-
-				GuiPanel::Sptr panel = subPanel->Add<GuiPanel>();
-				panel->SetColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-
-				panel->SetTexture(ResourceManager::CreateAsset<Texture2D>("textures/upArrow.png"));
-
-				Font::Sptr font = ResourceManager::CreateAsset<Font>("fonts/Roboto-Medium.ttf", 16.0f);
-				font->Bake();
-
-				GuiText::Sptr text = subPanel->Add<GuiText>();
-				text->SetText("Hello world!");
-				text->SetFont(font);
-
-				monkey1->Get<JumpBehaviour>()->Panel = text;
-			}
-
-			canvas->AddChild(subPanel);
-		}
-		*/
-
-		GameObject::Sptr particles = scene->CreateGameObject("Particles");
-		{
-			ParticleSystem::Sptr particleManager = particles->Add<ParticleSystem>();
-			particleManager->AddEmitter(glm::vec3(0.0f), glm::vec3(0.0f, -1.0f, 10.0f), 10.0f, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-		}
+			ParticleSystem::Sptr particleManager = particles->Add<ParticleSystem>();  
+			particleManager->AddEmitter(glm::vec3(0.0f), glm::vec3(0.0f, -1.0f, 10.0f), 10.0f, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)); 
+		}*/
 
 		GuiBatcher::SetDefaultTexture(ResourceManager::CreateAsset<Texture2D>("textures/ui-sprite.png"));
 		GuiBatcher::SetDefaultBorderRadius(8);

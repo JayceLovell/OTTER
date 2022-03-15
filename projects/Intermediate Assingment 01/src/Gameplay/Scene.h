@@ -44,6 +44,10 @@ namespace Gameplay {
 		// Whether the application is in "play mode", lets us leverage editors!
 		bool                       IsPlaying;
 
+		std::vector<GameObject::Sptr>	Lights;
+
+		bool NoLighting, AmbientOnly;
+
 		Scene();
 		~Scene();
 

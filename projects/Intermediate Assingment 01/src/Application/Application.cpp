@@ -60,7 +60,7 @@
 #include "Layers/ParticleLayer.h"
 
 Application* Application::_singleton = nullptr;
-std::string Application::_applicationName = "Assignment 1";
+std::string Application::_applicationName = "Jayce Assignment 01";
 
 #define DEFAULT_WINDOW_WIDTH 1280
 #define DEFAULT_WINDOW_HEIGHT 720
@@ -70,7 +70,7 @@ Application::Application() :
 	_windowSize({DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT}),
 	_isRunning(false),
 	_isEditor(true),
-	_windowTitle("INFR - 2350U"),
+	_windowTitle("Jayce Assignmetn 01"),
 	_currentScene(nullptr),
 	_targetScene(nullptr),
 	_renderOutput(nullptr)

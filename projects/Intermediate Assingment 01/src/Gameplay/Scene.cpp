@@ -16,11 +16,14 @@
 #include "Graphics/Textures/TextureCube.h"
 #include "Graphics/VertexArrayObject.h"
 #include "Application/Application.h"
+#include <Gameplay/InputEngine.h>
+#include <Gameplay/Components/Light.h>
 
 namespace Gameplay {
 	Scene::Scene() :
 		_objects(std::vector<GameObject::Sptr>()),
 		_deletionQueue(std::vector<std::weak_ptr<GameObject>>()),
+		Lights(std::vector<GameObject::Sptr>()),
 		IsPlaying(false),
 		MainCamera(nullptr),
 		DefaultMaterial(nullptr),
@@ -181,6 +184,67 @@ namespace Gameplay {
 	void Scene::Update(float dt) {
 		_FlushDeleteQueue();
 		if (IsPlaying) {
+			//No Lighting
+			if ((InputEngine::GetKeyState(GLFW_KEY_1) == ButtonState::Pressed)) {
+				for (auto light : Lights) {
+					light->Get<Light>()->SetIntensity(0.0f);
+				}
+			}
+			//ambient lighting only
+			if ((InputEngine::GetKeyState(GLFW_KEY_2) == ButtonState::Pressed)) {
+				if (AmbientOnly) {
+					SetAmbientLight(glm::vec3(0.0f, 0.0f, 0.0f));
+					for (auto light : Lights) {
+						light->Get<Light>()->SetIntensity(1.0f);
+					}
+					AmbientOnly = false;
+				}
+				else {
+					SetAmbientLight(glm::vec3(1.0f, 0.0f, 0.0f));
+					for (auto light : Lights) {
+						light->Get<Light>()->SetIntensity(0.0f);
+					}
+					AmbientOnly = true;
+				}
+			}
+			//specular lighting only
+			if ((InputEngine::GetKeyState(GLFW_KEY_3) == ButtonState::Pressed)) {
+				if (true) {
+					
+					for (auto light : Lights) {
+						light->Get<Light>()->SetIntensity(10.0f);
+					}
+				}
+				else
+					for (auto light : Lights) {
+						light->Get<Light>()->SetIntensity(0.0f);
+					}
+			}
+			//Ambient + specular
+			if ((InputEngine::GetKeyState(GLFW_KEY_4) == ButtonState::Pressed)) {
+				if (true) {
+					for (auto light : Lights) {
+						light->Get<Light>()->SetIntensity(10.0f);
+					}
+				}
+				else
+					for (auto light : Lights) {
+						light->Get<Light>()->SetIntensity(0.0f);
+					}
+			}
+			//Ambient + specular + custom
+			if ((InputEngine::GetKeyState(GLFW_KEY_5) == ButtonState::Pressed)) {}
+			//Toggle diffuse warp/ramp
+			if ((InputEngine::GetKeyState(GLFW_KEY_6) == ButtonState::Pressed)) {}
+			//Toggle specular warp/ramp
+			if ((InputEngine::GetKeyState(GLFW_KEY_7) == ButtonState::Pressed)) {}
+			//Toggle Color Grading Warm
+				if ((InputEngine::GetKeyState(GLFW_KEY_8) == ButtonState::Pressed)) {}
+			//Toggle Color Grading Cool
+					if ((InputEngine::GetKeyState(GLFW_KEY_9) == ButtonState::Pressed)) {}
+			//Toggle Color Graidn Custom Effect
+					if ((InputEngine::GetKeyState(GLFW_KEY_0) == ButtonState::Pressed)) {}
+
 			for (auto& obj : _objects) {
 				obj->Update(dt);
 			}
