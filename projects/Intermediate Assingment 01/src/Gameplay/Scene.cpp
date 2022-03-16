@@ -26,6 +26,10 @@ namespace Gameplay {
 		Lights(std::vector<GameObject::Sptr>()),
 		IsPlaying(false),
 		MainCamera(nullptr),
+		Lighting(true),
+		SpecularOnly(false),
+		Custom(false),
+		AmbientOnly(true),
 		DefaultMaterial(nullptr),
 		_isAwake(false),
 		_filePath(""),
@@ -186,64 +190,98 @@ namespace Gameplay {
 		if (IsPlaying) {
 			//No Lighting
 			if ((InputEngine::GetKeyState(GLFW_KEY_1) == ButtonState::Pressed)) {
-				for (auto light : Lights) {
-					light->Get<Light>()->SetIntensity(0.0f);
+				if (Lighting) {
+					for (auto light : Lights) {
+						light->Get<Light>()->SetIntensity(0.0f);
+					}
+					Lighting = false;
+				}
+				else
+				{
+					for (auto light : Lights) {
+						light->Get<Light>()->SetIntensity(1.0f);
+					}
+					Lighting =true;
 				}
 			}
 			//ambient lighting only
 			if ((InputEngine::GetKeyState(GLFW_KEY_2) == ButtonState::Pressed)) {
 				if (AmbientOnly) {
 					SetAmbientLight(glm::vec3(0.0f, 0.0f, 0.0f));
-					for (auto light : Lights) {
-						light->Get<Light>()->SetIntensity(1.0f);
-					}
 					AmbientOnly = false;
 				}
 				else {
-					SetAmbientLight(glm::vec3(1.0f, 0.0f, 0.0f));
-					for (auto light : Lights) {
-						light->Get<Light>()->SetIntensity(0.0f);
-					}
+					SetAmbientLight(glm::vec3(0.1f));
 					AmbientOnly = true;
 				}
 			}
 			//specular lighting only
 			if ((InputEngine::GetKeyState(GLFW_KEY_3) == ButtonState::Pressed)) {
-				if (true) {
-					
-					for (auto light : Lights) {
-						light->Get<Light>()->SetIntensity(10.0f);
+
+				if (SpecularOnly) {	
+					for (auto object : Hearts) {
+						object->Get<RenderComponent>()->SetMaterial(HeartMaterial);
 					}
+					SpecularOnly = false;
 				}
-				else
-					for (auto light : Lights) {
-						light->Get<Light>()->SetIntensity(0.0f);
+				else {
+					for (auto object : Hearts) {
+						object->Get<RenderComponent>()->SetMaterial(HeartMaterialSpecular);
 					}
+					SpecularOnly = true;
+				}
+					
 			}
 			//Ambient + specular
 			if ((InputEngine::GetKeyState(GLFW_KEY_4) == ButtonState::Pressed)) {
-				if (true) {
-					for (auto light : Lights) {
-						light->Get<Light>()->SetIntensity(10.0f);
+				if (AmbientOnly&&SpecularOnly) {
+					SetAmbientLight(glm::vec3(0.0f, 0.0f, 0.0f));
+					for (auto object : Hearts) {
+						object->Get<RenderComponent>()->SetMaterial(HeartMaterial);
 					}
+					AmbientOnly = false;
+					SpecularOnly = false;
 				}
 				else
-					for (auto light : Lights) {
-						light->Get<Light>()->SetIntensity(0.0f);
+				{
+					SetAmbientLight(glm::vec3(0.1f));
+					for (auto object : Hearts) {
+						object->Get<RenderComponent>()->SetMaterial(HeartMaterialSpecular);
 					}
+					AmbientOnly = true;
+					SpecularOnly = true;
+				}
 			}
 			//Ambient + specular + custom
-			if ((InputEngine::GetKeyState(GLFW_KEY_5) == ButtonState::Pressed)) {}
+			if ((InputEngine::GetKeyState(GLFW_KEY_5) == ButtonState::Pressed)) {
+				if (AmbientOnly && SpecularOnly && Custom) {
+					SetAmbientLight(glm::vec3(0.0f, 0.0f, 0.0f));
+					for (auto object : Hearts) {
+						object->Get<RenderComponent>()->SetMaterial(HeartMaterial);
+					}
+					AmbientOnly = false;
+					SpecularOnly = false;
+				}
+				else
+				{
+					SetAmbientLight(glm::vec3(0.1f));
+					for (auto object : Hearts) {
+						object->Get<RenderComponent>()->SetMaterial(HeartMaterialCustom);
+					}
+					AmbientOnly = true;
+					SpecularOnly = true;
+				}
+			}
 			//Toggle diffuse warp/ramp
 			if ((InputEngine::GetKeyState(GLFW_KEY_6) == ButtonState::Pressed)) {}
 			//Toggle specular warp/ramp
 			if ((InputEngine::GetKeyState(GLFW_KEY_7) == ButtonState::Pressed)) {}
 			//Toggle Color Grading Warm
-				if ((InputEngine::GetKeyState(GLFW_KEY_8) == ButtonState::Pressed)) {}
+			if ((InputEngine::GetKeyState(GLFW_KEY_8) == ButtonState::Pressed)) {}
 			//Toggle Color Grading Cool
-					if ((InputEngine::GetKeyState(GLFW_KEY_9) == ButtonState::Pressed)) {}
+			if ((InputEngine::GetKeyState(GLFW_KEY_9) == ButtonState::Pressed)) {}
 			//Toggle Color Graidn Custom Effect
-					if ((InputEngine::GetKeyState(GLFW_KEY_0) == ButtonState::Pressed)) {}
+			if ((InputEngine::GetKeyState(GLFW_KEY_0) == ButtonState::Pressed)) {}
 
 			for (auto& obj : _objects) {
 				obj->Update(dt);

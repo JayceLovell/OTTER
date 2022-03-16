@@ -101,7 +101,12 @@ void DefaultSceneLayer::_CreateScene()
 			{ ShaderPartType::Vertex, "shaders/vertex_shaders/basic.glsl" },
 			{ ShaderPartType::Fragment, "shaders/fragment_shaders/deferred_forward.glsl" }
 		});
-		deferredForward->SetDebugName("Deferred - GBuffer Generation");  
+		deferredForward->SetDebugName("Deferred - GBuffer Generation"); 
+		ShaderProgram::Sptr deferredForward2 = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
+			{ ShaderPartType::Vertex, "shaders/vertex_shaders/basic.glsl" },
+			{ ShaderPartType::Fragment, "shaders/fragment_shaders/deferred_forward2.glsl" }
+		});
+		deferredForward2->SetDebugName("Deferred - GBuffer Generation");
 
 		// Our foliage shader which manipulates the vertices of the mesh
 		ShaderProgram::Sptr foliageShader = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
@@ -130,6 +135,11 @@ void DefaultSceneLayer::_CreateScene()
 			{ ShaderPartType::Fragment, "shaders/fragment_shaders/cel_shader.glsl" }
 		});
 		celShader->SetDebugName("Cel Shader");
+
+		ShaderProgram::Sptr CustomShader = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
+			{ ShaderPartType::Vertex, "shaders/vertex_shaders/custom.glsl" },
+			{ ShaderPartType::Fragment, "shaders/fragment_shaders/frag_custom.glsl" }
+		});
 
 
 		// Load in the meshes
@@ -203,12 +213,6 @@ void DefaultSceneLayer::_CreateScene()
 		scene->SetColorLUT(lut);
 
 		// Create our materials
-		Material::Sptr HeartMaterial = ResourceManager::CreateAsset<Material>(deferredForward); {
-			HeartMaterial->Name = "Heart";
-			HeartMaterial->Set("u_Material.AlbedoMap", HeartTexture);
-			HeartMaterial->Set("u_Material.Shininess", 0.1f);
-			HeartMaterial->Set("u_Material.NormalMap", normalMapDefault);
-		}
 		// This will be our box material, with no environment reflections
 		Material::Sptr boxMaterial = ResourceManager::CreateAsset<Material>(deferredForward);
 		{
@@ -217,7 +221,6 @@ void DefaultSceneLayer::_CreateScene()
 			boxMaterial->Set("u_Material.Shininess", 0.1f);
 			boxMaterial->Set("u_Material.NormalMap", normalMapDefault);
 		}
-
 		// This will be the reflective material, we'll make the whole thing 90% reflective
 		Material::Sptr monkeyMaterial = ResourceManager::CreateAsset<Material>(deferredForward);
 		{
@@ -228,80 +231,32 @@ void DefaultSceneLayer::_CreateScene()
 		}
 
 		// This will be the reflective material, we'll make the whole thing 50% reflective
-		Material::Sptr testMaterial = ResourceManager::CreateAsset<Material>(deferredForward); 
+		Material::Sptr HeartMaterial = ResourceManager::CreateAsset<Material>(deferredForward2); 
 		{
-			testMaterial->Name = "Box-Specular";
-			testMaterial->Set("u_Material.AlbedoMap", boxTexture); 
-			testMaterial->Set("u_Material.Specular", boxSpec);
-			testMaterial->Set("u_Material.NormalMap", normalMapDefault);
+			HeartMaterial->Name = "HeartMaterial";
+			HeartMaterial->Set("u_Material.AlbedoMap", HeartTexture); 
+			HeartMaterial->Set("u_Material.Shininess", 0.1f);
+			HeartMaterial->Set("u_Material.NormalMap", normalMapDefault);
 		}
-
-		// Our foliage vertex shader material 
-		Material::Sptr foliageMaterial = ResourceManager::CreateAsset<Material>(foliageShader);
+		scene->HeartMaterial = HeartMaterial;
+		Material::Sptr HeartMaterialSpecular = ResourceManager::CreateAsset<Material>(deferredForward);
 		{
-			foliageMaterial->Name = "Foliage Shader";
-			foliageMaterial->Set("u_Material.AlbedoMap", leafTex);
-			foliageMaterial->Set("u_Material.Shininess", 0.1f);
-			foliageMaterial->Set("u_Material.DiscardThreshold", 0.1f);
-			foliageMaterial->Set("u_Material.NormalMap", normalMapDefault);
-
-			foliageMaterial->Set("u_WindDirection", glm::vec3(1.0f, 1.0f, 0.0f));
-			foliageMaterial->Set("u_WindStrength", 0.5f);
-			foliageMaterial->Set("u_VerticalScale", 1.0f);
-			foliageMaterial->Set("u_WindSpeed", 1.0f);
+			HeartMaterialSpecular->Name = "HeartMaterialSpecular";
+			HeartMaterialSpecular->Set("u_Material.AlbedoMap", HeartTexture);
+			HeartMaterialSpecular->Set("u_Material.Specular", boxSpec);
+			HeartMaterialSpecular->Set("u_Material.NormalMap", normalMapDefault);
 		}
+		scene->HeartMaterialSpecular = HeartMaterialSpecular;
 
-		// Our toon shader material
-		Material::Sptr toonMaterial = ResourceManager::CreateAsset<Material>(celShader);
+		Material::Sptr CustomHeartMaterial = ResourceManager::CreateAsset<Material>(CustomShader);
 		{
-			toonMaterial->Name = "Toon"; 
-			toonMaterial->Set("u_Material.AlbedoMap", boxTexture);
-			toonMaterial->Set("u_Material.NormalMap", normalMapDefault);
-			toonMaterial->Set("s_ToonTerm", toonLut);
-			toonMaterial->Set("u_Material.Shininess", 0.1f); 
-			toonMaterial->Set("u_Material.Steps", 8);
+			CustomHeartMaterial->Name = "CustomMaterial";
+			CustomHeartMaterial->Set("u_Material.Diffuse", HeartTexture);
+			CustomHeartMaterial->Set("u_Material.Specular", boxSpec);
+			CustomHeartMaterial->Set("u_Material.Shininess", 0.5f);
+			CustomHeartMaterial->Set("u_Material.Threshold", 0.5f);
 		}
-
-
-		Material::Sptr displacementTest = ResourceManager::CreateAsset<Material>(displacementShader);
-		{
-			Texture2D::Sptr displacementMap = ResourceManager::CreateAsset<Texture2D>("textures/displacement_map.png");
-			Texture2D::Sptr normalMap       = ResourceManager::CreateAsset<Texture2D>("textures/normal_map.png");
-			Texture2D::Sptr diffuseMap      = ResourceManager::CreateAsset<Texture2D>("textures/bricks_diffuse.png");
-
-			displacementTest->Name = "Displacement Map";
-			displacementTest->Set("u_Material.AlbedoMap", diffuseMap);
-			displacementTest->Set("u_Material.NormalMap", normalMap);
-			displacementTest->Set("s_Heightmap", displacementMap);
-			displacementTest->Set("u_Material.Shininess", 0.5f);
-			displacementTest->Set("u_Scale", 0.1f);
-		}
-
-		Material::Sptr normalmapMat = ResourceManager::CreateAsset<Material>(deferredForward);
-		{
-			Texture2D::Sptr normalMap       = ResourceManager::CreateAsset<Texture2D>("textures/normal_map.png");
-			Texture2D::Sptr diffuseMap      = ResourceManager::CreateAsset<Texture2D>("textures/bricks_diffuse.png");
-
-			normalmapMat->Name = "Tangent Space Normal Map";
-			normalmapMat->Set("u_Material.AlbedoMap", diffuseMap);
-			normalmapMat->Set("u_Material.NormalMap", normalMap);
-			normalmapMat->Set("u_Material.Shininess", 0.5f);
-			normalmapMat->Set("u_Scale", 0.1f);
-		}
-
-		Material::Sptr multiTextureMat = ResourceManager::CreateAsset<Material>(multiTextureShader);
-		{
-			Texture2D::Sptr sand  = ResourceManager::CreateAsset<Texture2D>("textures/terrain/sand.png");
-			Texture2D::Sptr grass = ResourceManager::CreateAsset<Texture2D>("textures/terrain/grass.png");
-
-			multiTextureMat->Name = "Multitexturing";
-			multiTextureMat->Set("u_Material.DiffuseA", sand);
-			multiTextureMat->Set("u_Material.DiffuseB", grass);
-			multiTextureMat->Set("u_Material.NormalMapA", normalMapDefault);
-			multiTextureMat->Set("u_Material.NormalMapB", normalMapDefault);
-			multiTextureMat->Set("u_Material.Shininess", 0.5f);
-			multiTextureMat->Set("u_Scale", 0.1f); 
-		}
+		scene->HeartMaterialCustom = CustomHeartMaterial;
 
 		// Create some lights for our scene
 		GameObject::Sptr lightParent = scene->CreateGameObject("Lights");
@@ -319,12 +274,6 @@ void DefaultSceneLayer::_CreateScene()
 
 			scene->Lights.push_back(light);
 		}
-
-		/*GameObject::Sptr light = scene->CreateGameObject("Diffuse"); {
-			Light::Sptr lightComponent = light->Add<Light>();
-			lightComponent->SetIntensity(glm::linearRand(10.0f, 10.0f));
-			lightParent->AddChild(light);
-		}*/
 
 		// We'll create a mesh that is a simple plane that we can resize later
 		MeshResource::Sptr planeMesh = ResourceManager::CreateAsset<MeshResource>();
@@ -367,34 +316,14 @@ void DefaultSceneLayer::_CreateScene()
 			physics->AddCollider(BoxCollider::Create(glm::vec3(50.0f, 50.0f, 1.0f)))->SetPosition({ 0,0,-1 });
 		}
 
-		GameObject::Sptr monkey1 = scene->CreateGameObject("Monkey 1");
-		{
-			// Set position in the scene
-			monkey1->SetPostion(glm::vec3(1.5f, 0.0f, 1.0f));
-
-			// Add some behaviour that relies on the physics body
-			monkey1->Add<JumpBehaviour>();
-
-			// Create and attach a renderer for the monkey
-			RenderComponent::Sptr renderer = monkey1->Add<RenderComponent>();
-			renderer->SetMesh(monkeyMesh);
-			renderer->SetMaterial(monkeyMaterial);
-
-			// Example of a trigger that interacts with static and kinematic bodies as well as dynamic bodies
-			TriggerVolume::Sptr trigger = monkey1->Add<TriggerVolume>();
-			trigger->SetFlags(TriggerTypeFlags::Statics | TriggerTypeFlags::Kinematics);
-			trigger->AddCollider(BoxCollider::Create(glm::vec3(1.0f)));
-
-			monkey1->Add<TriggerVolumeEnterBehaviour>();
-		}
 		GameObject::Sptr Heart = scene->CreateGameObject("Heart");
 		{
 			// Set position in the scene
-			Heart->SetPostion(glm::vec3(10.0f, 0.0f, 5.0f));
+			Heart->SetPostion(glm::vec3(0.0f, 0.0f, 5.0f));
 			Heart->SetRotation(glm::vec3(0.0f, -30.0f, 0.0f));
 
 			Heart->Add<RotatingBehaviour>();
-			Heart->Get<RotatingBehaviour>()->RotationSpeed= glm::vec3(0.0f,0.0f,1.0f);
+			Heart->Get<RotatingBehaviour>()->RotationSpeed= glm::vec3(0.0f,0.0f,5.0f);
 
 
 			// Create and attach a renderer for the monkey
@@ -402,6 +331,24 @@ void DefaultSceneLayer::_CreateScene()
 			renderer->SetMesh(HeartMesh);
 			renderer->SetMaterial(HeartMaterial);
 
+			scene->Hearts.push_back(Heart);
+		}
+		GameObject::Sptr Heart2 = scene->CreateGameObject("Heart2");
+		{
+			// Set position in the scene
+			Heart2->SetPostion(glm::vec3(10.0f, 0.0f, 5.0f));
+			Heart2->SetRotation(glm::vec3(0.0f, -30.0f, 0.0f));
+
+			Heart2->Add<RotatingBehaviour>();
+			Heart2->Get<RotatingBehaviour>()->RotationSpeed = glm::vec3(0.0f, 0.0f, -5.0f);
+
+
+			// Create and attach a renderer for the monkey
+			RenderComponent::Sptr renderer = Heart2->Add<RenderComponent>();
+			renderer->SetMesh(HeartMesh);
+			renderer->SetMaterial(HeartMaterial);
+
+			scene->Hearts.push_back(Heart2);
 		}
 
 		/*GameObject::Sptr particles = scene->CreateGameObject("Particles");

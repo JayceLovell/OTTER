@@ -4,6 +4,7 @@
 
 #include "Gameplay/Components/Camera.h"
 #include "Gameplay/GameObject.h"
+#include "Gameplay/Components/RenderComponent.h"
 
 #include "Physics/BulletDebugDraw.h"
 
@@ -45,8 +46,14 @@ namespace Gameplay {
 		bool                       IsPlaying;
 
 		std::vector<GameObject::Sptr>	Lights;
+		std::vector<GameObject::Sptr>	Hearts;
 
-		bool NoLighting, AmbientOnly;
+		//Mystuff
+		bool NoLighting, AmbientOnly,Lighting,SpecularOnly,Custom;
+		Material::Sptr HeartMaterial;
+		Material::Sptr HeartMaterialSpecular;
+		Material::Sptr HeartMaterialCustom;
+		//
 
 		Scene();
 		~Scene();
