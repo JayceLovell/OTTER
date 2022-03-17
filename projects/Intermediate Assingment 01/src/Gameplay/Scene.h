@@ -49,7 +49,7 @@ namespace Gameplay {
 		std::vector<GameObject::Sptr>	Hearts;
 
 		//Mystuff
-		bool NoLighting, AmbientOnly,Lighting,SpecularOnly,Custom;
+		bool NoLighting, AmbientOnly,IsLightsOn,SpecularOnly,Custom;
 		Material::Sptr HeartMaterial;
 		Material::Sptr HeartMaterialSpecular;
 		Material::Sptr HeartMaterialCustom;

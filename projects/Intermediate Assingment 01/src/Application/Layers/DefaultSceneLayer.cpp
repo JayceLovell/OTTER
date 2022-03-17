@@ -251,8 +251,9 @@ void DefaultSceneLayer::_CreateScene()
 		Material::Sptr CustomHeartMaterial = ResourceManager::CreateAsset<Material>(CustomShader);
 		{
 			CustomHeartMaterial->Name = "CustomMaterial";
-			CustomHeartMaterial->Set("u_Material.Diffuse", HeartTexture);
+			CustomHeartMaterial->Set("u_Material.AlbedoMap", HeartTexture);
 			CustomHeartMaterial->Set("u_Material.Specular", boxSpec);
+			CustomHeartMaterial->Set("u_Material.NormalMap", normalMapDefault);
 			CustomHeartMaterial->Set("u_Material.Shininess", 0.5f);
 			CustomHeartMaterial->Set("u_Material.Threshold", 0.5f);
 		}

@@ -26,7 +26,7 @@ namespace Gameplay {
 		Lights(std::vector<GameObject::Sptr>()),
 		IsPlaying(false),
 		MainCamera(nullptr),
-		Lighting(true),
+		IsLightsOn(true),
 		SpecularOnly(false),
 		Custom(false),
 		AmbientOnly(true),
@@ -190,28 +190,34 @@ namespace Gameplay {
 		if (IsPlaying) {
 			//No Lighting
 			if ((InputEngine::GetKeyState(GLFW_KEY_1) == ButtonState::Pressed)) {
-				if (Lighting) {
+				if (IsLightsOn) {
 					for (auto light : Lights) {
 						light->Get<Light>()->SetIntensity(0.0f);
 					}
-					Lighting = false;
+						SetAmbientLight(glm::vec3(0.0f, 0.0f, 0.0f));
+					IsLightsOn = false;
 				}
 				else
 				{
 					for (auto light : Lights) {
 						light->Get<Light>()->SetIntensity(1.0f);
 					}
-					Lighting =true;
+						SetAmbientLight(glm::vec3(0.1f));
+					IsLightsOn =true;
 				}
 			}
 			//ambient lighting only
 			if ((InputEngine::GetKeyState(GLFW_KEY_2) == ButtonState::Pressed)) {
 				if (AmbientOnly) {
-					SetAmbientLight(glm::vec3(0.0f, 0.0f, 0.0f));
+					for (auto light : Lights) {
+						light->Get<Light>()->SetIntensity(1.0f);
+					}
 					AmbientOnly = false;
 				}
 				else {
-					SetAmbientLight(glm::vec3(0.1f));
+					for (auto light : Lights) {
+						light->Get<Light>()->SetIntensity(0.0f);
+					}
 					AmbientOnly = true;
 				}
 			}
