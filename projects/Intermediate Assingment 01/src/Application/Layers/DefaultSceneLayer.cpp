@@ -208,10 +208,15 @@ void DefaultSceneLayer::_CreateScene()
 
 		// Loading in a color lookup table
 		Texture3D::Sptr lut = ResourceManager::CreateAsset<Texture3D>("luts/cool.CUBE");
-		Texture3D::Sptr Warmlut = ResourceManager::CreateAsset<Texture3D>("luts/WarmLut.CUBE");
+		Texture3D::Sptr WarmLut = ResourceManager::CreateAsset<Texture3D>("luts/WarmLut.CUBE");
+		Texture3D::Sptr CoolLut = ResourceManager::CreateAsset<Texture3D>("luts/CoolLut.CUBE");
+		Texture3D::Sptr CustomLut = ResourceManager::CreateAsset<Texture3D>("luts/CustomLut.CUBE");
 
 		// Configure the color correction LUT
-		scene->SetColorLUT(Warmlut);
+		scene->SetColorLUT(lut);
+		scene->WarmLut = WarmLut;
+		scene->CoolLut = CoolLut;
+		scene->CustomLut = CustomLut;
 
 		// Create our materials
 		// This will be our box material, with no environment reflections
@@ -222,6 +227,7 @@ void DefaultSceneLayer::_CreateScene()
 			boxMaterial->Set("u_Material.Shininess", 0.1f);
 			boxMaterial->Set("u_Material.NormalMap", normalMapDefault);
 		}
+		scene->BoxDefault = boxMaterial;
 		// This will be the reflective material, we'll make the whole thing 90% reflective
 		Material::Sptr monkeyMaterial = ResourceManager::CreateAsset<Material>(deferredForward);
 		{
@@ -251,14 +257,12 @@ void DefaultSceneLayer::_CreateScene()
 
 		Material::Sptr CustomHeartMaterial = ResourceManager::CreateAsset<Material>(CustomShader);
 		{
-			CustomHeartMaterial->Name = "CustomMaterial";
-			CustomHeartMaterial->Set("u_Material.AlbedoMap", HeartTexture);
-			CustomHeartMaterial->Set("u_Material.Specular", boxSpec);
-			CustomHeartMaterial->Set("u_Material.NormalMap", normalMapDefault);
+			CustomHeartMaterial->Name = "CustomHeartMaterial";
+			CustomHeartMaterial->Set("u_Material.Diffuse", boxTexture);
 			CustomHeartMaterial->Set("u_Material.Shininess", 0.5f);
-			CustomHeartMaterial->Set("u_Material.Threshold", 0.5f);
+			CustomHeartMaterial->Set("u_Material.Threshold", 0.5f);;
 		}
-		scene->HeartMaterialCustom = CustomHeartMaterial;
+		scene->CustomMaterial = CustomHeartMaterial;
 
 		// Create some lights for our scene
 		GameObject::Sptr lightParent = scene->CreateGameObject("Lights");

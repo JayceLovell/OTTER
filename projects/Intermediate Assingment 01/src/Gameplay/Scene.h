@@ -52,7 +52,11 @@ namespace Gameplay {
 		bool NoLighting, AmbientOnly,IsLightsOn,SpecularOnly,Custom;
 		Material::Sptr HeartMaterial;
 		Material::Sptr HeartMaterialSpecular;
-		Material::Sptr HeartMaterialCustom;
+		Material::Sptr CustomMaterial;
+		Material::Sptr BoxDefault;
+		Texture3D::Sptr WarmLut;
+		Texture3D::Sptr CoolLut;
+		Texture3D::Sptr CustomLut;
 		//
 
 		Scene();

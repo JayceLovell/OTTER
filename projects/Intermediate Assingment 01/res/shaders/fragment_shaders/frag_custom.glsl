@@ -3,7 +3,13 @@
 #include "../fragments/fs_common_inputs.glsl"
 
 // We output a single color to the color buffer
-layout(location = 0) out vec4 albedo_specPower;
+layout(location = 0) out vec4 frag_color;
+
+////////////////////////////////////////////////////////////////
+/////////////// Frame Level Uniforms ///////////////////////////
+////////////////////////////////////////////////////////////////
+
+#include "../fragments/frame_uniforms.glsl"
 
 ////////////////////////////////////////////////////////////////
 /////////////// Instance Level Uniforms ////////////////////////
@@ -26,12 +32,6 @@ uniform Material u_Material;
 
 #include "../fragments/multiple_point_lights.glsl"
 
-////////////////////////////////////////////////////////////////
-/////////////// Frame Level Uniforms ///////////////////////////
-////////////////////////////////////////////////////////////////
-
-#include "../fragments/frame_uniforms.glsl"
-
 // https://learnopengl.com/Advanced-Lighting/Advanced-Lighting
 void main() {
 
@@ -42,7 +42,6 @@ void main() {
         discard;
     }
 
-
 	// Normalize our input normal
 	vec3 normal = normalize(inNormal);
 
@@ -52,7 +51,5 @@ void main() {
 
 	// combine for the final result
 	vec3 result = lightAccumulation  * inColor * textureColor.rgb;
-
-	albedo_specPower = vec4(textureColor.rgb, 1.0f);
-	//frag_color = vec4(result, textureColor.a);
+	frag_color = vec4(result, textureColor.a);
 }

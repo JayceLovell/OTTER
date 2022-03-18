@@ -14,9 +14,9 @@ void main() {
 	// Lecture 5
 	// Pass vertex pos in world space to frag shader
 	//outWorldPos = (u_Model * vec4(vert, 1.0)).xyz;
-	outWorldPos = (u_Model * vec4(inPosition, 1.0)).xyz + vert;
+	outViewPos = (u_Model * vec4(inPosition, 1.0)).xyz + vert;
 
-	gl_Position = u_ModelViewProjection * vec4(outWorldPos,1.0);
+	gl_Position = u_ModelViewProjection * vec4(outViewPos,1.0);
 
 
 	// Normals

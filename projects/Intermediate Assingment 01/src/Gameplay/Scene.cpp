@@ -188,7 +188,7 @@ namespace Gameplay {
 	void Scene::Update(float dt) {
 		_FlushDeleteQueue();
 		if (IsPlaying) {
-			//No Lighting
+			//No Lighting #1
 			if ((InputEngine::GetKeyState(GLFW_KEY_1) == ButtonState::Pressed)) {
 				if (IsLightsOn) {
 					for (auto light : Lights) {
@@ -206,7 +206,7 @@ namespace Gameplay {
 					IsLightsOn =true;
 				}
 			}
-			//ambient lighting only
+			//ambient lighting only #2
 			if ((InputEngine::GetKeyState(GLFW_KEY_2) == ButtonState::Pressed)) {
 				if (AmbientOnly) {
 					for (auto light : Lights) {
@@ -221,7 +221,7 @@ namespace Gameplay {
 					AmbientOnly = true;
 				}
 			}
-			//specular lighting only
+			//specular lighting only #3
 			if ((InputEngine::GetKeyState(GLFW_KEY_3) == ButtonState::Pressed)) {
 
 				if (SpecularOnly) {	
@@ -238,7 +238,7 @@ namespace Gameplay {
 				}
 					
 			}
-			//Ambient + specular
+			//Ambient + specular #4
 			if ((InputEngine::GetKeyState(GLFW_KEY_4) == ButtonState::Pressed)) {
 				if (AmbientOnly&&SpecularOnly) {
 					SetAmbientLight(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -258,36 +258,46 @@ namespace Gameplay {
 					SpecularOnly = true;
 				}
 			}
-			//Ambient + specular + custom
+			//Ambient + specular + custom #5
 			if ((InputEngine::GetKeyState(GLFW_KEY_5) == ButtonState::Pressed)) {
 				if (AmbientOnly && SpecularOnly && Custom) {
 					SetAmbientLight(glm::vec3(0.0f, 0.0f, 0.0f));
 					for (auto object : Hearts) {
 						object->Get<RenderComponent>()->SetMaterial(HeartMaterial);
 					}
+					FindObjectByName("Plane")->Get<RenderComponent>()->SetMaterial(BoxDefault);
 					AmbientOnly = false;
 					SpecularOnly = false;
+					Custom = false;
 				}
 				else
 				{
 					SetAmbientLight(glm::vec3(0.1f));
 					for (auto object : Hearts) {
-						object->Get<RenderComponent>()->SetMaterial(HeartMaterialCustom);
+						object->Get<RenderComponent>()->SetMaterial(HeartMaterialSpecular);
 					}
+					FindObjectByName("Plane")->Get<RenderComponent>()->SetMaterial(CustomMaterial);
 					AmbientOnly = true;
 					SpecularOnly = true;
+					Custom = true;
 				}
 			}
-			//Toggle diffuse warp/ramp
+			//Toggle diffuse warp/ramp #6
 			if ((InputEngine::GetKeyState(GLFW_KEY_6) == ButtonState::Pressed)) {}
-			//Toggle specular warp/ramp
+			//Toggle specular warp/ramp #7
 			if ((InputEngine::GetKeyState(GLFW_KEY_7) == ButtonState::Pressed)) {}
-			//Toggle Color Grading Warm
-			if ((InputEngine::GetKeyState(GLFW_KEY_8) == ButtonState::Pressed)) {}
-			//Toggle Color Grading Cool
-			if ((InputEngine::GetKeyState(GLFW_KEY_9) == ButtonState::Pressed)) {}
-			//Toggle Color Graidn Custom Effect
-			if ((InputEngine::GetKeyState(GLFW_KEY_0) == ButtonState::Pressed)) {}
+			//Toggle Color Grading Warm #8
+			if ((InputEngine::GetKeyState(GLFW_KEY_8) == ButtonState::Pressed)) {
+				SetColorLUT(WarmLut);
+			}
+			//Toggle Color Grading Cool #9
+			if ((InputEngine::GetKeyState(GLFW_KEY_9) == ButtonState::Pressed)) {
+				SetColorLUT(CoolLut);
+			}
+			//Toggle Color Graidn Custom Effect #0
+			if ((InputEngine::GetKeyState(GLFW_KEY_0) == ButtonState::Pressed)) {
+				SetColorLUT(CustomLut);
+			}
 
 			for (auto& obj : _objects) {
 				obj->Update(dt);

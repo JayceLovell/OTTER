@@ -1,14 +1,22 @@
+CSPLUTV100
+3D
+
+BEGIN METADATA
 #Created by: Adobe Photoshop Export Color Lookup Plugin
-TITLE "Warm"
+TITLE "Sigh.PNG"
+END METADATA
 
-#LUT size
-LUT_3D_SIZE 32
+2
+0.0 1.0
+0.0 1.0
+2
+0.0 1.0
+0.0 1.0
+2
+0.0 1.0
+0.0 1.0
 
-#data domain
-DOMAIN_MIN 0.0 0.0 0.0
-DOMAIN_MAX 1.0 1.0 1.0
-
-#LUT data points
+32 32 32
 0.000000 0.000000 0.000000
 0.022827 0.004059 0.004059
 0.047241 0.007416 0.007416
