@@ -4,6 +4,7 @@
 #include <GLM/glm.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
 #include <GLM/gtc/type_ptr.hpp>
+#include <GLM/gtc/random.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <GLM/gtx/common.hpp> // for fmod (floating modulus)
 
@@ -36,6 +37,7 @@
 #include "Gameplay/Material.h"
 #include "Gameplay/GameObject.h"
 #include "Gameplay/Scene.h"
+#include "Gameplay/Components/Light.h"
 
 // Components
 #include "Gameplay/Components/IComponent.h"
@@ -93,65 +95,46 @@ void DefaultSceneLayer::_CreateScene()
 	if (loadScene && std::filesystem::exists("scene.json")) {
 		app.LoadScene("scene.json");
 	} else {
-		// This time we'll have 2 different shaders, and share data between both of them using the UBO
-		// This shader will handle reflective materials 
-		ShaderProgram::Sptr reflectiveShader = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
+		 
+		// Basic gbuffer generation with no vertex manipulation
+		ShaderProgram::Sptr deferredForward = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
 			{ ShaderPartType::Vertex, "shaders/vertex_shaders/basic.glsl" },
-			{ ShaderPartType::Fragment, "shaders/fragment_shaders/frag_environment_reflective.glsl" }
+			{ ShaderPartType::Fragment, "shaders/fragment_shaders/deferred_forward.glsl" }
 		});
-		reflectiveShader->SetDebugName("Reflective");
+		deferredForward->SetDebugName("Deferred - GBuffer Generation");  
 
-		// This shader handles our basic materials without reflections (cause they expensive)
-		ShaderProgram::Sptr basicShader = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
-			{ ShaderPartType::Vertex, "shaders/vertex_shaders/basic.glsl" },
-			{ ShaderPartType::Fragment, "shaders/fragment_shaders/frag_blinn_phong_textured.glsl" }
-		});
-		basicShader->SetDebugName("Blinn-phong");
-
-		// This shader handles our basic materials without reflections (cause they expensive)
-		ShaderProgram::Sptr specShader = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
-			{ ShaderPartType::Vertex, "shaders/vertex_shaders/basic.glsl" },
-			{ ShaderPartType::Fragment, "shaders/fragment_shaders/textured_specular.glsl" }
-		});
-		specShader->SetDebugName("Textured-Specular");
-
-		// This shader handles our foliage vertex shader example
+		// Our foliage shader which manipulates the vertices of the mesh
 		ShaderProgram::Sptr foliageShader = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
 			{ ShaderPartType::Vertex, "shaders/vertex_shaders/foliage.glsl" },
-			{ ShaderPartType::Fragment, "shaders/fragment_shaders/screendoor_transparency.glsl" }
-		});
-		foliageShader->SetDebugName("Foliage");
+			{ ShaderPartType::Fragment, "shaders/fragment_shaders/deferred_forward.glsl" }
+		});  
+		foliageShader->SetDebugName("Foliage");   
 
-		// This shader handles our cel shading example
-		ShaderProgram::Sptr toonShader = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
-			{ ShaderPartType::Vertex, "shaders/vertex_shaders/basic.glsl" },
-			{ ShaderPartType::Fragment, "shaders/fragment_shaders/toon_shading.glsl" }
+		// This shader handles our multitexturing example
+		ShaderProgram::Sptr multiTextureShader = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
+			{ ShaderPartType::Vertex, "shaders/vertex_shaders/vert_multitextured.glsl" },  
+			{ ShaderPartType::Fragment, "shaders/fragment_shaders/frag_multitextured.glsl" }
 		});
-		toonShader->SetDebugName("Toon Shader");
+		multiTextureShader->SetDebugName("Multitexturing"); 
 
 		// This shader handles our displacement mapping example
 		ShaderProgram::Sptr displacementShader = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
 			{ ShaderPartType::Vertex, "shaders/vertex_shaders/displacement_mapping.glsl" },
-			{ ShaderPartType::Fragment, "shaders/fragment_shaders/frag_tangentspace_normal_maps.glsl" }
+			{ ShaderPartType::Fragment, "shaders/fragment_shaders/deferred_forward.glsl" }
 		});
 		displacementShader->SetDebugName("Displacement Mapping");
 
-		// This shader handles our tangent space normal mapping
-		ShaderProgram::Sptr tangentSpaceMapping = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
-			{ ShaderPartType::Vertex, "shaders/vertex_shaders/basic.glsl" },
-			{ ShaderPartType::Fragment, "shaders/fragment_shaders/frag_tangentspace_normal_maps.glsl" }
+		// This shader handles our cel shading example
+		ShaderProgram::Sptr celShader = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
+			{ ShaderPartType::Vertex, "shaders/vertex_shaders/displacement_mapping.glsl" },
+			{ ShaderPartType::Fragment, "shaders/fragment_shaders/cel_shader.glsl" }
 		});
-		tangentSpaceMapping->SetDebugName("Tangent Space Mapping");
+		celShader->SetDebugName("Cel Shader");
 
-		// This shader handles our multitexturing example
-		ShaderProgram::Sptr multiTextureShader = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
-			{ ShaderPartType::Vertex, "shaders/vertex_shaders/vert_multitextured.glsl" },
-			{ ShaderPartType::Fragment, "shaders/fragment_shaders/frag_multitextured.glsl" }
-		});
-		multiTextureShader->SetDebugName("Multitexturing");
 
 		// Load in the meshes
 		MeshResource::Sptr monkeyMesh = ResourceManager::CreateAsset<MeshResource>("Monkey.obj");
+		MeshResource::Sptr shipMesh   = ResourceManager::CreateAsset<MeshResource>("fenrir.obj");
 
 		// Load in some textures
 		Texture2D::Sptr    boxTexture   = ResourceManager::CreateAsset<Texture2D>("textures/box-diffuse.png");
@@ -161,20 +144,42 @@ void DefaultSceneLayer::_CreateScene()
 		leafTex->SetMinFilter(MinFilter::Nearest);
 		leafTex->SetMagFilter(MagFilter::Nearest);
 
+#pragma region Basic Texture Creation
+		Texture2DDescription singlePixelDescriptor;
+		singlePixelDescriptor.Width = singlePixelDescriptor.Height = 1;
+		singlePixelDescriptor.Format = InternalFormat::RGB8;
+
+		float normalMapDefaultData[3] = { 0.5f, 0.5f, 1.0f };
+		Texture2D::Sptr normalMapDefault = ResourceManager::CreateAsset<Texture2D>(singlePixelDescriptor);
+		normalMapDefault->LoadData(1, 1, PixelFormat::RGB, PixelType::Float, normalMapDefaultData);
+
+		float solidBlack[3] = { 0.5f, 0.5f, 0.5f };
+		Texture2D::Sptr solidBlackTex = ResourceManager::CreateAsset<Texture2D>(singlePixelDescriptor);
+		solidBlackTex->LoadData(1, 1, PixelFormat::RGB, PixelType::Float, solidBlack);
+
+		float solidGrey[3] = { 0.0f, 0.0f, 0.0f };
+		Texture2D::Sptr solidGreyTex = ResourceManager::CreateAsset<Texture2D>(singlePixelDescriptor);
+		solidGreyTex->LoadData(1, 1, PixelFormat::RGB, PixelType::Float, solidGrey);
+
+		float solidWhite[3] = { 1.0f, 1.0f, 1.0f };
+		Texture2D::Sptr solidWhiteTex = ResourceManager::CreateAsset<Texture2D>(singlePixelDescriptor);
+		solidWhiteTex->LoadData(1, 1, PixelFormat::RGB, PixelType::Float, solidWhite);
+
+#pragma endregion 
 
 		// Loading in a 1D LUT
-		Texture1D::Sptr toonLut = ResourceManager::CreateAsset<Texture1D>("luts/WarmLut.CUBE");//"luts/toon-1D.png"); 
+		Texture1D::Sptr toonLut = ResourceManager::CreateAsset<Texture1D>("luts/toon-1D.png"); 
 		toonLut->SetWrap(WrapMode::ClampToEdge);
 
 		// Here we'll load in the cubemap, as well as a special shader to handle drawing the skybox
 		TextureCube::Sptr testCubemap = ResourceManager::CreateAsset<TextureCube>("cubemaps/ocean/ocean.jpg");
 		ShaderProgram::Sptr      skyboxShader = ResourceManager::CreateAsset<ShaderProgram>(std::unordered_map<ShaderPartType, std::string>{
 			{ ShaderPartType::Vertex, "shaders/vertex_shaders/skybox_vert.glsl" },
-			{ ShaderPartType::Fragment, "shaders/fragment_shaders/skybox_frag.glsl" }
+			{ ShaderPartType::Fragment, "shaders/fragment_shaders/skybox_frag.glsl" } 
 		});
-
+		  
 		// Create an empty scene
-		Scene::Sptr scene = std::make_shared<Scene>(); 
+		Scene::Sptr scene = std::make_shared<Scene>();  
 
 		// Setting up our enviroment map
 		scene->SetSkyboxTexture(testCubemap); 
@@ -183,43 +188,47 @@ void DefaultSceneLayer::_CreateScene()
 		scene->SetSkyboxRotation(glm::rotate(MAT4_IDENTITY, glm::half_pi<float>(), glm::vec3(1.0f, 0.0f, 0.0f)));
 
 		// Loading in a color lookup table
-		Texture3D::Sptr lut = ResourceManager::CreateAsset<Texture3D>("luts/cool.CUBE");  
+		Texture3D::Sptr lut = ResourceManager::CreateAsset<Texture3D>("luts/cool.CUBE");   
 
 		// Configure the color correction LUT
 		scene->SetColorLUT(lut);
 
 		// Create our materials
 		// This will be our box material, with no environment reflections
-		Material::Sptr boxMaterial = ResourceManager::CreateAsset<Material>(basicShader);
+		Material::Sptr boxMaterial = ResourceManager::CreateAsset<Material>(deferredForward);
 		{
 			boxMaterial->Name = "Box";
-			boxMaterial->Set("u_Material.Diffuse", boxTexture);
+			boxMaterial->Set("u_Material.AlbedoMap", boxTexture);
 			boxMaterial->Set("u_Material.Shininess", 0.1f);
+			boxMaterial->Set("u_Material.NormalMap", normalMapDefault);
 		}
 
 		// This will be the reflective material, we'll make the whole thing 90% reflective
-		Material::Sptr monkeyMaterial = ResourceManager::CreateAsset<Material>(reflectiveShader);
+		Material::Sptr monkeyMaterial = ResourceManager::CreateAsset<Material>(deferredForward);
 		{
 			monkeyMaterial->Name = "Monkey";
-			monkeyMaterial->Set("u_Material.Diffuse", monkeyTex);
+			monkeyMaterial->Set("u_Material.AlbedoMap", monkeyTex);
+			monkeyMaterial->Set("u_Material.NormalMap", normalMapDefault);
 			monkeyMaterial->Set("u_Material.Shininess", 0.5f);
 		}
 
-		// This will be the reflective material, we'll make the whole thing 90% reflective
-		Material::Sptr testMaterial = ResourceManager::CreateAsset<Material>(specShader);
+		// This will be the reflective material, we'll make the whole thing 50% reflective
+		Material::Sptr testMaterial = ResourceManager::CreateAsset<Material>(deferredForward); 
 		{
 			testMaterial->Name = "Box-Specular";
-			testMaterial->Set("u_Material.Diffuse", boxTexture);
+			testMaterial->Set("u_Material.AlbedoMap", boxTexture); 
 			testMaterial->Set("u_Material.Specular", boxSpec);
+			testMaterial->Set("u_Material.NormalMap", normalMapDefault);
 		}
 
-		// Our foliage vertex shader material
+		// Our foliage vertex shader material 
 		Material::Sptr foliageMaterial = ResourceManager::CreateAsset<Material>(foliageShader);
 		{
 			foliageMaterial->Name = "Foliage Shader";
-			foliageMaterial->Set("u_Material.Diffuse", leafTex);
+			foliageMaterial->Set("u_Material.AlbedoMap", leafTex);
 			foliageMaterial->Set("u_Material.Shininess", 0.1f);
-			foliageMaterial->Set("u_Material.Threshold", 0.1f);
+			foliageMaterial->Set("u_Material.DiscardThreshold", 0.1f);
+			foliageMaterial->Set("u_Material.NormalMap", normalMapDefault);
 
 			foliageMaterial->Set("u_WindDirection", glm::vec3(1.0f, 1.0f, 0.0f));
 			foliageMaterial->Set("u_WindStrength", 0.5f);
@@ -228,12 +237,13 @@ void DefaultSceneLayer::_CreateScene()
 		}
 
 		// Our toon shader material
-		Material::Sptr toonMaterial = ResourceManager::CreateAsset<Material>(toonShader);
+		Material::Sptr toonMaterial = ResourceManager::CreateAsset<Material>(celShader);
 		{
-			toonMaterial->Name = "Toon";
-			toonMaterial->Set("u_Material.Diffuse", boxTexture);
+			toonMaterial->Name = "Toon"; 
+			toonMaterial->Set("u_Material.AlbedoMap", boxTexture);
+			toonMaterial->Set("u_Material.NormalMap", normalMapDefault);
 			toonMaterial->Set("s_ToonTerm", toonLut);
-			toonMaterial->Set("u_Material.Shininess", 0.1f);
+			toonMaterial->Set("u_Material.Shininess", 0.1f); 
 			toonMaterial->Set("u_Material.Steps", 8);
 		}
 
@@ -245,21 +255,21 @@ void DefaultSceneLayer::_CreateScene()
 			Texture2D::Sptr diffuseMap      = ResourceManager::CreateAsset<Texture2D>("textures/bricks_diffuse.png");
 
 			displacementTest->Name = "Displacement Map";
-			displacementTest->Set("u_Material.Diffuse", diffuseMap);
+			displacementTest->Set("u_Material.AlbedoMap", diffuseMap);
+			displacementTest->Set("u_Material.NormalMap", normalMap);
 			displacementTest->Set("s_Heightmap", displacementMap);
-			displacementTest->Set("s_NormalMap", normalMap);
 			displacementTest->Set("u_Material.Shininess", 0.5f);
 			displacementTest->Set("u_Scale", 0.1f);
 		}
 
-		Material::Sptr normalmapMat = ResourceManager::CreateAsset<Material>(tangentSpaceMapping);
+		Material::Sptr normalmapMat = ResourceManager::CreateAsset<Material>(deferredForward);
 		{
 			Texture2D::Sptr normalMap       = ResourceManager::CreateAsset<Texture2D>("textures/normal_map.png");
 			Texture2D::Sptr diffuseMap      = ResourceManager::CreateAsset<Texture2D>("textures/bricks_diffuse.png");
 
 			normalmapMat->Name = "Tangent Space Normal Map";
-			normalmapMat->Set("u_Material.Diffuse", diffuseMap);
-			normalmapMat->Set("s_NormalMap", normalMap);
+			normalmapMat->Set("u_Material.AlbedoMap", diffuseMap);
+			normalmapMat->Set("u_Material.NormalMap", normalMap);
 			normalmapMat->Set("u_Material.Shininess", 0.5f);
 			normalmapMat->Set("u_Scale", 0.1f);
 		}
@@ -272,21 +282,25 @@ void DefaultSceneLayer::_CreateScene()
 			multiTextureMat->Name = "Multitexturing";
 			multiTextureMat->Set("u_Material.DiffuseA", sand);
 			multiTextureMat->Set("u_Material.DiffuseB", grass);
+			multiTextureMat->Set("u_Material.NormalMapA", normalMapDefault);
+			multiTextureMat->Set("u_Material.NormalMapB", normalMapDefault);
 			multiTextureMat->Set("u_Material.Shininess", 0.5f);
-			multiTextureMat->Set("u_Scale", 0.1f);
+			multiTextureMat->Set("u_Scale", 0.1f); 
 		}
 
 		// Create some lights for our scene
-		scene->Lights.resize(3);
-		scene->Lights[0].Position = glm::vec3(0.0f, 1.0f, 3.0f);
-		scene->Lights[0].Color = glm::vec3(1.0f, 1.0f, 1.0f);
-		scene->Lights[0].Range = 100.0f;
+		GameObject::Sptr lightParent = scene->CreateGameObject("Lights");
 
-		scene->Lights[1].Position = glm::vec3(1.0f, 0.0f, 3.0f);
-		scene->Lights[1].Color = glm::vec3(0.2f, 0.8f, 0.1f);
+		for (int ix = 0; ix < 50; ix++) {
+			GameObject::Sptr light = scene->CreateGameObject("Light");
+			light->SetPostion(glm::vec3(glm::diskRand(25.0f), 1.0f));
+			lightParent->AddChild(light);
 
-		scene->Lights[2].Position = glm::vec3(0.0f, 1.0f, 3.0f);
-		scene->Lights[2].Color = glm::vec3(1.0f, 0.2f, 0.1f);
+			Light::Sptr lightComponent = light->Add<Light>();
+			lightComponent->SetColor(glm::linearRand(glm::vec3(0.0f), glm::vec3(1.0f)));
+			lightComponent->SetRadius(glm::linearRand(0.1f, 10.0f));
+			lightComponent->SetIntensity(glm::linearRand(1.0f, 2.0f));
+		}
 
 		// We'll create a mesh that is a simple plane that we can resize later
 		MeshResource::Sptr planeMesh = ResourceManager::CreateAsset<MeshResource>();
@@ -350,6 +364,19 @@ void DefaultSceneLayer::_CreateScene()
 			monkey1->Add<TriggerVolumeEnterBehaviour>();
 		}
 
+
+		GameObject::Sptr ship = scene->CreateGameObject("Fenrir");
+		{
+			// Set position in the scene
+			ship->SetPostion(glm::vec3(1.5f, 0.0f, 4.0f));
+			ship->SetScale(glm::vec3(0.1f));
+
+			// Create and attach a renderer for the monkey
+			RenderComponent::Sptr renderer = ship->Add<RenderComponent>();
+			renderer->SetMesh(shipMesh);
+			renderer->SetMaterial(monkeyMaterial);
+		}
+
 		GameObject::Sptr demoBase = scene->CreateGameObject("Demo Parent");
 
 		// Box to showcase the specular material
@@ -365,7 +392,7 @@ void DefaultSceneLayer::_CreateScene()
 			// Add a render component
 			RenderComponent::Sptr renderer = specBox->Add<RenderComponent>();
 			renderer->SetMesh(boxMesh);
-			renderer->SetMaterial(testMaterial);
+			renderer->SetMaterial(testMaterial); 
 
 			demoBase->AddChild(specBox);
 		}

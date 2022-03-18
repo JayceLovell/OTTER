@@ -207,10 +207,11 @@ void DefaultSceneLayer::_CreateScene()
 		scene->SetSkyboxRotation(glm::rotate(MAT4_IDENTITY, glm::half_pi<float>(), glm::vec3(1.0f, 0.0f, 0.0f)));
 
 		// Loading in a color lookup table
-		Texture3D::Sptr lut = ResourceManager::CreateAsset<Texture3D>("luts/cool.CUBE");   
+		Texture3D::Sptr lut = ResourceManager::CreateAsset<Texture3D>("luts/cool.CUBE");
+		Texture3D::Sptr Warmlut = ResourceManager::CreateAsset<Texture3D>("luts/WarmLut.CUBE");
 
 		// Configure the color correction LUT
-		scene->SetColorLUT(lut);
+		scene->SetColorLUT(Warmlut);
 
 		// Create our materials
 		// This will be our box material, with no environment reflections
